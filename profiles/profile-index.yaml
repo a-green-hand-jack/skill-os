@@ -56,7 +56,7 @@ repo_matrix:
   ml-research-skills:
     status: active
     github_url: https://github.com/a-green-hand-jack/ml-research-skills
-    pinned_commit: 0e6058450b8d8b1b5b297d4c790cafa62df1b7fd
+    pinned_commit: a7612508c3de6526814be790e6748c519c0619bd
     pinned_at: "2026-05-28"
     role: >
       Domain pack for AI PhD and ML research workflows from idea through
