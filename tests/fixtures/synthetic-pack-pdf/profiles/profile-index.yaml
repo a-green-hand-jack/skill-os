@@ -1,0 +1,28 @@
+schema_version: 0
+note: >
+  Synthetic test-fixture profile-index for the `synthetic-pdf` profile.
+  Depends on the `synthetic` profile from tests/fixtures/synthetic-pack/.
+  Used only by skill-os chain-install tests.
+
+profiles:
+  synthetic-pdf:
+    status: draft
+    scope: private
+    future_repo: synthetic-pack-pdf
+    depends_on:
+      - synthetic
+    intent: >
+      Synthetic test profile that depends on the synthetic pack.
+    entrypoints:
+      - synthetic-pdf-reader
+    routers:
+      - synthetic-pdf-reader
+    skills:
+      required:
+        - synthetic-pdf-reader
+      optional: []
+    install_policy:
+      recommended: project-local
+      full_bundle_allowed: false
+      notes: >
+        Test fixture only.

@@ -1,0 +1,101 @@
+{
+  "schema_version": "0.1",
+  "kernel_id": "synthetic-pdf",
+  "owner_repo": "skill-os",
+  "source_paths": [
+    "profiles/profile-index.yaml",
+    "skills/synthetic-pdf-reader/SKILL.md"
+  ],
+  "profile": {
+    "name": "synthetic-pdf",
+    "status": "draft",
+    "scope": "private",
+    "future_repo": "synthetic-pack-pdf",
+    "intent": "Self-contained synthetic profile used only by skill-os chain-install tests. Depends on the `synthetic` profile."
+  },
+  "routing": {
+    "entrypoints": ["synthetic-pdf-reader"],
+    "routers": ["synthetic-pdf-reader"],
+    "handoff_policy": "Test fixture only."
+  },
+  "install_policy": {
+    "recommended": "project-local",
+    "full_bundle_allowed": false,
+    "notes": "Never install outside skill-os chain tests."
+  },
+  "skills": {
+    "required": ["synthetic-pdf-reader"],
+    "optional": []
+  },
+  "workflow_contract": {
+    "supported_lanes": ["action", "evidence", "combined", "no-contract"],
+    "default_lane": "no-contract",
+    "lane_selection_rule": "Synthetic fixture; lane selection is trivial.",
+    "action_lane": {
+      "mutation_surfaces": ["files"],
+      "risk_classes": ["read-only"],
+      "required_preflight": ["Confirm this is running inside a test fixture."],
+      "forbidden_actions": ["Do not use this profile outside chain-install tests."],
+      "approval_boundary": "Synthetic fixture; no real approval required."
+    },
+    "evidence_lane": {
+      "modes": ["none", "light"],
+      "source_ledger_required": false,
+      "source_types": ["test fixtures"],
+      "confidence_policy": "Test data only.",
+      "citation_policy": "Synthetic fixture; no citations."
+    },
+    "combined_lane": {
+      "evidence_before_action": false,
+      "handoff_artifact": "test output",
+      "staleness_trigger": "Fixture file changes."
+    },
+    "no_contract_lane": {
+      "allowed_when": "Always — this profile is a synthetic test fixture.",
+      "escalation_trigger": "Never relevant outside tests."
+    }
+  },
+  "validation": {
+    "required_checks": [
+      {
+        "name": "synthetic chain fixture smoke",
+        "command": "python3 -m unittest tests.test_synthetic_chain_install",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      }
+    ],
+    "acceptance_checks": [
+      "Kernel references synthetic-pdf-reader skill.",
+      "Profile depends_on the `synthetic` profile for the chain test."
+    ]
+  },
+  "memory": {
+    "required_reads": ["tests/fixtures/synthetic-pack-pdf/profiles/profile-index.yaml"],
+    "writeback_targets": ["test-artifacts"],
+    "privacy_boundary": {
+      "public_safe": ["synthetic skill names", "fixture paths"],
+      "private_only": ["tmpdir paths created during test runs"],
+      "publication_audit_required_when": "Never — test fixture."
+    }
+  },
+  "adapters": {
+    "source_of_truth": "kernel",
+    "selection_semantics": {
+      "runtime_expectation": "direct-entrypoint",
+      "selection_contexts": ["Synthetic fixture; never selected in real runtime."],
+      "delegation_policy": "No delegation; fixture only.",
+      "installable_manifest_gate": "Never install."
+    },
+    "runtimes": [
+      {"runtime": "codex", "status": "future-adapter"},
+      {"runtime": "claude-code", "status": "future-adapter"},
+      {"runtime": "generic-agent", "status": "future-adapter"}
+    ]
+  },
+  "promotion": {
+    "status": "repo-candidate",
+    "promotion_gates": ["Synthetic fixture never promotes; it stays a test artifact."],
+    "rejection_checks": ["Reject any attempt to install this profile outside skill-os chain-install tests."]
+  }
+}
