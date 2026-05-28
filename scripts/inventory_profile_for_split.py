@@ -19,14 +19,40 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import sys
 from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_KERNEL_DIR = REPO_ROOT / "schemas" / "skill-kernel" / "examples"
-PROFILE_INDEX_PATH = REPO_ROOT / "profiles" / "profile-index.yaml"
+SOURCE_ROOT_ENV = "SKILL_OS_SOURCE_ROOT"
+
+# SOURCE_ROOT is the repo whose `skills/`, kernel examples, and profile-index
+# are inventoried. It defaults to the script's own repo (skill-os) so behavior
+# is unchanged for callers who don't pass a flag, but can be overridden via
+# `--source-root <path>` or the SKILL_OS_SOURCE_ROOT env var.
+SOURCE_ROOT = REPO_ROOT
+DEFAULT_KERNEL_DIR = SOURCE_ROOT / "schemas" / "skill-kernel" / "examples"
+PROFILE_INDEX_PATH = SOURCE_ROOT / "profiles" / "profile-index.yaml"
+
+
+def _resolve_source_root(cli_value: Path | None) -> Path:
+    """Pick the source root: CLI flag > env var > default to skill-os REPO_ROOT."""
+    if cli_value is not None:
+        return cli_value.resolve()
+    env_value = os.environ.get(SOURCE_ROOT_ENV)
+    if env_value:
+        return Path(env_value).resolve()
+    return REPO_ROOT
+
+
+def _set_source_root(path: Path) -> None:
+    """Override the active source root after CLI/env resolution."""
+    global SOURCE_ROOT, DEFAULT_KERNEL_DIR, PROFILE_INDEX_PATH
+    SOURCE_ROOT = path.resolve()
+    DEFAULT_KERNEL_DIR = SOURCE_ROOT / "schemas" / "skill-kernel" / "examples"
+    PROFILE_INDEX_PATH = SOURCE_ROOT / "profiles" / "profile-index.yaml"
 
 INVENTORY_SCHEMA_VERSION = "0.1"
 AUDIT_SCHEMA_VERSION = "0.1"
@@ -115,7 +141,7 @@ def sha256_hex(data: bytes) -> str:
 
 def repo_relative(path: Path) -> str:
     try:
-        return str(path.resolve().relative_to(REPO_ROOT))
+        return str(path.resolve().relative_to(SOURCE_ROOT))
     except ValueError:
         return str(path)
 
@@ -145,7 +171,7 @@ def kernel_path_for(profile: str, kernel_dir: Path) -> Path:
 
 
 def walk_skill_dir(skill_name: str, kind: str) -> list[dict[str, Any]]:
-    skill_root = REPO_ROOT / "skills" / skill_name
+    skill_root = SOURCE_ROOT / "skills" / skill_name
     if not skill_root.is_dir():
         raise ValueError(f"skill directory missing: skills/{skill_name}")
     entries: list[dict[str, Any]] = []
@@ -171,7 +197,7 @@ def walk_skill_dir(skill_name: str, kind: str) -> list[dict[str, Any]]:
 
 
 def file_entry(rel_path: str, classification: str) -> dict[str, Any]:
-    path = REPO_ROOT / rel_path
+    path = SOURCE_ROOT / rel_path
     if not path.is_file():
         raise ValueError(f"source path is not a file: {rel_path}")
     raw = path.read_bytes()
@@ -186,7 +212,7 @@ def file_entry(rel_path: str, classification: str) -> dict[str, Any]:
 
 
 def directory_entries(rel_path: str, classification: str) -> list[dict[str, Any]]:
-    path = REPO_ROOT / rel_path
+    path = SOURCE_ROOT / rel_path
     if not path.is_dir():
         return []
     entries: list[dict[str, Any]] = []
@@ -218,7 +244,7 @@ def kernel_source_entries(kernel: dict[str, Any]) -> list[dict[str, Any]]:
         if rel.startswith("skills/"):
             # Skill files are enumerated through the skill walk; reference only here.
             continue
-        path = REPO_ROOT / rel
+        path = SOURCE_ROOT / rel
         if path.is_dir():
             entries.extend(directory_entries(rel, "kernel-source"))
         elif path.is_file():
@@ -323,7 +349,7 @@ def build_privacy_audit(
     hits: list[dict[str, Any]] = []
     for source in inventory["sources"]:
         rel = source["path"]
-        abs_path = REPO_ROOT / rel
+        abs_path = SOURCE_ROOT / rel
         if not abs_path.is_file():
             continue
         checked_paths.append(rel)
@@ -361,10 +387,20 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     parser.add_argument("profile", help="Profile name, e.g. core-ops.")
     parser.add_argument(
+        "--source-root",
+        type=Path,
+        default=None,
+        help=(
+            "Override the source root (where to look for skills/, kernel "
+            "examples, and profile-index). Defaults to the script's own "
+            "repo root, or the SKILL_OS_SOURCE_ROOT env var if set."
+        ),
+    )
+    parser.add_argument(
         "--kernel-dir",
         type=Path,
-        default=DEFAULT_KERNEL_DIR,
-        help="Directory containing kernel examples.",
+        default=None,
+        help="Directory containing kernel examples (default: <source-root>/schemas/skill-kernel/examples).",
     )
     parser.add_argument(
         "--inventory-out",
@@ -387,8 +423,10 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
+    _set_source_root(_resolve_source_root(args.source_root))
+    kernel_dir = (args.kernel_dir or DEFAULT_KERNEL_DIR).resolve()
     try:
-        inventory = build_inventory(args.profile, args.kernel_dir.resolve())
+        inventory = build_inventory(args.profile, kernel_dir)
     except ValueError as exc:
         print(json.dumps({"status": "failed", "error": str(exc)}, indent=2, sort_keys=True))
         return 2

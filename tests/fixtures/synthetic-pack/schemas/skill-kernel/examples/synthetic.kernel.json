@@ -1,0 +1,154 @@
+{
+  "schema_version": "0.1",
+  "kernel_id": "synthetic",
+  "owner_repo": "skill-os",
+  "source_paths": [
+    "tests/fixtures/synthetic-pack/profiles/profile-index.yaml",
+    "tests/fixtures/synthetic-pack/skills/synthetic-alpha/SKILL.md",
+    "tests/fixtures/synthetic-pack/skills/synthetic-beta/SKILL.md"
+  ],
+  "profile": {
+    "name": "synthetic",
+    "status": "draft",
+    "scope": "private",
+    "future_repo": "synthetic-pack-skills",
+    "intent": "Self-contained synthetic profile used only by skill-os tests to exercise inventory, scaffolder, validator, and applier logic without depending on a real pack repo's skills directory."
+  },
+  "routing": {
+    "entrypoints": [
+      "synthetic-alpha"
+    ],
+    "routers": [
+      "synthetic-alpha"
+    ],
+    "handoff_policy": "Test fixture only. The router is a stub skill that has no real handoff logic."
+  },
+  "install_policy": {
+    "recommended": "project-local",
+    "full_bundle_allowed": false,
+    "notes": "Never install this profile in a real project. It exists only as a test fixture for skill-os."
+  },
+  "skills": {
+    "required": [
+      "synthetic-alpha",
+      "synthetic-beta"
+    ],
+    "optional": [
+      "synthetic-gamma"
+    ]
+  },
+  "workflow_contract": {
+    "supported_lanes": [
+      "action",
+      "evidence",
+      "combined",
+      "no-contract"
+    ],
+    "default_lane": "no-contract",
+    "lane_selection_rule": "Synthetic fixture; lane selection is trivial and not exercised by real tasks.",
+    "action_lane": {
+      "mutation_surfaces": [
+        "files"
+      ],
+      "risk_classes": [
+        "read-only"
+      ],
+      "required_preflight": [
+        "Confirm this is running inside a test fixture and not against a real project."
+      ],
+      "forbidden_actions": [
+        "Do not use the synthetic profile in any real install or runtime context."
+      ],
+      "approval_boundary": "Synthetic fixture; no real approval required."
+    },
+    "evidence_lane": {
+      "modes": [
+        "none",
+        "light"
+      ],
+      "source_ledger_required": false,
+      "source_types": [
+        "test fixtures"
+      ],
+      "confidence_policy": "Test data only; no real-world confidence claims.",
+      "citation_policy": "Synthetic fixture; no citations."
+    },
+    "combined_lane": {
+      "evidence_before_action": false,
+      "handoff_artifact": "test output",
+      "staleness_trigger": "Fixture file changes."
+    },
+    "no_contract_lane": {
+      "allowed_when": "Always — this profile is a synthetic test fixture.",
+      "escalation_trigger": "Never relevant outside tests."
+    }
+  },
+  "validation": {
+    "required_checks": [
+      {
+        "name": "synthetic fixture smoke",
+        "command": "python3 -m unittest tests.test_synthetic_install_chain",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      }
+    ],
+    "acceptance_checks": [
+      "Kernel example references the three synthetic skills under tests/fixtures/synthetic-pack/skills/.",
+      "Profile is private-scope and never installed in real projects.",
+      "Workflow contract names test-only mutation surfaces."
+    ]
+  },
+  "memory": {
+    "required_reads": [
+      "tests/fixtures/synthetic-pack/profiles/profile-index.yaml"
+    ],
+    "writeback_targets": [
+      "test-artifacts"
+    ],
+    "privacy_boundary": {
+      "public_safe": [
+        "synthetic skill names",
+        "fixture paths"
+      ],
+      "private_only": [
+        "tmpdir paths created during test runs"
+      ],
+      "publication_audit_required_when": "Never — this profile is a test fixture and is not publishable as a real skill pack."
+    }
+  },
+  "adapters": {
+    "source_of_truth": "kernel",
+    "selection_semantics": {
+      "runtime_expectation": "direct-entrypoint",
+      "selection_contexts": [
+        "Synthetic fixture; never selected in a real runtime."
+      ],
+      "delegation_policy": "No delegation; fixture only.",
+      "installable_manifest_gate": "Never install."
+    },
+    "runtimes": [
+      {
+        "runtime": "codex",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "claude-code",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "generic-agent",
+        "status": "future-adapter"
+      }
+    ]
+  },
+  "promotion": {
+    "status": "repo-candidate",
+    "promotion_gates": [
+      "Synthetic fixture never promotes; it stays a test artifact."
+    ],
+    "rejection_checks": [
+      "Reject any attempt to extract or install the synthetic profile outside of skill-os tests."
+    ]
+  }
+}

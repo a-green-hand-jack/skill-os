@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import sys
 from datetime import datetime, timezone
@@ -29,6 +30,27 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+# SOURCE_ROOT: where to read source files (skills/, profile-index) from.
+# Defaults to skill-os REPO_ROOT, overridable via --source-root or
+# SKILL_OS_SOURCE_ROOT env var. This lets the scaffolder run from skill-os
+# but copy files out of a sibling pack repo.
+SOURCE_ROOT_ENV = "SKILL_OS_SOURCE_ROOT"
+SOURCE_ROOT = REPO_ROOT
+
+
+def _resolve_source_root(cli_value: Path | None) -> Path:
+    if cli_value is not None:
+        return cli_value.resolve()
+    env_value = os.environ.get(SOURCE_ROOT_ENV)
+    if env_value:
+        return Path(env_value).resolve()
+    return REPO_ROOT
+
+
+def _set_source_root(path: Path) -> None:
+    global SOURCE_ROOT
+    SOURCE_ROOT = path.resolve()
 
 from preview_repo_split_writer import (  # noqa: E402
     SUPPORTED_MODE as REPO_SPLIT_SUPPORTED_MODE,
@@ -112,7 +134,7 @@ def execute_repo_split_actions(
             target_path.mkdir(parents=True, exist_ok=True)
             created_directories.append(str(target_path))
         elif kind == "copy-file":
-            source_path = REPO_ROOT / action["source_path"]
+            source_path = SOURCE_ROOT / action["source_path"]
             target_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source_path, target_path)
             written.append(str(target_path))
@@ -190,7 +212,7 @@ def render_profile_index_slice(inventory: dict[str, Any]) -> str:
     profile_index = inventory.get("profile_index", {})
     profile = inventory.get("profile", "")
     kernel_id = inventory.get("kernel_id", profile)
-    source_path = REPO_ROOT / profile_index.get("path", "profiles/profile-index.yaml")
+    source_path = SOURCE_ROOT / profile_index.get("path", "profiles/profile-index.yaml")
     sliced = slice_profile_index_yaml(source_path, profile_index.get("key", profile))
     if sliced is not None:
         return sliced
@@ -265,6 +287,16 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         help="Where to write the rollback record JSON after a successful scaffold.",
     )
     parser.add_argument(
+        "--source-root",
+        type=Path,
+        default=None,
+        help=(
+            "Override the source root from which skills/ and profile-index "
+            "are copied. Defaults to the script's own repo, or the "
+            "SKILL_OS_SOURCE_ROOT env var if set."
+        ),
+    )
+    parser.add_argument(
         "--execute",
         action="store_true",
         help="Actually copy files into target_root. Without this flag the script is dry-run only.",
@@ -274,6 +306,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
+    _set_source_root(_resolve_source_root(args.source_root))
     try:
         plan = load_json(resolve_input_path(args.plan))
         contract = load_json(resolve_input_path(args.contract))

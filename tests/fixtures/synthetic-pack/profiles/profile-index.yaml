@@ -1,0 +1,28 @@
+schema_version: 0
+note: >
+  Synthetic test fixture profile-index. Used only by skill-os tests to verify
+  inventory, scaffolder, validator, and applier behavior without depending on
+  a real pack repo. Do not reference this file from production code.
+
+profiles:
+  synthetic:
+    status: draft
+    scope: private
+    future_repo: synthetic-pack-skills
+    intent: >
+      Self-contained synthetic profile used only by skill-os tests.
+    entrypoints:
+      - synthetic-alpha
+    routers:
+      - synthetic-alpha
+    skills:
+      required:
+        - synthetic-alpha
+        - synthetic-beta
+      optional:
+        - synthetic-gamma
+    install_policy:
+      recommended: project-local
+      full_bundle_allowed: false
+      notes: >
+        Test fixture only.
