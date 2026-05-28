@@ -131,7 +131,7 @@ profiles:
         ordinary non-ML repositories.
 
   core-ops:
-    status: draft
+    status: active
     scope: cross-domain
     future_repo: core-ops-skills
     intent: >
@@ -166,7 +166,7 @@ profiles:
         semantics out when this becomes an independent pack.
 
   paper-reading:
-    status: draft
+    status: active
     scope: project-local
     future_repo: paper-reading-skills
     depends_on:
@@ -201,7 +201,7 @@ profiles:
         surveys before a full ML project exists.
 
   research-distillation:
-    status: draft
+    status: active
     scope: project-local
     future_repo: research-distillation-skills
     depends_on:
@@ -262,7 +262,7 @@ profiles:
       - Cross-source comparator for people, projects, papers, and courses.
 
   automation:
-    status: draft
+    status: active
     scope: cross-domain
     future_repo: automation-skills
     depends_on:
@@ -297,7 +297,7 @@ profiles:
       - Scheduled automation runbook and rollback skill.
 
   quick-experiment:
-    status: draft
+    status: active
     scope: cross-domain
     future_repo: quick-experiment-skills
     depends_on:
@@ -339,32 +339,38 @@ profiles:
     status: active
     scope: project-local
     future_repo: ml-research-skills
+    depends_on:
+      - core-ops
+      - automation
+      - paper-reading
+      - research-distillation
+      - quick-experiment
     intent: >
       Full AI PhD / ML research lifecycle: ideas, literature, project setup,
       data, experiments, evidence, paper writing, review, rebuttal, artifact
-      release, and project memory.
+      release, and project memory. After the 2026-05-28 hard-slim, this pack
+      owns only the 46 ml-research-specific skills (paper writing, review,
+      rebuttal, camera-ready, submission, release, idea & experiment design,
+      project setup); shared substrate, automation, literature reading,
+      distillation, and quick-experiment skills come from sibling packs via
+      depends_on. The explicit 46-skill list lives in the pack's own
+      profile-index slice.
     entrypoints:
       - ml-research-router
     routers:
       - ml-research-router
-      - experiment-evidence-router
       - paper-writing-router
-      - discovery-router
-      - project-ops-router
-    include_all_repo_skills: true
     skills:
       required:
         - ml-research-router
-        - project-init
-        - research-project-memory
-        - experiment-evidence-router
         - paper-writing-router
-        - discovery-router
-        - project-ops-router
+        - project-init
       optional: []
     install_policy:
       recommended: project-local
       full_bundle_allowed: true
       notes: >
-        This is the current complete pack. Keep full global installs
-        maintainer/debug-only; use `global-bootstrap` for global runtimes.
+        Recommended path is the chain installer (`install_profile_chain.py
+        ml-research`) which resolves depends_on and pulls all 5 sibling
+        packs alongside. Keep full global installs maintainer/debug-only;
+        use `global-bootstrap` for generic non-ML projects.

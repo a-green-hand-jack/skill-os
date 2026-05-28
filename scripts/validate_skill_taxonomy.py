@@ -27,6 +27,9 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SKILLS_ROOT = REPO_ROOT / "skills"
+# Populated by main() from --pack-search-path / --pack overrides. Each entry
+# is a path that is itself a <pack-repo>/skills/ directory.
+EXTRA_SKILL_ROOTS: list[Path] = []
 SKILL_NAME_RE = re.compile(r"^[a-z0-9-]+$")
 BACKTICK_SKILL_RE = re.compile(r"`([a-z0-9-]+)`")
 # Pseudo-values allowed in applies_to that are not real skill names
@@ -116,6 +119,52 @@ def _all_backtick_names(text: str) -> set[str]:
     return {m.group(1) for m in BACKTICK_SKILL_RE.finditer(text) if SKILL_NAME_RE.fullmatch(m.group(1))}
 
 
+def _all_skill_roots() -> list[Path]:
+    """Return the local SKILLS_ROOT (if it exists) plus all matrix pack roots."""
+    return [r for r in [SKILLS_ROOT, *EXTRA_SKILL_ROOTS] if r.exists()]
+
+
+def iter_skill_dirs():
+    """Yield (skill_dir, root) pairs across all known skill roots, first-wins on name."""
+    seen: set[str] = set()
+    for root in _all_skill_roots():
+        for skill_dir in sorted(root.iterdir()):
+            if not skill_dir.is_dir():
+                continue
+            if skill_dir.name in seen:
+                continue
+            seen.add(skill_dir.name)
+            yield skill_dir
+
+
+def find_skill_dir(name: str) -> Path | None:
+    """Return the skill dir for `name` across known skill roots (first match wins)."""
+    for root in _all_skill_roots():
+        candidate = root / name
+        if candidate.is_dir():
+            return candidate
+    return None
+
+
+def _pack_repo_roots() -> list[Path]:
+    """Pack repo roots (parents of each EXTRA_SKILL_ROOTS entry)."""
+    return [r.parent for r in EXTRA_SKILL_ROOTS]
+
+
+def path_exists_in_any_root(rel: str) -> bool:
+    """True if `rel` exists under REPO_ROOT or any sibling pack root.
+
+    Used for source-path checks in kernel examples and profile-index artifacts
+    where the path is rooted in the OWNING pack repo, not necessarily here.
+    """
+    if (REPO_ROOT / rel).exists():
+        return True
+    for pack_root in _pack_repo_roots():
+        if (pack_root / rel).exists():
+            return True
+    return False
+
+
 # ---------------------------------------------------------------------------
 # Check 1 — Router child consistency
 # ---------------------------------------------------------------------------
@@ -123,15 +172,16 @@ def _all_backtick_names(text: str) -> set[str]:
 def validate_router_children(skill_names: set[str]) -> list[Issue]:
     """Every skill named in a route-table.md must exist in skills/."""
     issues: list[Issue] = []
-    for skill_dir in sorted(SKILLS_ROOT.iterdir()):
-        if not skill_dir.is_dir():
-            continue
+    for skill_dir in iter_skill_dirs():
         route_table = skill_dir / "references" / "route-table.md"
         if not route_table.exists():
             continue
         text = route_table.read_text(encoding="utf-8")
         named = _all_backtick_names(text)
-        rel = str(route_table.relative_to(REPO_ROOT))
+        try:
+            rel = str(route_table.relative_to(REPO_ROOT))
+        except ValueError:
+            rel = str(route_table)
         for name in sorted(named):
             if name not in skill_names:
                 issues.append(Issue(rel, f"references unknown skill `{name}`"))
@@ -172,15 +222,16 @@ def validate_expected_paths(skill_names: set[str]) -> list[Issue]:
 def validate_contrastive_routing(skill_names: set[str]) -> list[Issue]:
     """Skill names in contrastive-routing.md files must exist."""
     issues: list[Issue] = []
-    for skill_dir in sorted(SKILLS_ROOT.iterdir()):
-        if not skill_dir.is_dir():
-            continue
+    for skill_dir in iter_skill_dirs():
         cr_file = skill_dir / "references" / "contrastive-routing.md"
         if not cr_file.exists():
             continue
         text = cr_file.read_text(encoding="utf-8")
         named = _all_backtick_names(text)
-        rel = str(cr_file.relative_to(REPO_ROOT))
+        try:
+            rel = str(cr_file.relative_to(REPO_ROOT))
+        except ValueError:
+            rel = str(cr_file)
         for name in sorted(named):
             if name not in skill_names:
                 issues.append(Issue(rel, f"references unknown skill `{name}`"))
@@ -396,8 +447,10 @@ def validate_profile_index(skill_names: set[str]) -> list[Issue]:
             for skill in value:
                 if skill not in skill_names:
                     issues.append(Issue(rel, f"profile `{profile_name}` `{field}` references unknown skill `{skill}`"))
-                if field == "routers" and not (SKILLS_ROOT / skill / "references" / "route-table.md").exists():
-                    issues.append(Issue(rel, f"profile `{profile_name}` routers entry `{skill}` is not a router skill"))
+                if field == "routers":
+                    sd = find_skill_dir(skill)
+                    if sd is None or not (sd / "references" / "route-table.md").exists():
+                        issues.append(Issue(rel, f"profile `{profile_name}` routers entry `{skill}` is not a router skill"))
 
         skills = profile.get("skills", {})
         if not isinstance(skills, dict):
@@ -479,9 +532,19 @@ def validate_profile_index(skill_names: set[str]) -> list[Issue]:
                         )
                     )
                 full_path = REPO_ROOT / artifact
+                # Hub validator: artifact may live in the owning pack repo
+                # (e.g. profiles/research-distillation/... lives in research-distillation-skills).
                 if not full_path.exists():
-                    issues.append(Issue(rel, f"profile `{profile_name}` artifacts.{field} missing path `{artifact}`"))
-                    continue
+                    pack_match: Path | None = None
+                    for pack_root in _pack_repo_roots():
+                        candidate = pack_root / artifact
+                        if candidate.exists():
+                            pack_match = candidate
+                            break
+                    if pack_match is None:
+                        issues.append(Issue(rel, f"profile `{profile_name}` artifacts.{field} missing path `{artifact}`"))
+                        continue
+                    full_path = pack_match
                 if not full_path.is_file():
                     issues.append(Issue(rel, f"profile `{profile_name}` artifacts.{field} path `{artifact}` must be a file"))
                     continue
@@ -842,7 +905,7 @@ def validate_skill_kernel_schema(skill_names: set[str]) -> list[Issue]:
                                 f"authoritative source path must be repo-relative: `{source_path}`",
                             )
                         )
-                    elif not (REPO_ROOT / source_path).exists():
+                    elif not path_exists_in_any_root(source_path):
                         issues.append(
                             Issue(
                                 handoff_rel,
@@ -887,8 +950,7 @@ def validate_skill_kernel_schema(skill_names: set[str]) -> list[Issue]:
                 if not isinstance(source_path, str):
                     issues.append(Issue(rel, "`source_paths` entries must be strings"))
                     continue
-                full_path = REPO_ROOT / source_path
-                if not full_path.exists():
+                if not path_exists_in_any_root(source_path):
                     issues.append(Issue(rel, f"source path does not exist: `{source_path}`"))
 
         profile = data.get("profile", {})
@@ -925,8 +987,10 @@ def validate_skill_kernel_schema(skill_names: set[str]) -> list[Issue]:
             for router in routers:
                 if router not in skill_names:
                     issues.append(Issue(rel, f"routing.routers references unknown skill `{router}`"))
-                elif not (SKILLS_ROOT / router / "references" / "route-table.md").exists():
-                    issues.append(Issue(rel, f"routing.routers entry `{router}` is not a router skill"))
+                else:
+                    sd = find_skill_dir(router)
+                    if sd is None or not (sd / "references" / "route-table.md").exists():
+                        issues.append(Issue(rel, f"routing.routers entry `{router}` is not a router skill"))
 
         skills = data.get("skills", {})
         if not isinstance(skills, dict):
@@ -987,12 +1051,100 @@ def validate_skill_kernel_schema(skill_names: set[str]) -> list[Issue]:
 # Main
 # ---------------------------------------------------------------------------
 
-def main() -> int:
-    if not SKILLS_ROOT.exists():
-        print(f"skills directory not found: {SKILLS_ROOT}", file=sys.stderr)
+def _parse_argv(argv: list[str]) -> tuple[list[Path], dict[str, Path]]:
+    """Parse --pack-search-path / --pack overrides. Returns (search_paths, overrides)."""
+    search_paths: list[Path] = []
+    overrides: dict[str, Path] = {}
+    i = 0
+    while i < len(argv):
+        arg = argv[i]
+        if arg == "--pack-search-path":
+            i += 1
+            if i >= len(argv):
+                raise SystemExit("--pack-search-path expects a value")
+            search_paths.append(Path(argv[i]).expanduser().resolve())
+        elif arg.startswith("--pack-search-path="):
+            search_paths.append(Path(arg.split("=", 1)[1]).expanduser().resolve())
+        elif arg == "--pack":
+            i += 1
+            if i >= len(argv) or "=" not in argv[i]:
+                raise SystemExit("--pack expects NAME=PATH")
+            name, _, path = argv[i].partition("=")
+            overrides[name.strip()] = Path(path).expanduser().resolve()
+        elif arg.startswith("--pack="):
+            spec = arg.split("=", 1)[1]
+            name, _, path = spec.partition("=")
+            overrides[name.strip()] = Path(path).expanduser().resolve()
+        elif arg in {"-h", "--help"}:
+            print(
+                "validate_skill_taxonomy.py [--pack-search-path PATH] [--pack NAME=PATH]\n"
+                "\n"
+                "  When run in skill-os, skills/ is empty; pass --pack-search-path\n"
+                "  (or repeated --pack NAME=PATH) to aggregate the skill universe\n"
+                "  across sibling pack repos for full matrix-aware validation."
+            )
+            raise SystemExit(0)
+        else:
+            raise SystemExit(f"unknown arg: {arg}")
+        i += 1
+    return search_paths, overrides
+
+
+def _resolve_pack_skill_roots(search_paths: list[Path], overrides: dict[str, Path]) -> list[Path]:
+    """Resolve sibling-pack skill-root dirs from --pack-search-path / --pack args."""
+    roots: list[Path] = []
+    seen: set[Path] = set()
+
+    def add(p: Path) -> None:
+        skill_root = p / "skills"
+        if skill_root.is_dir() and skill_root.resolve() not in seen:
+            seen.add(skill_root.resolve())
+            roots.append(skill_root)
+
+    # Try to discover known pack names under each search path.
+    known_packs = (
+        "core-ops-skills",
+        "automation-skills",
+        "paper-reading-skills",
+        "research-distillation-skills",
+        "quick-experiment-skills",
+        "ml-research-skills",
+    )
+    for parent in search_paths:
+        for name in known_packs:
+            candidate = parent / name
+            if candidate.is_dir():
+                add(candidate)
+    # Explicit overrides win (and may be non-canonical directory names).
+    for _, path in overrides.items():
+        add(path)
+    return roots
+
+
+def main(argv: list[str] | None = None) -> int:
+    cli_argv = list(sys.argv[1:]) if argv is None else argv
+    search_paths, overrides = _parse_argv(cli_argv)
+    EXTRA_SKILL_ROOTS[:] = _resolve_pack_skill_roots(search_paths, overrides)
+
+    if not SKILLS_ROOT.exists() and not EXTRA_SKILL_ROOTS:
+        print(
+            f"no skills found: {SKILLS_ROOT} does not exist and no --pack-search-path / --pack was given.\n"
+            "Hub repos (e.g. skill-os) should pass --pack-search-path so the validator\n"
+            "can aggregate skill names across sibling packs.",
+            file=sys.stderr,
+        )
         return 2
 
-    skill_names = {p.name for p in SKILLS_ROOT.iterdir() if p.is_dir()}
+    skill_names = {sd.name for sd in iter_skill_dirs()}
+    if not skill_names:
+        print(
+            "WARNING: skill universe is empty.\n"
+            "  Local skills/ contains no skill dirs and no sibling packs were resolved.\n"
+            "  In skill-os (hub repo), pass --pack-search-path <parent-of-cloned-packs>\n"
+            "  so the validator can see skills in sibling pack repos. Otherwise every\n"
+            "  kernel/profile-index check below will fail trivially.\n",
+            file=sys.stderr,
+        )
     all_issues: list[Issue] = []
 
     checks = [
@@ -1017,12 +1169,13 @@ def main() -> int:
         return 1
 
     router_count = sum(
-        1 for p in SKILLS_ROOT.iterdir()
-        if p.is_dir() and (p / "references" / "route-table.md").exists()
+        1 for sd in iter_skill_dirs()
+        if (sd / "references" / "route-table.md").exists()
     )
+    roots_descr = ", ".join(str(r) for r in _all_skill_roots()) or "(no local skills/)"
     print(
         f"Taxonomy OK: {len(skill_names)} skills, {router_count} routers with route tables, "
-        f"no issues found."
+        f"no issues found.  Roots: {roots_descr}"
     )
     return 0
 

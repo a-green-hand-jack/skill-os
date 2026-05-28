@@ -196,6 +196,18 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--pack",
+        action="append",
+        default=[],
+        metavar="NAME=PATH",
+        help=(
+            "Override pack location for one repo (repeatable). Use when your local "
+            "clone has a non-canonical directory name "
+            "(e.g. --pack ml-research-skills=/Users/me/projects/project-skills). "
+            "Overrides win over --pack-search-path discovery."
+        ),
+    )
+    parser.add_argument(
         "--runtime",
         default="codex",
         help="Target runtime for the install manifest (default: codex).",
@@ -243,13 +255,25 @@ def main(argv: list[str] | None = None) -> int:
     work_dir = args.work_dir or (args.target_parent / ".skill-os-install-state")
     work_dir.mkdir(parents=True, exist_ok=True)
 
+    # Parse --pack NAME=PATH overrides (consistent with verify_pack_pins.py).
+    pack_overrides: dict[str, Path] = {}
+    for spec in args.pack:
+        if "=" not in spec:
+            print(f"--pack expects NAME=PATH, got {spec!r}", file=sys.stderr)
+            return 2
+        name, _, path = spec.partition("=")
+        pack_overrides[name.strip()] = Path(path).expanduser().resolve()
+
     steps_report = []
     overall_ok = True
     resolution_order_names: list[str] = report["resolution_order"]
     for profile_name in resolution_order_names:
         profile_meta = profiles.get(profile_name, {})
         future_repo = profile_meta.get("future_repo") or f"{profile_name}-skills"
-        pack_root = find_pack_root(future_repo, search_paths)
+        if future_repo in pack_overrides:
+            pack_root = pack_overrides[future_repo] if pack_overrides[future_repo].is_dir() else None
+        else:
+            pack_root = find_pack_root(future_repo, search_paths)
         if pack_root is None:
             steps_report.append(
                 {
