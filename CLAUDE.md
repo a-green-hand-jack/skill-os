@@ -31,7 +31,7 @@ Run the full skill-os test suite:
 python3 -m unittest discover tests
 ```
 
-58 tests across 9 files. Coverage:
+64 tests across 10 files. Coverage:
 
 - `test_skill_kernel_adapter_export.py` (16) — kernel → adapter dry-run
 - `test_profile_routing_harness.py` (6) — profile-routing eval fixtures
@@ -39,9 +39,10 @@ python3 -m unittest discover tests
 - `test_synthetic_install_chain.py` (7) — single-profile install chain on synthetic fixture
 - `test_synthetic_repo_split_chain.py` (2) — repo-split chain on synthetic fixture
 - `test_synthetic_cross_repo_install.py` (5) — cross-repo install via --source-root
-- `test_synthetic_chain_install.py` (4) — multi-profile chain installer
+- `test_synthetic_chain_install.py` (6) — multi-profile chain installer + leaf staging + dedup
 - `test_routing_evals.py` (7) — matrix-wide leaf-routing eval regression (`tests/routing-evals.json`)
 - `test_verify_pack_pins.py` (4) — sibling-pack commit pin verifier
+- `test_taxonomy_matrix_aware.py` (4) — `--pack-search-path` / `--pack` flag handling
 
 Dry-run adapter export must always pass:
 
@@ -90,6 +91,27 @@ The chain installer resolves the profile's `depends_on` chain via
 per step in dependency-first order. Each step gets its own
 `plan-<profile>.json`, manifest index, and rollback record under
 `<target-parent>/.skill-os-install-state/`.
+
+### Two-layer install layout
+
+After a successful `--execute` chain install of profile `P` with `depends_on
+[Q, R, ...]`, the target directory contains:
+
+- **One profile-level adapter per pack**: `<target-parent>/<pack-profile>/SKILL.md`
+  (e.g. `core-ops/SKILL.md`, `automation/SKILL.md`, ..., `ml-research/SKILL.md`).
+  Generated from each pack's kernel example; describes the profile.
+- **One flat leaf-skill dir per unique skill**: `<target-parent>/<skill-name>/SKILL.md`
+  + bundled assets (`references/`, `scripts/`, `templates/`, etc.). Matches the
+  runtime convention (Codex / Claude Code read `<root>/<name>/SKILL.md`).
+
+Cross-pack dedup uses **first-wins by `depends_on` order**: foundational
+packs (`core-ops`) get their `research-project-memory` honored over the same
+name in `automation`, `paper-reading`, etc. The reporting JSON includes
+`leaf_skills_staged_unique`, `leaf_skills_unique_count`, and per-step
+`leaf_skills.staged` / `leaf_skills.skipped_dedup` for audit.
+
+Use `--no-leaf-skills` to keep only the profile-level adapters (kernel-only
+mode; runtime sees 6 profiles, not 74 leaves).
 
 ## Sibling Pack Pin Verification
 

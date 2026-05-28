@@ -67,11 +67,15 @@ volatile-fields: git-state, sibling-pack-HEADs, test-counts
 ## Open Actions (skill-os scope)
 
 - ACT-077 + ACT-080 + ACT-081 + ACT-082 + ACT-085 + ACT-086 + ACT-087 — all `done`.
+- Post-Phase-B2 consistency hardening (P0–P4 from 2026-05-28 Codex audit) — `done`.
+- Leaf-skill staging (P5) — `done`: chain installer now materializes 74 leaf SKILL.md dirs in addition to 6 profile-level adapters.
 - (queue empty)
 
 ## Decision Log (recent)
 
-- ACT-086 (2026-05-28): each sibling pack has a `pinned_commit` + `pinned_at` in `profiles/profile-index.yaml` `repo_matrix`. `scripts/verify_pack_pins.py` is read-only and exits non-zero on mismatch; it never auto-checks-out the pinned ref. 4 tests in `test_verify_pack_pins.py`. Total skill-os test count: 58.
+- P5 (2026-05-28): Chain installer adds Phase-2 leaf-flat staging after each apply step. Layout: `<target-parent>/<pack-name>/SKILL.md` (profile adapter, 1 per pack) + `<target-parent>/<skill-name>/SKILL.md` (flat leaf, 1 per unique skill). Cross-pack dedup is first-wins by `depends_on` order. `--no-leaf-skills` opts out. End-to-end verified: `chain install ml-research --execute` lands 6 + 74 = 80 entries. Total tests: 62 → 64.
+- P0–P4 (2026-05-28): post-hard-slim consistency hardening from Codex audit. Hub validator matrix-aware (`--pack-search-path` + `--pack NAME=PATH`); chain installer `--pack` override; ml-research profile gains `depends_on`; 5 pack profiles flip `draft`→`active`; ml-research-skills doc/memory drift purged; ml-research-skills pin refreshed.
+- ACT-086 (2026-05-28): each sibling pack has a `pinned_commit` + `pinned_at` in `profiles/profile-index.yaml` `repo_matrix`. `scripts/verify_pack_pins.py` is read-only and exits non-zero on mismatch; it never auto-checks-out the pinned ref. 4 tests in `test_verify_pack_pins.py`.
 - ACT-085 (2026-05-28): matrix-wide leaf-routing regression fixture lives in **skill-os** (`tests/routing-evals.json` + `tests/test_routing_evals.py`). Reasoning: skills referenced by the evals span 6 pack repos after the hard-slim; only the hub sees the full matrix. The test enforces structural well-formedness; cross-pack skill-existence checks would require every pack cloned alongside and are an opt-in script, not part of the default suite.
 
 ## Full Memory

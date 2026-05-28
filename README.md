@@ -65,9 +65,18 @@ python3 skill-os/scripts/install_profile_chain.py paper-reading \
   --pack-search-path /path/to/cloned-pack-parent \
   --execute
 
-# Result: core-ops + paper-reading skill bundles land under
-#   /path/to/my-paper-reading-folder/.agents/skills/{core-ops,paper-reading}/
-# Each with SKILL.md + agents/openai.yaml + rollback record.
+# Result (two-layer layout):
+#   .agents/skills/
+#     core-ops/SKILL.md         <- profile-level kernel adapter, 1 per pack
+#     paper-reading/SKILL.md    <-
+#     <skill-name>/SKILL.md     <- flat leaf skill (one dir per unique skill)
+#     <skill-name>/references/
+#     ...
+#     .skill-os-install-state/  <- plans + manifest indexes + rollback records
+#
+# For `ml-research` (depends_on all 5 packs): 6 profile adapters + 74 flat
+# leaf-skill dirs (cross-pack dedup is first-wins by depends_on order).
+# Use --no-leaf-skills if you only want the profile adapters.
 ```
 
 The chain installer respects the active handoff contract: it refuses to write
@@ -99,8 +108,10 @@ Common folder types and what to install:
 | ACT-084 | Relocated `profiles/research-distillation/` subtree from ml-research-skills to research-distillation-skills. | 2026-05-28 |
 | ACT-085 | Matrix-wide leaf-routing regression fixture rehomed here as `tests/routing-evals.json` + `tests/test_routing_evals.py`. | 2026-05-28 |
 | ACT-086 | Pinned commit per sibling pack in `profile-index.yaml` + `scripts/verify_pack_pins.py` read-only mismatch detector. | 2026-05-28 |
+| Post-Phase-B2 consistency | Hub validator matrix-aware (`--pack-search-path`); `--pack NAME=PATH` in chain installer; ml-research profile gains `depends_on`; 5 pack profiles flip `draft`→`active`; doc/memory drift purged. | 2026-05-28 |
+| Leaf-skill staging | Chain installer adds Phase-2 leaf-flat copy per pack with first-wins dedup. `chain_install ml-research` now lands 6 profile adapters + 74 unique leaf SKILL.md dirs. | 2026-05-28 |
 
-Test count: **58 passing** in skill-os.
+Test count: **64 passing** in skill-os.
 
 ## Source-of-truth boundaries
 

@@ -60,6 +60,78 @@ def find_pack_root(future_repo: str, search_paths: list[Path]) -> Path | None:
     return None
 
 
+# Files / dirs we never copy into the runtime skill root.
+LEAF_COPY_IGNORE = {
+    ".DS_Store",
+    "__pycache__",
+    ".git",
+    ".gitignore",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+}
+
+
+def enumerate_pack_leaf_skills(pack_root: Path) -> list[Path]:
+    """List each `<pack_root>/skills/<name>/` directory that contains a SKILL.md."""
+    skills_dir = pack_root / "skills"
+    if not skills_dir.is_dir():
+        return []
+    return [
+        p for p in sorted(skills_dir.iterdir())
+        if p.is_dir() and (p / "SKILL.md").is_file()
+    ]
+
+
+def stage_leaf_skills(
+    pack_root: Path,
+    target_parent: Path,
+    already_staged: dict[str, str],
+    execute: bool,
+) -> dict[str, Any]:
+    """Copy each leaf skill from `<pack_root>/skills/<name>/` to `<target_parent>/<name>/`.
+
+    First-wins dedup across the chain: if a skill name is already in
+    `already_staged`, this step records it as `skipped_dedup` and leaves the
+    earlier copy intact. `already_staged` is mutated to record `name -> pack_root`
+    for every name this step contributes.
+
+    When `execute` is False, no files are written; the return record still
+    enumerates what *would* be staged so the dry-run output is informative.
+    """
+    import shutil
+
+    staged: list[str] = []
+    skipped_dedup: list[dict[str, str]] = []
+    for skill_dir in enumerate_pack_leaf_skills(pack_root):
+        name = skill_dir.name
+        if name in already_staged:
+            skipped_dedup.append(
+                {
+                    "name": name,
+                    "kept_from": already_staged[name],
+                    "skipped_from": str(pack_root),
+                }
+            )
+            continue
+        already_staged[name] = str(pack_root)
+        if execute:
+            dest = target_parent / name
+            if dest.exists():
+                shutil.rmtree(dest)
+            shutil.copytree(
+                skill_dir,
+                dest,
+                ignore=shutil.ignore_patterns(*LEAF_COPY_IGNORE),
+            )
+        staged.append(name)
+    return {
+        "staged": staged,
+        "skipped_dedup": skipped_dedup,
+        "total_in_pack": len(enumerate_pack_leaf_skills(pack_root)),
+    }
+
+
 def find_kernel_path(pack_root: Path, profile_name: str, kernel_id_hint: str | None) -> Path | None:
     examples = pack_root / "schemas" / "skill-kernel" / "examples"
     if not examples.is_dir():
@@ -238,6 +310,16 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         action="store_true",
         help="Actually run apply_install_plan with --execute per step. Without this flag the chain is dry-run only.",
     )
+    parser.add_argument(
+        "--no-leaf-skills",
+        action="store_true",
+        help=(
+            "Skip the post-apply leaf-skill staging phase. Default: after each "
+            "pack's apply step, copy <pack>/skills/<name>/ into <target-parent>/"
+            "<name>/ flat (first-wins dedup across the chain). Disable when you "
+            "only want the profile-level kernel adapter SKILL.md files."
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -267,6 +349,8 @@ def main(argv: list[str] | None = None) -> int:
     steps_report = []
     overall_ok = True
     resolution_order_names: list[str] = report["resolution_order"]
+    # name -> pack_root (string), used by stage_leaf_skills for first-wins dedup
+    leaf_staged_across_chain: dict[str, str] = {}
     for profile_name in resolution_order_names:
         profile_meta = profiles.get(profile_name, {})
         future_repo = profile_meta.get("future_repo") or f"{profile_name}-skills"
@@ -365,6 +449,19 @@ def main(argv: list[str] | None = None) -> int:
             step_summary["blockers"] = (
                 apply_report.get("blockers") if isinstance(apply_report, dict) else None
             )
+        # Phase 2 — stage leaf skills from <pack>/skills/<name>/ → <target-parent>/<name>/
+        # First-wins dedup across the chain (foundational packs win earlier).
+        # Only writes when --execute and not --no-leaf-skills.
+        if step_summary["applied"] and not args.no_leaf_skills:
+            leaf_result = stage_leaf_skills(
+                pack_root=pack_root,
+                target_parent=args.target_parent,
+                already_staged=leaf_staged_across_chain,
+                execute=args.execute,
+            )
+            step_summary["leaf_skills"] = leaf_result
+        elif args.no_leaf_skills:
+            step_summary["leaf_skills"] = {"skipped_via_flag": True}
         steps_report.append(step_summary)
         if not step_summary["applied"] and args.execute:
             overall_ok = False
@@ -380,6 +477,12 @@ def main(argv: list[str] | None = None) -> int:
                 "resolution_order": resolution_order_names,
                 "steps": steps_report,
                 "all_applied": overall_ok and all(s.get("applied", False) for s in steps_report) if args.execute else False,
+                "leaf_skills_staged_unique": (
+                    sorted(leaf_staged_across_chain.keys()) if not args.no_leaf_skills else []
+                ),
+                "leaf_skills_unique_count": (
+                    len(leaf_staged_across_chain) if not args.no_leaf_skills else 0
+                ),
             },
             indent=2,
             sort_keys=True,

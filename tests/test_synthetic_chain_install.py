@@ -157,6 +157,95 @@ class ChainInstallTest(unittest.TestCase):
         self.assertTrue((work_dir / "rollback-synthetic.json").is_file())
         self.assertTrue((work_dir / "rollback-synthetic-pdf.json").is_file())
 
+        # Leaf-skill staging: every leaf SKILL.md from each pack should also land
+        # flat under target_parent/<skill-name>/.
+        self.assertTrue((self.target_parent / "synthetic-alpha" / "SKILL.md").is_file())
+        self.assertTrue((self.target_parent / "synthetic-beta" / "SKILL.md").is_file())
+        self.assertTrue((self.target_parent / "synthetic-gamma" / "SKILL.md").is_file())
+        self.assertTrue((self.target_parent / "synthetic-pdf-reader" / "SKILL.md").is_file())
+
+        # Aggregated reporting
+        self.assertEqual(
+            sorted(report["leaf_skills_staged_unique"]),
+            ["synthetic-alpha", "synthetic-beta", "synthetic-gamma", "synthetic-pdf-reader"],
+        )
+        self.assertEqual(report["leaf_skills_unique_count"], 4)
+
+        # Per-step staging counts
+        synth_step = next(s for s in report["steps"] if s["profile"] == "synthetic")
+        pdf_step = next(s for s in report["steps"] if s["profile"] == "synthetic-pdf")
+        self.assertEqual(len(synth_step["leaf_skills"]["staged"]), 3)
+        self.assertEqual(len(synth_step["leaf_skills"]["skipped_dedup"]), 0)
+        self.assertEqual(len(pdf_step["leaf_skills"]["staged"]), 1)
+        self.assertEqual(len(pdf_step["leaf_skills"]["skipped_dedup"]), 0)
+
+    def test_chain_install_no_leaf_skills_skips_staging(self) -> None:
+        code, report = run(
+            [
+                "python3",
+                str(INSTALL_CHAIN),
+                "synthetic-pdf",
+                "--target-parent",
+                str(self.target_parent),
+                "--pack-search-path",
+                str(self.pack_parent),
+                "--profile-index",
+                str(self.combined_profile_index),
+                "--execute",
+                "--no-leaf-skills",
+            ]
+        )
+        self.assertEqual(code, 0, report)
+        # Profile adapters land as usual
+        self.assertTrue((self.target_parent / "synthetic" / "SKILL.md").is_file())
+        # But no leaf-skill flat dirs
+        self.assertFalse((self.target_parent / "synthetic-alpha").exists())
+        self.assertFalse((self.target_parent / "synthetic-pdf-reader").exists())
+        self.assertEqual(report["leaf_skills_unique_count"], 0)
+        for step in report["steps"]:
+            self.assertTrue(step["leaf_skills"].get("skipped_via_flag"))
+
+    def test_leaf_staging_dedup_first_pack_wins(self) -> None:
+        """When two packs ship a same-named skill, the first (foundational) wins."""
+        # Add a synthetic-alpha to synthetic-pdf with distinctive content; on
+        # install, foundational synthetic's version should remain (first wins).
+        clash_dir = self.pack_parent / "synthetic-pack-pdf" / "skills" / "synthetic-alpha"
+        clash_dir.mkdir(parents=True, exist_ok=True)
+        (clash_dir / "SKILL.md").write_text(
+            "---\nname: synthetic-alpha\n"
+            "description: This is the WRONG version from synthetic-pdf — first-wins dedup should keep synthetic's copy.\n"
+            "---\n",
+            encoding="utf-8",
+        )
+
+        code, report = run(
+            [
+                "python3",
+                str(INSTALL_CHAIN),
+                "synthetic-pdf",
+                "--target-parent",
+                str(self.target_parent),
+                "--pack-search-path",
+                str(self.pack_parent),
+                "--profile-index",
+                str(self.combined_profile_index),
+                "--execute",
+            ]
+        )
+        self.assertEqual(code, 0, report)
+        # The synthetic-alpha that ends up on disk must be synthetic's (foundational),
+        # not synthetic-pdf's clashing copy.
+        landed = (self.target_parent / "synthetic-alpha" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertNotIn("WRONG version", landed)
+        self.assertIn("Synthetic test fixture skill alpha", landed)
+        # The clash must be recorded in synthetic-pdf step's skipped_dedup
+        pdf_step = next(s for s in report["steps"] if s["profile"] == "synthetic-pdf")
+        skipped = pdf_step["leaf_skills"]["skipped_dedup"]
+        self.assertTrue(
+            any(s["name"] == "synthetic-alpha" for s in skipped),
+            f"expected synthetic-alpha in skipped_dedup, got {skipped}",
+        )
+
     def test_chain_install_dry_run_writes_no_files_under_target(self) -> None:
         code, report = run(
             [
@@ -182,6 +271,9 @@ class ChainInstallTest(unittest.TestCase):
         # No target files written
         self.assertFalse((self.target_parent / "synthetic" / "SKILL.md").exists())
         self.assertFalse((self.target_parent / "synthetic-pdf" / "SKILL.md").exists())
+        # And no leaf-skill flat dirs either
+        self.assertFalse((self.target_parent / "synthetic-alpha").exists())
+        self.assertFalse((self.target_parent / "synthetic-pdf-reader").exists())
 
     def test_chain_install_fails_when_pack_root_missing(self) -> None:
         # Point search path at an empty dir → pack discovery fails
