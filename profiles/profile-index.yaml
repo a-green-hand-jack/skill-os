@@ -141,9 +141,12 @@ profiles:
     status: draft
     scope: project-local
     future_repo: paper-reading-skills
+    depends_on:
+      - core-ops
     intent: >
       Read papers, source bundles, notes, and small corpora without activating
-      experiment execution or full paper-writing workflows.
+      experiment execution or full paper-writing workflows. Depends on
+      core-ops for git/memory/docs/sidecar substrate.
     entrypoints:
       - discovery-router
     routers:
@@ -173,9 +176,12 @@ profiles:
     status: draft
     scope: project-local
     future_repo: research-distillation-skills
+    depends_on:
+      - core-ops
     intent: >
       Distill exemplary papers, projects, people, public talks, or workflows
-      into reusable patterns and eventually new skills.
+      into reusable patterns and eventually new skills. Depends on core-ops
+      for git/memory/docs/sidecar substrate.
     entrypoints:
       - discovery-router
     routers:
