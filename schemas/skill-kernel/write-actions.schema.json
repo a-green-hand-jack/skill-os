@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/a-green-hand-jack/ml-research-skills/schemas/skill-kernel/write-actions.schema.json",
+  "title": "Skill Kernel Install Write Actions",
+  "description": "Read-only enumeration of the file writes a future reviewed-plan installer would perform for a single passing install plan. The preview never writes target files itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "mode",
+    "profile",
+    "runtime",
+    "target_root",
+    "validator_passed",
+    "real_runtime_write_authorized",
+    "dry_run",
+    "writes_during_preview",
+    "manifests",
+    "total_files",
+    "total_bytes",
+    "rollback"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string"
+    },
+    "profile": {
+      "type": "string"
+    },
+    "runtime": {
+      "type": "string"
+    },
+    "target_root": {
+      "type": "string"
+    },
+    "validator_passed": {
+      "type": "boolean"
+    },
+    "real_runtime_write_authorized": {
+      "type": "boolean"
+    },
+    "dry_run": {
+      "const": true
+    },
+    "writes_during_preview": {
+      "const": false
+    },
+    "manifests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kernel_id",
+          "runtime",
+          "manifest_path",
+          "skill_directory",
+          "actions"
+        ],
+        "properties": {
+          "kernel_id": {
+            "type": "string"
+          },
+          "runtime": {
+            "type": "string"
+          },
+          "manifest_path": {
+            "type": "string"
+          },
+          "skill_directory": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "target_path"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "create-directory",
+                    "write-skill-markdown",
+                    "write-interface-metadata",
+                    "copy-file",
+                    "write-profile-index-slice",
+                    "post-write-check"
+                  ]
+                },
+                "source_path": {
+                  "type": "string"
+                },
+                "source_sha256": {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                },
+                "owning_skill": {
+                  "type": "string"
+                },
+                "post_write_command": {
+                  "type": "string"
+                },
+                "target_path": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "content_sha256": {
+                  "type": "string",
+                  "pattern": "^sha256:[0-9a-f]{64}$"
+                },
+                "content_bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "total_files": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total_bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "snapshot_required",
+        "expected_existing_paths_to_check",
+        "rollback_record_template"
+      ],
+      "properties": {
+        "snapshot_required": {
+          "type": "boolean"
+        },
+        "expected_existing_paths_to_check": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rollback_record_template": {
+          "type": "object"
+        }
+      }
+    },
+    "supported_modes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "schema_version": "0.1",
+  "kernel_id": "research-distillation-workflow-contract",
+  "owner_repo": "ml-research-skills",
+  "source_paths": [
+    "profiles/profile-index.yaml",
+    "profiles/research-distillation/templates/workflow-contract.md",
+    "profiles/research-distillation/examples/workflow-contract-routing-evals.json",
+    "profiles/research-distillation/examples/workflow-contract-trials/assessment.md"
+  ],
+  "profile": {
+    "name": "research-distillation",
+    "status": "draft",
+    "scope": "project-local",
+    "future_repo": "research-distillation-skills",
+    "intent": "Distill exemplary public or sanitized sources into reusable patterns, workflow contracts, and future skill proposals."
+  },
+  "routing": {
+    "entrypoints": [
+      "discovery-router"
+    ],
+    "routers": [
+      "discovery-router"
+    ],
+    "handoff_policy": "Select the project profile first, enter through discovery-router, and hand off to mature skills before creating new execution logic."
+  },
+  "install_policy": {
+    "recommended": "project-local",
+    "full_bundle_allowed": false,
+    "notes": "Keep this profile local until a separate research-distillation-skills repo exists."
+  },
+  "skills": {
+    "required": [
+      "discovery-router",
+      "reference-library-manager",
+      "reference-reading-summarizer",
+      "reference-project-synthesizer",
+      "reference-corpus-analyzer",
+      "literature-review-sprint",
+      "memory-publication-auditor",
+      "skill-system-auditor",
+      "personalization-memory"
+    ],
+    "optional": [
+      "sidecar-task-runner",
+      "paper-writing-assistant",
+      "advisor-update-writer",
+      "work-timeline-planner"
+    ]
+  },
+  "workflow_contract": {
+    "supported_lanes": [
+      "action",
+      "evidence",
+      "combined",
+      "no-contract"
+    ],
+    "default_lane": "evidence",
+    "lane_selection_rule": "Use evidence for source synthesis, action for mutation-heavy automation, combined when both are required, and no-contract only for low-risk read-only answers.",
+    "action_lane": {
+      "mutation_surfaces": [
+        "files",
+        "git",
+        "remote",
+        "public-surface",
+        "credentials"
+      ],
+      "risk_classes": [
+        "read-only",
+        "safe-write",
+        "network",
+        "credentialed",
+        "public-facing"
+      ],
+      "required_preflight": [
+        "Detect scope and git state before mutation.",
+        "Name the mature owner skill or wrapper before executing.",
+        "Run validation before commit, push, publication, or repo extraction."
+      ],
+      "forbidden_actions": [
+        "Do not bypass mature owner skills such as safe-git-ops.",
+        "Do not mutate credentials or private paths in public artifacts.",
+        "Do not scaffold a new skill before the promotion gate is met."
+      ],
+      "approval_boundary": "Escalate before destructive recovery, force push, credential changes, public release, or standalone skill creation."
+    },
+    "evidence_lane": {
+      "modes": [
+        "none",
+        "light",
+        "standard",
+        "heavy"
+      ],
+      "source_ledger_required": true,
+      "source_types": [
+        "source cards",
+        "distillation runs",
+        "pattern cards",
+        "skill proposals",
+        "comparison notes",
+        "routing evals"
+      ],
+      "confidence_policy": "Promote only when multiple artifacts show reusable ownership beyond existing routers and skills.",
+      "citation_policy": "Use source cards or repo-local artifact links; do not copy raw private transcripts or long copyrighted text into public kernels."
+    },
+    "combined_lane": {
+      "evidence_before_action": true,
+      "handoff_artifact": "workflow contract or assessment that names both evidence owner and action owner",
+      "staleness_trigger": "A new profile split, runtime adapter, or repeated live-session lane-selection failure."
+    },
+    "no_contract_lane": {
+      "allowed_when": "The request is low-risk, read-only, and creates no durable project state or public claim.",
+      "escalation_trigger": "The answer would mutate files, make a durable decision, publish a claim, or create reusable memory."
+    }
+  },
+  "validation": {
+    "required_checks": [
+      {
+        "name": "skill sanity",
+        "command": "python3 scripts/validate_skills.py",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "taxonomy and profile registry",
+        "command": "uv run scripts/validate_skill_taxonomy.py",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "skill-kernel schema tests",
+        "command": "python3 -m unittest -v tests.test_skill_kernel_schema",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      }
+    ],
+    "acceptance_checks": [
+      "Kernel JSON parses and the example references real profile entrypoints and skills.",
+      "Workflow lanes include action, evidence, combined, and no-contract.",
+      "Adapters are metadata targets and not the source of workflow truth."
+    ]
+  },
+  "memory": {
+    "required_reads": [
+      "memory/BRIEFING.md",
+      "memory/project-conventions.md",
+      "memory/hot-results.md"
+    ],
+    "writeback_targets": [
+      "project-memory",
+      "profile-artifacts"
+    ],
+    "privacy_boundary": {
+      "public_safe": [
+        "schema fields",
+        "routing contracts",
+        "validation commands",
+        "sanitized source artifact paths"
+      ],
+      "private_only": [
+        "raw session transcripts",
+        "credentials",
+        "private local paths",
+        "unpublished project details"
+      ],
+      "publication_audit_required_when": "Use memory-publication-auditor before promoting private-derived examples into public kernels."
+    }
+  },
+  "adapters": {
+    "source_of_truth": "kernel",
+    "selection_semantics": {
+      "runtime_expectation": "direct-entrypoint",
+      "selection_contexts": [
+        "Select research-distillation-workflow-contract directly when the task is to distill public or sanitized sources into reusable workflow patterns, contracts, or future skill proposals.",
+        "Use it as a profile-local contract surface rather than as a standalone executor when mature discovery, reading, publication-audit, or skill-system skills own the concrete subtask."
+      ],
+      "delegation_policy": "Delegate concrete source intake to discovery/reference skills and promotion safety checks to memory-publication-auditor or skill-system-auditor while preserving the workflow-contract artifact as the profile-level schema.",
+      "installable_manifest_gate": "Installable manifests should require live evidence that a runtime can select this profile contract for distillation tasks without making it the only source of workflow truth."
+    },
+    "runtimes": [
+      {
+        "runtime": "codex",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "claude-code",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "generic-agent",
+        "status": "future-adapter"
+      }
+    ]
+  },
+  "promotion": {
+    "status": "schema-only",
+    "promotion_gates": [
+      "A second repo or profile can consume the same kernel fields without bespoke documentation.",
+      "Runtime adapters can be generated from the kernel without changing the source schema.",
+      "Repeated live sessions show lane-selection failures that existing routers cannot prevent."
+    ],
+    "rejection_checks": [
+      "Do not create a standalone skill if mature routers already own the workflow.",
+      "Do not publish private-derived examples without an audit.",
+      "Do not make runtime-specific metadata the only copy of the contract."
+    ]
+  }
+}

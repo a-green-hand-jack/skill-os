@@ -1,0 +1,599 @@
+{
+  "excluded_sources": [
+    {
+      "path_pattern": ".agent/sidecars/",
+      "reason": "private sidecar artifacts are excluded by repo policy"
+    },
+    {
+      "path_pattern": "memory/",
+      "reason": "project memory is not part of the public profile pack"
+    },
+    {
+      "path_pattern": "*/.DS_Store",
+      "reason": "OS metadata files are never copied into a split repo"
+    },
+    {
+      "path_pattern": "*/__pycache__/*",
+      "reason": "compiled bytecode is never copied"
+    }
+  ],
+  "kernel_id": "quick-experiment",
+  "kernel_path": "schemas/skill-kernel/examples/quick-experiment.kernel.json",
+  "kernel_source_paths": [
+    "profiles/profile-index.yaml",
+    "docs/design/skill-matrix.md",
+    "skills/experiment-evidence-router/references/route-table.md",
+    "skills/run-experiment/SKILL.md",
+    "skills/experiment-debugger/SKILL.md",
+    "skills/compute-budget-planner/SKILL.md"
+  ],
+  "profile": "quick-experiment",
+  "profile_index": {
+    "destination_path": "profiles/profile-index.yaml",
+    "key": "quick-experiment",
+    "path": "profiles/profile-index.yaml"
+  },
+  "schema_version": "0.1",
+  "sources": [
+    {
+      "class": "kernel",
+      "destination_path": "schemas/skill-kernel/examples/quick-experiment.kernel.json",
+      "include_in_split": true,
+      "path": "schemas/skill-kernel/examples/quick-experiment.kernel.json",
+      "sha256": "sha256:fc16f27ec3caf1a08d902ba689e98bd679bc3a72279e7ea96585223cce0afdc0",
+      "size_bytes": 9435
+    },
+    {
+      "class": "kernel-source",
+      "destination_path": "docs/design/skill-matrix.md",
+      "include_in_split": true,
+      "path": "docs/design/skill-matrix.md",
+      "sha256": "sha256:de6d1477aaca67ebaeab8906b3e7c70ad67eda8dc8e8096610f0d6ce35a57459",
+      "size_bytes": 14902
+    },
+    {
+      "class": "kernel-source",
+      "destination_path": "profiles/profile-index.yaml",
+      "include_in_split": true,
+      "path": "profiles/profile-index.yaml",
+      "sha256": "sha256:c9b642b62dd9712d4f72c9a9c81a85d8b32bb731288b1188cd2bb80639eecc7e",
+      "size_bytes": 12249
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/data-pipeline-manager/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "data-pipeline-manager",
+      "path": "skills/data-pipeline-manager/SKILL.md",
+      "sha256": "sha256:bb7e0141aff300c05b2d7028d0aeb20522b66ed35af0ced8b5b8efaa0434de05",
+      "size_bytes": 10043
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/data-pipeline-manager/references/contamination-guide.md",
+      "include_in_split": true,
+      "owning_skill": "data-pipeline-manager",
+      "path": "skills/data-pipeline-manager/references/contamination-guide.md",
+      "sha256": "sha256:45c48f9eb01c57520766e51fb5a268970a94a4466fa5bca70271361d7c23717b",
+      "size_bytes": 4573
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/data-pipeline-manager/references/split-protocols.md",
+      "include_in_split": true,
+      "owning_skill": "data-pipeline-manager",
+      "path": "skills/data-pipeline-manager/references/split-protocols.md",
+      "sha256": "sha256:782a8fd14bb212b805a973fc68cb8b98ba696d59d0a1477639f20328326a116a",
+      "size_bytes": 3225
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/data-pipeline-manager/templates/pipeline-plan.md",
+      "include_in_split": true,
+      "owning_skill": "data-pipeline-manager",
+      "path": "skills/data-pipeline-manager/templates/pipeline-plan.md",
+      "sha256": "sha256:47f6ca875fe188525e768eade1059599920849c727dc6c33c196a8748ed99a7b",
+      "size_bytes": 2635
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/experiment-design-planner/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-design-planner",
+      "path": "skills/experiment-design-planner/SKILL.md",
+      "sha256": "sha256:6c3fb1ee70f92df02b0639f3e67a7ea164461106e665c0e2856c96be7aa76fce",
+      "size_bytes": 8135
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/experiment-design-planner/references/ablation-matrix.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-design-planner",
+      "path": "skills/experiment-design-planner/references/ablation-matrix.md",
+      "sha256": "sha256:5a493d3ecf31e60b975c0c6feaf5e8da80f6f9f81f8009a2b852c61cc8dea02c",
+      "size_bytes": 1842
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/experiment-design-planner/references/evidence-standards.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-design-planner",
+      "path": "skills/experiment-design-planner/references/evidence-standards.md",
+      "sha256": "sha256:d71e2ef59df1c79b6d64e7a6887c467e5686d57bebc264b9d6e41d0ff665f795",
+      "size_bytes": 2107
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/experiment-design-planner/references/metrics-and-controls.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-design-planner",
+      "path": "skills/experiment-design-planner/references/metrics-and-controls.md",
+      "sha256": "sha256:cc244b12cbad95ae7a53420fd6758020616796adc41fab479528412ef5aad2bc",
+      "size_bytes": 1875
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/experiment-design-planner/references/report-template.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-design-planner",
+      "path": "skills/experiment-design-planner/references/report-template.md",
+      "sha256": "sha256:ab5f85acc92125a411bef70e66559f3d847391f8b26f26bc22f121b5f477f2af",
+      "size_bytes": 1530
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/experiment-report-writer/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-report-writer",
+      "path": "skills/experiment-report-writer/SKILL.md",
+      "sha256": "sha256:6e8f6eeb02905ec04d654eac7e53c5b6f34f2ca0e8f51bf9df1b12fac37fd67b",
+      "size_bytes": 10419
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/experiment-report-writer/templates/experiment-report.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-report-writer",
+      "path": "skills/experiment-report-writer/templates/experiment-report.md",
+      "sha256": "sha256:fce5da9728edae6b1152b840c5ea25bbb7f53e58288fe7ada5c2f2d18020ec16",
+      "size_bytes": 738
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/SKILL.md",
+      "sha256": "sha256:2cbc65cf9794020d6cdbd458e366ddbc3288be7abbdf27807221443cce05fbcf",
+      "size_bytes": 21683
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/claim-lifecycle-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/claim-lifecycle-protocol.md",
+      "sha256": "sha256:6fe7d41c86ca213a9c86635a9ffc771761570981ba8addf5e609245f8907f1b8",
+      "size_bytes": 3760
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/closeout-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/closeout-protocol.md",
+      "sha256": "sha256:9e09c182cedaf69e7a1f0472e3c13b6fb848f3495d3bcdf0171f1b321e7483ef",
+      "size_bytes": 3372
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/consistency-checks.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/consistency-checks.md",
+      "sha256": "sha256:ff6676edf4354d740104ed2fb26a67fffd21b13b737e62339e77d18d4cb438f7",
+      "size_bytes": 4632
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/cross-module-handoff-contracts.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/cross-module-handoff-contracts.md",
+      "sha256": "sha256:a8b6d5e3297a02ac510b822db6c89a65d9fad71a36f3e485c7c7c779026f957d",
+      "size_bytes": 3114
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/evidence-provenance-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/evidence-provenance-protocol.md",
+      "sha256": "sha256:b569a3e5d6cdc521c08870b23c3b89045c7737278297890552ef5b82c17b1655",
+      "size_bytes": 3220
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/memory-architecture.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/memory-architecture.md",
+      "sha256": "sha256:6df5051a30b495c34b72ddc2ced51ea5f94d48ae9d10fff7b19d9c672b30c654",
+      "size_bytes": 8829
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/object-schemas.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/object-schemas.md",
+      "sha256": "sha256:e967421fb7b6923bb7e02a115210ce393ac7320507e17644746e6e0fe9984ef3",
+      "size_bytes": 6197
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/paper-source-visibility-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/paper-source-visibility-protocol.md",
+      "sha256": "sha256:7661cbbf8676f53103e72716b659d6e451ed6969703c14d19d1b471333b4449c",
+      "size_bytes": 6182
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/phase-dashboard-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/phase-dashboard-protocol.md",
+      "sha256": "sha256:34e4dd5fbede8b4bf549620f1740ea7e220f2945891af220f92503b8879e0a1b",
+      "size_bytes": 3357
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/toolchain-gates-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/toolchain-gates-protocol.md",
+      "sha256": "sha256:00f6a9f996d79c863a7835d1d3d9a0400a9d32534c70a4d01c8afe821638f711",
+      "size_bytes": 5079
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/writeback-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/writeback-protocol.md",
+      "sha256": "sha256:d80946b5ec97ff8234db0df95e3e4c674eb43c66a865564af109a4b2db0d551b",
+      "size_bytes": 11654
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/component/component-status.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/component/component-status.md",
+      "sha256": "sha256:698fc13237a9d34b05b174db500d5a5e255c961e299afac5cef8684fe557f5e9",
+      "size_bytes": 648
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/component/worktree-index.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/component/worktree-index.md",
+      "sha256": "sha256:4a376806ffda7c4686328f13aae4f09864e63a166573c12a58f6baa89605af63",
+      "size_bytes": 909
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/component/worktree-status.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/component/worktree-status.md",
+      "sha256": "sha256:be2e66f39828dcab230b363247eb8407b22ba8c2967b9b019b4b5761b4b4c959",
+      "size_bytes": 2293
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/BRIEFING.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/BRIEFING.md",
+      "sha256": "sha256:7b3c5d83799e59f5c6fa2203ce6bd1c56f1eb07deee5f756f8a5c5b607621cc0",
+      "size_bytes": 1413
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/action-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/action-board.md",
+      "sha256": "sha256:483b3f163a9a8c28e859c2450e78a9c04c256b76c1b459f68a60c82f3ba0d086",
+      "size_bytes": 448
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/claim-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/claim-board.md",
+      "sha256": "sha256:c76d8694a348a86ee2cb42c026d820b4f119b484421e6e770f94ac56b911829d",
+      "size_bytes": 1130
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/component-index.yaml",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/component-index.yaml",
+      "sha256": "sha256:19040a3521b5ca122beed1790cb9186ab089a607c8c71b6b091776a52435e3da",
+      "size_bytes": 2003
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/current-status.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/current-status.md",
+      "sha256": "sha256:5cb1fa4cfa426046087e9ca68f0134cc4c260f29c4276fe66ab5ae048d4e9be1",
+      "size_bytes": 740
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/decision-log.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/decision-log.md",
+      "sha256": "sha256:59abccaa0117c558e0ab583cb65ea136a0104d963a1d28dd31701854aedb2d21",
+      "size_bytes": 314
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/evidence-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/evidence-board.md",
+      "sha256": "sha256:7c787d7d9b427167610eb5323d2623ba89e86a69720df9f556703c190c64d5a4",
+      "size_bytes": 876
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/handoff-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/handoff-board.md",
+      "sha256": "sha256:3b44eec1b317b6b5d557af428c5cd153cda4ebe27b2dbdfb050653dfb3dc3e3e",
+      "size_bytes": 793
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/hot-results.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/hot-results.md",
+      "sha256": "sha256:44829584062dd4f8f7f9ff212e1918b15466054995375187821aac919fba400f",
+      "size_bytes": 1070
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/phase-dashboard.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/phase-dashboard.md",
+      "sha256": "sha256:bf66235a28fb1615cb715f432199615dd73897763c1c01fde861076000c176e3",
+      "size_bytes": 2102
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/project-conventions.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/project-conventions.md",
+      "sha256": "sha256:bae82ddad31f1586a0ba4e14b13fe95ae377926aec5aa270ae0b728fa8ca6b22",
+      "size_bytes": 1560
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/project.yaml",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/project.yaml",
+      "sha256": "sha256:75913196b440fa8dfeaaceaf8576d24bd721b40d063d251204246a3a7a7ea272",
+      "size_bytes": 3972
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/provenance-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/provenance-board.md",
+      "sha256": "sha256:868869a902515c99a98d6639b712cca536fce529fbe806af3b3a59ee9bc0927b",
+      "size_bytes": 836
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/risk-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/risk-board.md",
+      "sha256": "sha256:6eb589e9d8410af8adc575c61415a9a0948d61409156009cfec551a754a50105",
+      "size_bytes": 483
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/source-visibility-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/source-visibility-board.md",
+      "sha256": "sha256:b4aaf3a663d2da826aac35f1684248893b750a1c19f319c2a49d97dbaf1b4262",
+      "size_bytes": 1320
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/result-diagnosis/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "result-diagnosis",
+      "path": "skills/result-diagnosis/SKILL.md",
+      "sha256": "sha256:dd1389ab8b77ca65159a01407a800a9ddc059916ee03b061450afe1f1917812d",
+      "size_bytes": 9092
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/result-diagnosis/references/diagnosis-taxonomy.md",
+      "include_in_split": true,
+      "owning_skill": "result-diagnosis",
+      "path": "skills/result-diagnosis/references/diagnosis-taxonomy.md",
+      "sha256": "sha256:27f8fc43f261f0de844f99e6561288afd8470dd2577b58be4be1873aefe4eeef",
+      "size_bytes": 2745
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/result-diagnosis/references/evidence-audit.md",
+      "include_in_split": true,
+      "owning_skill": "result-diagnosis",
+      "path": "skills/result-diagnosis/references/evidence-audit.md",
+      "sha256": "sha256:73abb0bc3ff93f9cc4ba82888e5473fe486a2b56e8b96d93ab1910e86868b26b",
+      "size_bytes": 1807
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/result-diagnosis/references/next-decision-rules.md",
+      "include_in_split": true,
+      "owning_skill": "result-diagnosis",
+      "path": "skills/result-diagnosis/references/next-decision-rules.md",
+      "sha256": "sha256:88b3cf47ffb540cf3909f36a707c36ffec0ec5bcc6e45fc76d738fdb4706ad98",
+      "size_bytes": 2398
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/result-diagnosis/references/report-template.md",
+      "include_in_split": true,
+      "owning_skill": "result-diagnosis",
+      "path": "skills/result-diagnosis/references/report-template.md",
+      "sha256": "sha256:3eb28caf3159046cdb09fce66dd6ab14d59656bcca1ee625303a1af5555dc42d",
+      "size_bytes": 1303
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/result-diagnosis/references/triage-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "result-diagnosis",
+      "path": "skills/result-diagnosis/references/triage-protocol.md",
+      "sha256": "sha256:c21172530f4149e7aae4664cfde66efc0c70d68b229ed65ba89ce50b63d1f463",
+      "size_bytes": 2082
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/compute-budget-planner/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "compute-budget-planner",
+      "path": "skills/compute-budget-planner/SKILL.md",
+      "sha256": "sha256:b0a20c8533655da035596bf6e8fe34de5277b9ed36a1f5664d3059a81e0a1d8e",
+      "size_bytes": 7120
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/compute-budget-planner/references/estimation-guide.md",
+      "include_in_split": true,
+      "owning_skill": "compute-budget-planner",
+      "path": "skills/compute-budget-planner/references/estimation-guide.md",
+      "sha256": "sha256:0265014040c6e54ebf9b4ebd06f31dee2f40b73c2979164fac3cf00d76b3372b",
+      "size_bytes": 3806
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/experiment-debugger/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-debugger",
+      "path": "skills/experiment-debugger/SKILL.md",
+      "sha256": "sha256:662a27743a58d0fa70703494326eb3dafdfaf6c6538407a5f5bd3473d2e7c72f",
+      "size_bytes": 8915
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/experiment-debugger/references/failure-taxonomy.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-debugger",
+      "path": "skills/experiment-debugger/references/failure-taxonomy.md",
+      "sha256": "sha256:35c96d3e9655e711b6b970e199f7f7fa7ed2ed4ab4df34bc8a864dffe69ac45b",
+      "size_bytes": 5689
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/experiment-evidence-router/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-evidence-router",
+      "path": "skills/experiment-evidence-router/SKILL.md",
+      "sha256": "sha256:80acb9f6b5979c25f1d973ff8b6ff7efaf27f3bc3134e6d703f51645bad5531b",
+      "size_bytes": 3160
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/experiment-evidence-router/references/contrastive-routing.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-evidence-router",
+      "path": "skills/experiment-evidence-router/references/contrastive-routing.md",
+      "sha256": "sha256:0dce82b411d1c64810164c01b24eacc2da16403dbc567b910b37746f99606b4b",
+      "size_bytes": 3896
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/experiment-evidence-router/references/route-table.md",
+      "include_in_split": true,
+      "owning_skill": "experiment-evidence-router",
+      "path": "skills/experiment-evidence-router/references/route-table.md",
+      "sha256": "sha256:9ddc67ab9b6bc1eedfe59ae49613dce4e42fc2430f90e0b475093cf72225cbf0",
+      "size_bytes": 3092
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/run-experiment/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "run-experiment",
+      "path": "skills/run-experiment/SKILL.md",
+      "sha256": "sha256:9bffcbccdeb52aff87db8317b594c8e152a624b75103a29e47dfdb23d5b6cbe1",
+      "size_bytes": 21571
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/run-experiment/environments.yaml",
+      "include_in_split": true,
+      "owning_skill": "run-experiment",
+      "path": "skills/run-experiment/environments.yaml",
+      "sha256": "sha256:071cc658bf1e0071ba55d38a1e19dcbfad96d46e191c4497b8ee36e9a6cd0546",
+      "size_bytes": 5603
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/run-experiment/templates/local_run.sh",
+      "include_in_split": true,
+      "owning_skill": "run-experiment",
+      "path": "skills/run-experiment/templates/local_run.sh",
+      "sha256": "sha256:2a74b93f7bd7115f48cdd97ffafbd406cd20ee913b2cf651b05fbd7412e3a88c",
+      "size_bytes": 1515
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/run-experiment/templates/runai_job.sh",
+      "include_in_split": true,
+      "owning_skill": "run-experiment",
+      "path": "skills/run-experiment/templates/runai_job.sh",
+      "sha256": "sha256:5e92c95b2ef6b4cf9f8bb86d5c24f5f4dc16f24e3af9a471de8ba54fdfcf5a6f",
+      "size_bytes": 980
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/run-experiment/templates/slurm_job.sh",
+      "include_in_split": true,
+      "owning_skill": "run-experiment",
+      "path": "skills/run-experiment/templates/slurm_job.sh",
+      "sha256": "sha256:9635de1fdb7790e352c723eee3ba8aa8ae31ae3d8d59c5502a6c475709d8f176",
+      "size_bytes": 2582
+    }
+  ],
+  "totals": {
+    "file_count": 62,
+    "skill_count": 9,
+    "total_bytes": 275053
+  }
+}

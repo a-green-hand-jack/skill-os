@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1",
+  "plan_id": "automation-repo-split-generic-2026-05-28",
+  "mode": "repo-split-handoff",
+  "profile": "automation",
+  "runtime": "generic-agent",
+  "target_root": "tests/fixtures/install-plans/example-repo-split/skill-kernel-automation",
+  "requested_manifests": [
+    {
+      "runtime": "generic-agent",
+      "kernel_id": "automation"
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "profile-and-runtime-selected",
+      "status": "passed",
+      "notes": "Splitting the automation profile into a standalone repo; generic-agent adapter is the portable surface."
+    },
+    {
+      "id": "source-of-truth-preserved",
+      "status": "passed",
+      "notes": "automation kernel, profile-index entry, and its 6 member skills are copied as authoritative sources. Skills shared with core-ops (project-ops-router, sidecar-task-runner) are also copied; the depends_on relationship is documented in profile-index."
+    },
+    {
+      "id": "selection-semantics-preserved",
+      "status": "passed",
+      "notes": "Direct-entrypoint selection semantics are carried over; the profile-first / full-root delegation contract belongs to core-ops, not automation."
+    },
+    {
+      "id": "manual-review-recorded",
+      "status": "passed",
+      "notes": "Source inventory, file copy list, and exclusion list reviewed before scaffolding the destination repo. depends_on: core-ops noted in destination profile-index."
+    },
+    {
+      "id": "validation-plan-recorded",
+      "status": "passed",
+      "notes": "Pre-split: acceptance_checks in source repo. Post-split: re-run exporter, validator, inventory script, and confirm automation references no ML paper-lifecycle skill in the destination repo."
+    },
+    {
+      "id": "privacy-and-publication-audit",
+      "status": "passed",
+      "notes": "Privacy audit at schemas/skill-kernel/repo-split/automation-privacy-audit-2026-05-28.json reports status: passed with zero hits over the proposed split set, including credential / token / SSH transcript patterns."
+    },
+    {
+      "id": "no-credential-or-private-path-leakage",
+      "status": "passed",
+      "notes": "Inventory + audit confirm no credential, auth token, scheduler API token, or concrete remote cluster path appears in any file the scaffolder would copy."
+    }
+  ],
+  "source_of_truth_paths": [
+    "schemas/skill-kernel/skill-kernel.schema.json",
+    "schemas/skill-kernel/examples/core-ops.kernel.json",
+    "schemas/skill-kernel/examples/paper-reading.kernel.json",
+    "schemas/skill-kernel/examples/research-distillation-workflow-contract.kernel.json",
+    "profiles/profile-index.yaml",
+    "skills",
+    "scripts/export_skill_kernel_adapters.py",
+    "schemas/skill-kernel/runtime-adapter-contracts.json"
+  ],
+  "validation_commands": [
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --check",
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/kernel-installable-manifests",
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/kernel-installable-manifests --exercise-skill-root /tmp/kernel-manifest-exercise",
+    "python3 -m unittest -v tests.test_skill_kernel_schema tests.test_skill_kernel_adapter_export",
+    "uv run scripts/validate_skill_taxonomy.py",
+    "git diff --check"
+  ],
+  "privacy_audit": {
+    "status": "passed",
+    "checked_paths": [
+      "schemas/skill-kernel/examples/automation.kernel.json",
+      "profiles/profile-index.yaml",
+      "skills"
+    ],
+    "notes": "Programmatic audit at schemas/skill-kernel/repo-split/automation-privacy-audit-2026-05-28.json scans every included file for credential / personal-identifier / concrete sidecar / SSH-key patterns and reports 0 hits over 63 checked paths."
+  },
+  "rollback": {
+    "snapshot_before_write": true,
+    "rollback_record_path": ".agent/install-plans/automation-repo-split-rollback.json",
+    "restore_strategy": "Record destination repo URL, commit hash before scaffolding, and exact file copy list; on rollback, delete the destination repo (or revert its first commit) and restore the source profile-index entry from the rollback record."
+  },
+  "automation": {
+    "validator_only": true,
+    "writes_during_validation": false,
+    "real_installer_requested": false,
+    "will_touch_global_roots": false,
+    "explicit_user_request_for_global_scope": false
+  },
+  "acknowledged_forbidden_actions": [
+    "automatic-global-install",
+    "adapter-as-source-of-truth",
+    "implicit-full-bundle-install",
+    "unreviewed-repo-split",
+    "credential-or-private-path-copy"
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/a-green-hand-jack/ml-research-skills/schemas/skill-kernel/repo-split-inventory.schema.json",
+  "title": "Profile Repo-Split Source Inventory",
+  "description": "Read-only inventory of every source file a reviewed repo-split scaffolder would copy for a profile, plus excluded paths and totals. Generated, never authoritative.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile",
+    "kernel_id",
+    "kernel_path",
+    "kernel_source_paths",
+    "sources",
+    "profile_index",
+    "excluded_sources",
+    "totals"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "profile": {
+      "type": "string"
+    },
+    "kernel_id": {
+      "type": "string"
+    },
+    "kernel_path": {
+      "type": "string"
+    },
+    "kernel_source_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "class",
+          "size_bytes",
+          "sha256",
+          "include_in_split",
+          "destination_path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "class": {
+            "enum": [
+              "kernel",
+              "kernel-source",
+              "profile-index",
+              "skill-required",
+              "skill-optional",
+              "schema",
+              "script",
+              "doc"
+            ]
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "include_in_split": {
+            "type": "boolean"
+          },
+          "destination_path": {
+            "type": "string"
+          },
+          "owning_skill": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "profile_index": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "key",
+        "destination_path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "destination_path": {
+          "type": "string"
+        }
+      }
+    },
+    "excluded_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path_pattern",
+          "reason"
+        ],
+        "properties": {
+          "path_pattern": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file_count",
+        "total_bytes",
+        "skill_count"
+      ],
+      "properties": {
+        "file_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skill_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,847 @@
+{
+  "excluded_sources": [
+    {
+      "path_pattern": ".agent/sidecars/",
+      "reason": "private sidecar artifacts are excluded by repo policy"
+    },
+    {
+      "path_pattern": "memory/",
+      "reason": "project memory is not part of the public profile pack"
+    },
+    {
+      "path_pattern": "*/.DS_Store",
+      "reason": "OS metadata files are never copied into a split repo"
+    },
+    {
+      "path_pattern": "*/__pycache__/*",
+      "reason": "compiled bytecode is never copied"
+    }
+  ],
+  "kernel_id": "research-distillation-workflow-contract",
+  "kernel_path": "schemas/skill-kernel/examples/research-distillation-workflow-contract.kernel.json",
+  "kernel_source_paths": [
+    "profiles/profile-index.yaml",
+    "profiles/research-distillation/templates/workflow-contract.md",
+    "profiles/research-distillation/examples/workflow-contract-routing-evals.json",
+    "profiles/research-distillation/examples/workflow-contract-trials/assessment.md"
+  ],
+  "profile": "research-distillation",
+  "profile_index": {
+    "destination_path": "profiles/profile-index.yaml",
+    "key": "research-distillation",
+    "path": "profiles/profile-index.yaml"
+  },
+  "schema_version": "0.1",
+  "sources": [
+    {
+      "class": "kernel",
+      "destination_path": "schemas/skill-kernel/examples/research-distillation-workflow-contract.kernel.json",
+      "include_in_split": true,
+      "path": "schemas/skill-kernel/examples/research-distillation-workflow-contract.kernel.json",
+      "sha256": "sha256:e49d0545c4d784dbbea2bb4a94429da8beb9a790bf5dcc48da2ab90ff5268b08",
+      "size_bytes": 7806
+    },
+    {
+      "class": "kernel-source",
+      "destination_path": "profiles/profile-index.yaml",
+      "include_in_split": true,
+      "path": "profiles/profile-index.yaml",
+      "sha256": "sha256:c9b642b62dd9712d4f72c9a9c81a85d8b32bb731288b1188cd2bb80639eecc7e",
+      "size_bytes": 12249
+    },
+    {
+      "class": "kernel-source",
+      "destination_path": "profiles/research-distillation/examples/workflow-contract-routing-evals.json",
+      "include_in_split": true,
+      "path": "profiles/research-distillation/examples/workflow-contract-routing-evals.json",
+      "sha256": "sha256:0a26f0dd11219a57c56cfc310afe82d7c7f332bad33c34461e39680e58add0be",
+      "size_bytes": 2725
+    },
+    {
+      "class": "kernel-source",
+      "destination_path": "profiles/research-distillation/examples/workflow-contract-trials/assessment.md",
+      "include_in_split": true,
+      "path": "profiles/research-distillation/examples/workflow-contract-trials/assessment.md",
+      "sha256": "sha256:00c38a62ef733a4945246e3c57e8c23d01d5ebc81bf6b3c95d4c14388e0149e8",
+      "size_bytes": 2298
+    },
+    {
+      "class": "kernel-source",
+      "destination_path": "profiles/research-distillation/templates/workflow-contract.md",
+      "include_in_split": true,
+      "path": "profiles/research-distillation/templates/workflow-contract.md",
+      "sha256": "sha256:829b905575bafe9980aea7494cc517057bdad07e746d7da43bffc78d7d425864",
+      "size_bytes": 5568
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/advisor-update-writer/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "advisor-update-writer",
+      "path": "skills/advisor-update-writer/SKILL.md",
+      "sha256": "sha256:4eb0dae854100bfbf911a9acd4e0f0350f6fd7b055e8361176e26f21f81c59c0",
+      "size_bytes": 5542
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/advisor-update-writer/references/decision-framing.md",
+      "include_in_split": true,
+      "owning_skill": "advisor-update-writer",
+      "path": "skills/advisor-update-writer/references/decision-framing.md",
+      "sha256": "sha256:7dd37dd2e64865a175e9ae25c43dccbd10fd703013612b76f24d81d71d831646",
+      "size_bytes": 880
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/advisor-update-writer/references/memory-writeback.md",
+      "include_in_split": true,
+      "owning_skill": "advisor-update-writer",
+      "path": "skills/advisor-update-writer/references/memory-writeback.md",
+      "sha256": "sha256:3cf5784e69b4fb7555bd54ee7f9ba576a21e1ae60ccdf25a713f04dcdd8df501",
+      "size_bytes": 1075
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/advisor-update-writer/references/update-template.md",
+      "include_in_split": true,
+      "owning_skill": "advisor-update-writer",
+      "path": "skills/advisor-update-writer/references/update-template.md",
+      "sha256": "sha256:eae7a561e531a1c12995fb361c5f9a5a523fd31b0100def69cb41a47cb853756",
+      "size_bytes": 669
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/SKILL.md",
+      "sha256": "sha256:3f874f647fa0988741db2ce97b85ec36ebc114ce71c2b67b4022c8ff79618c93",
+      "size_bytes": 19593
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/edit-whitelist-contract.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/edit-whitelist-contract.md",
+      "sha256": "sha256:b6c55aea300a9c76f1716dcf0def524ef232d26fe2780f621389b7269e817299",
+      "size_bytes": 3614
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/evidence-recipes.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/evidence-recipes.md",
+      "sha256": "sha256:c2f0a780b76344b9d9362d0dd4e82e3f9d313d72f6939242ffd83d9794f88b10",
+      "size_bytes": 11913
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/exemplar-index.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/exemplar-index.md",
+      "sha256": "sha256:5769859e29a987114515b332d63437af3545a67a423b23fc82e1dea907900707",
+      "size_bytes": 4268
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/exemplars/acl-2022-truthfulqa-benchmark.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/exemplars/acl-2022-truthfulqa-benchmark.md",
+      "sha256": "sha256:4b30b29e693acf98d72af90c887bfca7be0aeed435b41e198d1c91cbe513970b",
+      "size_bytes": 2037
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/exemplars/cvpr-2022-latent-diffusion-method.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/exemplars/cvpr-2022-latent-diffusion-method.md",
+      "sha256": "sha256:7ff61ecdff8ddada895e5f533241acb8b5e7fd737bc3ad2c4736a4c76ffe3177",
+      "size_bytes": 2262
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/exemplars/iccv-2023-segment-anything-benchmark.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/exemplars/iccv-2023-segment-anything-benchmark.md",
+      "sha256": "sha256:9953d6eaab4ac64f7984c75efff310e7ae3afaeafd2b5921b464de515a6640f7",
+      "size_bytes": 2069
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/exemplars/iclr-2017-rethinking-generalization-analysis.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/exemplars/iclr-2017-rethinking-generalization-analysis.md",
+      "sha256": "sha256:df50c09edea640aeabe3dd9c5d1cf1efc1d16588107316778da975f76ab52d86",
+      "size_bytes": 2001
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/exemplars/iclr-2022-lora-method.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/exemplars/iclr-2022-lora-method.md",
+      "sha256": "sha256:b99498be9d9c5611f6db9be3429257d9baaf0837bd1930bb85acef9f4fd65b61",
+      "size_bytes": 2473
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/exemplars/naacl-2019-bert-method.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/exemplars/naacl-2019-bert-method.md",
+      "sha256": "sha256:5c13647af34f0261b300bda0efa796e05500fd7648752a5481a76605cf8f89f1",
+      "size_bytes": 2120
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/exemplars/neurips-2020-ddpm-method.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/exemplars/neurips-2020-ddpm-method.md",
+      "sha256": "sha256:1af384960041c7a8e8e2a168518b3ae9f3e2cc7d79483b546b8adb9dc51541f8",
+      "size_bytes": 2194
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/exemplars/neurips-2021-mlp-mixer-method.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/exemplars/neurips-2021-mlp-mixer-method.md",
+      "sha256": "sha256:9f0a69e5c4f8e1be0c574b66485f7210d8dec1274ed2b77cc21ce7ce14e0afd9",
+      "size_bytes": 2069
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/exemplars/sc20-zero-systems.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/exemplars/sc20-zero-systems.md",
+      "sha256": "sha256:496a6bdb3b9277cc608849d6f2ddb6e6c2ce287659f9f8c536e9fd7a607610e7",
+      "size_bytes": 2130
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/micro-patterns/figure-captions.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/micro-patterns/figure-captions.md",
+      "sha256": "sha256:9d7693c72ec874488942c2078429eb8bf959e6728e7d4b6eb348c554f0e96b52",
+      "size_bytes": 1868
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/micro-patterns/paragraph-openings-closings.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/micro-patterns/paragraph-openings-closings.md",
+      "sha256": "sha256:a527872e07649d2c59427e3be71c5bfff9aaa37d861d4176da56d71e1ec6118e",
+      "size_bytes": 2067
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/micro-patterns/result-interpretation.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/micro-patterns/result-interpretation.md",
+      "sha256": "sha256:4c08381868c36e8fa016f0249e1c8b4fdc5bf7af5f4ba49d3c62848c90ab1c86",
+      "size_bytes": 1853
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/micro-patterns/table-captions.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/micro-patterns/table-captions.md",
+      "sha256": "sha256:3cfa6de2fc16548325cfad6eed78ecb98c472093f7cddf0bc545b4b2d43900d9",
+      "size_bytes": 1677
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/micro-patterns/transitions-and-positioning.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/micro-patterns/transitions-and-positioning.md",
+      "sha256": "sha256:cdf67e6c7ecdcc0c4e24534a4b8dccaeee5185349b2b79a2d06ceaf232182445",
+      "size_bytes": 2116
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/paper-quality-heuristics.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/paper-quality-heuristics.md",
+      "sha256": "sha256:45d25e32fef738f2b634fb5697778d99f0e15cad7090ce8353a1c78e2c8587a2",
+      "size_bytes": 3332
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/section-patterns/abstract.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/section-patterns/abstract.md",
+      "sha256": "sha256:ab6566c641f20d00de2044ba9288a5123137b09e100fb40e9c8389f30cf94302",
+      "size_bytes": 2879
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/section-patterns/experiments-results.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/section-patterns/experiments-results.md",
+      "sha256": "sha256:defe6e93d36355f3e96ae08139a4f2c5158bac4b9bea45d4034d432d502698fe",
+      "size_bytes": 2605
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/section-patterns/introduction.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/section-patterns/introduction.md",
+      "sha256": "sha256:e9961d7b27cb73ac724f61b48f88fffc7e302e6bd3846f85cb42f4edab880219",
+      "size_bytes": 2645
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/section-patterns/limitations-conclusion.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/section-patterns/limitations-conclusion.md",
+      "sha256": "sha256:2cdbe40a1f0cb0d26a31b154d2313636a5b6d6e3bffb3d86079fe2219b76b67b",
+      "size_bytes": 1375
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/section-patterns/method.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/section-patterns/method.md",
+      "sha256": "sha256:d87d19eff4629ab09c29f3fb008e2034f38c041a37383c4734ea375484b8593d",
+      "size_bytes": 2131
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/section-patterns/related-work.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/section-patterns/related-work.md",
+      "sha256": "sha256:bcc3dda9f23c5cbd0df930568823e7be7ec5746feb73dac4c175c29fd8ddd385",
+      "size_bytes": 1729
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-assistant/references/style-selection.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-assistant",
+      "path": "skills/paper-writing-assistant/references/style-selection.md",
+      "sha256": "sha256:7e28e4f6091c446927ff9428e8f748cf7028dcfd6c80428cdd9a56a249c036c9",
+      "size_bytes": 6267
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/sidecar-task-runner/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "sidecar-task-runner",
+      "path": "skills/sidecar-task-runner/SKILL.md",
+      "sha256": "sha256:d836664f02fe0686a9a214ca260bb8490f8a136be8d0984cf015cc3a78e72741",
+      "size_bytes": 7677
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/sidecar-task-runner/agents/openai.yaml",
+      "include_in_split": true,
+      "owning_skill": "sidecar-task-runner",
+      "path": "skills/sidecar-task-runner/agents/openai.yaml",
+      "sha256": "sha256:16a595cad7c52991997edd6eb466f174d46cd6e846c5d530f2ed28970183458c",
+      "size_bytes": 428
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/sidecar-task-runner/scripts/prepare_sidecar_task.py",
+      "include_in_split": true,
+      "owning_skill": "sidecar-task-runner",
+      "path": "skills/sidecar-task-runner/scripts/prepare_sidecar_task.py",
+      "sha256": "sha256:d48d72fa409ed69eb20abdc6c2b95ef3927e1515994f1e4ccca9cd96b6990270",
+      "size_bytes": 7592
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/sidecar-task-runner/templates/personalization-scanner.md",
+      "include_in_split": true,
+      "owning_skill": "sidecar-task-runner",
+      "path": "skills/sidecar-task-runner/templates/personalization-scanner.md",
+      "sha256": "sha256:5847e5e18fa1621e77f509fc519a5983f9d0a1dc6216baa09cd4ffcf9c0221e8",
+      "size_bytes": 1959
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/sidecar-task-runner/templates/precommit-classifier.md",
+      "include_in_split": true,
+      "owning_skill": "sidecar-task-runner",
+      "path": "skills/sidecar-task-runner/templates/precommit-classifier.md",
+      "sha256": "sha256:56e4ea1f472a17834388f95e80353f4a141e1d96793953bee7ea34968ed8fa1f",
+      "size_bytes": 2372
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/work-timeline-planner/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "work-timeline-planner",
+      "path": "skills/work-timeline-planner/SKILL.md",
+      "sha256": "sha256:eb3b200eea5caf0c5888cf37029b1f5f7a87a79dd4b5fd1bc667f19c01637ca1",
+      "size_bytes": 7478
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/work-timeline-planner/references/evidence-model.md",
+      "include_in_split": true,
+      "owning_skill": "work-timeline-planner",
+      "path": "skills/work-timeline-planner/references/evidence-model.md",
+      "sha256": "sha256:e3083813b95ae54ba9277be5bd4b631934420c28f246c01a6a87f8e6eced4ec8",
+      "size_bytes": 2022
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/work-timeline-planner/references/output-formats.md",
+      "include_in_split": true,
+      "owning_skill": "work-timeline-planner",
+      "path": "skills/work-timeline-planner/references/output-formats.md",
+      "sha256": "sha256:ac1c897d96f88e7b84d912b96076755c9221b938a3e039d919366435c9ee8ba5",
+      "size_bytes": 2140
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/work-timeline-planner/references/report-modes.md",
+      "include_in_split": true,
+      "owning_skill": "work-timeline-planner",
+      "path": "skills/work-timeline-planner/references/report-modes.md",
+      "sha256": "sha256:86366dae61fbaceb313c0cb85740fc69dbede80d9ea92309d4111dd3d6200719",
+      "size_bytes": 1338
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/work-timeline-planner/templates/timeline-report.html",
+      "include_in_split": true,
+      "owning_skill": "work-timeline-planner",
+      "path": "skills/work-timeline-planner/templates/timeline-report.html",
+      "sha256": "sha256:a59e8db97fdcb83699e1b2a2c7cacd1e2551e32c9287eb34176e3dd61add6059",
+      "size_bytes": 3992
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/work-timeline-planner/templates/timeline-report.md",
+      "include_in_split": true,
+      "owning_skill": "work-timeline-planner",
+      "path": "skills/work-timeline-planner/templates/timeline-report.md",
+      "sha256": "sha256:d22ce83c7b289aa80e22f6b0a48b78571b44cfb3cd9e25b31897769c440ceeee",
+      "size_bytes": 928
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/discovery-router/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "discovery-router",
+      "path": "skills/discovery-router/SKILL.md",
+      "sha256": "sha256:57100eed8a37c8ae2ad0114cc5a8b6501f80695742e736b05609ce7fbdab8644",
+      "size_bytes": 2651
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/discovery-router/references/contrastive-routing.md",
+      "include_in_split": true,
+      "owning_skill": "discovery-router",
+      "path": "skills/discovery-router/references/contrastive-routing.md",
+      "sha256": "sha256:66c44ee8e411dcf794b97bb94609d917ea66241da5325ea48011473aa8056352",
+      "size_bytes": 2638
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/discovery-router/references/route-table.md",
+      "include_in_split": true,
+      "owning_skill": "discovery-router",
+      "path": "skills/discovery-router/references/route-table.md",
+      "sha256": "sha256:0a2a472d80756778e15b6a5e20e517e5e2b627b9aa28b994a1cc7f1d54626c4f",
+      "size_bytes": 1681
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/SKILL.md",
+      "sha256": "sha256:0862bf462c8345e95a54af00a60a1cbbb8e68c71299a005e4f52b41a460e700a",
+      "size_bytes": 9018
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/references/memory-writeback.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/references/memory-writeback.md",
+      "sha256": "sha256:4376ddcaafec1b07eee9d75e9a08700aa51bf90f485ec55e68fdc366d29295d7",
+      "size_bytes": 2680
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/references/paper-taxonomy.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/references/paper-taxonomy.md",
+      "sha256": "sha256:df0e3149e3a7813b6f6fd4d63beb0fa041ab9703723788bddb942bdc83a469c3",
+      "size_bytes": 2124
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/references/reading-priority.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/references/reading-priority.md",
+      "sha256": "sha256:021be2408c6d5545aabf50b93e850e52ebf3956c9803e7634fdde224feacb22e",
+      "size_bytes": 2078
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/references/search-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/references/search-protocol.md",
+      "sha256": "sha256:e26148e3973093a2ad73e0280c6dd840441f8b30ef85acde84cac5e3a666d5c7",
+      "size_bytes": 2537
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/references/synthesis-template.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/references/synthesis-template.md",
+      "sha256": "sha256:62594aec053b8d115d33f9a08b9f7bdb3eb6c1eaf54e829136c3f052956df148",
+      "size_bytes": 1337
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/memory-publication-auditor/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "memory-publication-auditor",
+      "path": "skills/memory-publication-auditor/SKILL.md",
+      "sha256": "sha256:113c85d09ea9a8c4ca31e0d38d1f5de2ac95c06bf07e8a20e6a41484acaef5da",
+      "size_bytes": 3656
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/memory-publication-auditor/agents/openai.yaml",
+      "include_in_split": true,
+      "owning_skill": "memory-publication-auditor",
+      "path": "skills/memory-publication-auditor/agents/openai.yaml",
+      "sha256": "sha256:cff2b3131cdeb7f62070704a72059e977e23a90f3cd14e3ea1b9729de0814624",
+      "size_bytes": 378
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/memory-publication-auditor/references/classification-policy.md",
+      "include_in_split": true,
+      "owning_skill": "memory-publication-auditor",
+      "path": "skills/memory-publication-auditor/references/classification-policy.md",
+      "sha256": "sha256:8fc1b05373f9eb3400af52eab60b47c2dd79530bf726ce72fef716a762bff521",
+      "size_bytes": 1893
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/memory-publication-auditor/scripts/scan_publication_candidates.py",
+      "include_in_split": true,
+      "owning_skill": "memory-publication-auditor",
+      "path": "skills/memory-publication-auditor/scripts/scan_publication_candidates.py",
+      "sha256": "sha256:a8f359f0c14adc5a554b910ec2ef1c8451f5d9eb89fd95bd97b8108e7077a7b9",
+      "size_bytes": 8820
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/memory-publication-auditor/templates/audit-report.md",
+      "include_in_split": true,
+      "owning_skill": "memory-publication-auditor",
+      "path": "skills/memory-publication-auditor/templates/audit-report.md",
+      "sha256": "sha256:05a8b067c6cfd30ff7316cfdb7c725144815d18359aa0bc938f6e6e3154a4eb6",
+      "size_bytes": 566
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/memory-publication-auditor/templates/publication-candidate.md",
+      "include_in_split": true,
+      "owning_skill": "memory-publication-auditor",
+      "path": "skills/memory-publication-auditor/templates/publication-candidate.md",
+      "sha256": "sha256:507a5e51fa475f2816f73945ad4f244548b8fdbb74a3366fcb98cb93958fbe01",
+      "size_bytes": 475
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/personalization-memory/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "personalization-memory",
+      "path": "skills/personalization-memory/SKILL.md",
+      "sha256": "sha256:c57198e1b6a0eac6f5daa8849bfeb023361582763c63b57f8c24b8917d67a4e7",
+      "size_bytes": 5921
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/personalization-memory/agents/openai.yaml",
+      "include_in_split": true,
+      "owning_skill": "personalization-memory",
+      "path": "skills/personalization-memory/agents/openai.yaml",
+      "sha256": "sha256:9a02dca1220d47e3b7ca5d13c201718216995740fedbbf7edbaca0b78d24aacb",
+      "size_bytes": 333
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/personalization-memory/references/trajectory-scanner.md",
+      "include_in_split": true,
+      "owning_skill": "personalization-memory",
+      "path": "skills/personalization-memory/references/trajectory-scanner.md",
+      "sha256": "sha256:01150f9c67424251b4b6f2486e49f46804de8b361759bad844ff6038096cbdf0",
+      "size_bytes": 2231
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/personalization-memory/references/writeback-policy.md",
+      "include_in_split": true,
+      "owning_skill": "personalization-memory",
+      "path": "skills/personalization-memory/references/writeback-policy.md",
+      "sha256": "sha256:928e774ec90d879edaef608d851339dc1ac5361673d29df44db2a7213467be7e",
+      "size_bytes": 2879
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/personalization-memory/templates/preference-ledger.md",
+      "include_in_split": true,
+      "owning_skill": "personalization-memory",
+      "path": "skills/personalization-memory/templates/preference-ledger.md",
+      "sha256": "sha256:7f2bd39e7a9c0cad3e9a98cf3da4cf4c0a557527af38f1bf6393757414e42016",
+      "size_bytes": 666
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-corpus-analyzer/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "reference-corpus-analyzer",
+      "path": "skills/reference-corpus-analyzer/SKILL.md",
+      "sha256": "sha256:8a71f40e00b742472c34fd952e0b6f25063544149a6bff2f34426cca82592a8e",
+      "size_bytes": 6981
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-corpus-analyzer/templates/comparison-matrix.md",
+      "include_in_split": true,
+      "owning_skill": "reference-corpus-analyzer",
+      "path": "skills/reference-corpus-analyzer/templates/comparison-matrix.md",
+      "sha256": "sha256:69ed27334f1da9671807cf20c83323b29e93e56eb97a74076220338c20bfe961",
+      "size_bytes": 1562
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/SKILL.md",
+      "sha256": "sha256:3cec72b1877d223c8f72cf192a2d7c342d6ff82d9e84f02ee8df731f19f028a4",
+      "size_bytes": 5041
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/agents/openai.yaml",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/agents/openai.yaml",
+      "sha256": "sha256:88c306855af9266c0a08959c2c6f94012943beb9e9a23742edd2f288390dea89",
+      "size_bytes": 316
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/references/library-policy.md",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/references/library-policy.md",
+      "sha256": "sha256:70c7884d4b2502e5af2ff460a5d6ad83a7ec017fb0d87e438cceda285dd484dc",
+      "size_bytes": 3823
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/scripts/scan_reference_library.py",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/scripts/scan_reference_library.py",
+      "sha256": "sha256:95751012a98d5d4543c84798370debfd058a7f51eda65586171b9f6d444f21a1",
+      "size_bytes": 11373
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/templates/reading-status.md",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/templates/reading-status.md",
+      "sha256": "sha256:9bf880840e965ea9deafe3bf78f51827cc96b55381eca36b721efbefa150f097",
+      "size_bytes": 483
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/templates/reference-index.md",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/templates/reference-index.md",
+      "sha256": "sha256:6563432def3d48a2bc911ae13661061792541c57d2498ab78af399c5c5cdbdf4",
+      "size_bytes": 550
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-project-synthesizer/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "reference-project-synthesizer",
+      "path": "skills/reference-project-synthesizer/SKILL.md",
+      "sha256": "sha256:dc43d1eded96a212107a82ccb834446ebfe6f92712f1fde6fca96e4aa99fde70",
+      "size_bytes": 4726
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-project-synthesizer/agents/openai.yaml",
+      "include_in_split": true,
+      "owning_skill": "reference-project-synthesizer",
+      "path": "skills/reference-project-synthesizer/agents/openai.yaml",
+      "sha256": "sha256:061e625e1ab594018734186033da395103deac1c620b3a520ea691998ad9baca",
+      "size_bytes": 375
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-project-synthesizer/references/project-link-routing.md",
+      "include_in_split": true,
+      "owning_skill": "reference-project-synthesizer",
+      "path": "skills/reference-project-synthesizer/references/project-link-routing.md",
+      "sha256": "sha256:af12b08619cf6303c493dfda4f959fe4748b26957a3e416548df92078f0dd266",
+      "size_bytes": 2579
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-project-synthesizer/templates/project-use-note.md",
+      "include_in_split": true,
+      "owning_skill": "reference-project-synthesizer",
+      "path": "skills/reference-project-synthesizer/templates/project-use-note.md",
+      "sha256": "sha256:4c6bfa5c196d33c0f1fc291c4019227d621ddb0cf830c0514e7638b00d4bb0d1",
+      "size_bytes": 936
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/SKILL.md",
+      "sha256": "sha256:e3f30cdd67796d44d34550fb90b6fbd263d14e765096925efdca901599b91295",
+      "size_bytes": 5944
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/agents/openai.yaml",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/agents/openai.yaml",
+      "sha256": "sha256:b1cf6fc041eb2f28c20a7ef4da643abb9a89d40e834f4b24d78044dc5725565e",
+      "size_bytes": 315
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/references/model-routing.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/references/model-routing.md",
+      "sha256": "sha256:f23b6400ef04f8965acd799e3b801a110196502028c1c6a3f61a207acce63278",
+      "size_bytes": 2798
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/references/reading-modes.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/references/reading-modes.md",
+      "sha256": "sha256:5e0cc7e58235e511c285862ec65b786762202403e0b157deac91794aecdceae1",
+      "size_bytes": 2629
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/templates/paper-card.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/templates/paper-card.md",
+      "sha256": "sha256:902c7975fd8f3a00807dfa36fd16e921b8470ea488c407f37e4bb718cd682b9d",
+      "size_bytes": 937
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/templates/reading-run.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/templates/reading-run.md",
+      "sha256": "sha256:e84af84a16fd56ccd854b3e15b386c5ccc70062f6a8cd7f928520256642555b9",
+      "size_bytes": 292
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/templates/source-card.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/templates/source-card.md",
+      "sha256": "sha256:852caabbf176fa3f24175cf0be78fb5d6d3d9a80bddf7a6a2448f308bb366118",
+      "size_bytes": 1168
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/skill-system-auditor/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "skill-system-auditor",
+      "path": "skills/skill-system-auditor/SKILL.md",
+      "sha256": "sha256:a737b515eaccd5ad3380aabcf031b68d2f57c588aa879f5d06094c10c3354fad",
+      "size_bytes": 6999
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/skill-system-auditor/references/agent-regression-hardening.md",
+      "include_in_split": true,
+      "owning_skill": "skill-system-auditor",
+      "path": "skills/skill-system-auditor/references/agent-regression-hardening.md",
+      "sha256": "sha256:d35d0849d90baf3d5e5fdcfbb85e5c6383cd3c58564b21d0e31328eca4c4d0e8",
+      "size_bytes": 5072
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/skill-system-auditor/references/audit-rubric.md",
+      "include_in_split": true,
+      "owning_skill": "skill-system-auditor",
+      "path": "skills/skill-system-auditor/references/audit-rubric.md",
+      "sha256": "sha256:940dc7fcad058517432f2b127593c0c59d6ec23118d610f3a5b74d2b1ecb4645",
+      "size_bytes": 2218
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/skill-system-auditor/references/doc-sync-map.md",
+      "include_in_split": true,
+      "owning_skill": "skill-system-auditor",
+      "path": "skills/skill-system-auditor/references/doc-sync-map.md",
+      "sha256": "sha256:731ae0df449cd74cfee6a898a9a97d0d170e07340baf46b79d1822a362ba0e5a",
+      "size_bytes": 989
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/skill-system-auditor/references/report-template.md",
+      "include_in_split": true,
+      "owning_skill": "skill-system-auditor",
+      "path": "skills/skill-system-auditor/references/report-template.md",
+      "sha256": "sha256:b0a6ee8932fe4d476df82d87011d5afcfa016355316fa2abb5ce050290008143",
+      "size_bytes": 474
+    }
+  ],
+  "totals": {
+    "file_count": 90,
+    "skill_count": 13,
+    "total_bytes": 291167
+  }
+}

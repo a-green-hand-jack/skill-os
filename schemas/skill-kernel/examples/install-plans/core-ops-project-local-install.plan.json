@@ -1,0 +1,102 @@
+{
+  "schema_version": "0.1",
+  "plan_id": "core-ops-project-local-codex-2026-05-27",
+  "mode": "project-local-profile-install",
+  "profile": "core-ops",
+  "runtime": "codex",
+  "target_root": "tests/fixtures/install-plans/example-ml-project/.agents/skills/core-ops",
+  "requested_manifests": [
+    {
+      "runtime": "codex",
+      "kernel_id": "core-ops"
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "target-root-declared",
+      "status": "passed",
+      "notes": "Target is an initialized ML project's runtime-specific skill root, not a global root."
+    },
+    {
+      "id": "profile-and-runtime-selected",
+      "status": "passed",
+      "notes": "core-ops profile selected for Codex; install_policy in profile-index permits project-local use."
+    },
+    {
+      "id": "source-of-truth-preserved",
+      "status": "passed",
+      "notes": "Kernel, profile-index, skill files, and adapter contracts remain authoritative."
+    },
+    {
+      "id": "selection-semantics-preserved",
+      "status": "passed",
+      "notes": "core-ops is installed as a profile-first entrypoint; full-root delegation to mature owner skills is preserved by not overriding existing project-local routers."
+    },
+    {
+      "id": "manual-review-recorded",
+      "status": "passed",
+      "notes": "Manual review of generated adapter manifest recorded before any write; safe_to_install_automatically remains false."
+    },
+    {
+      "id": "rollback-plan-recorded",
+      "status": "passed",
+      "notes": "Pre-write snapshot and restore commands captured at the rollback record path."
+    },
+    {
+      "id": "validation-plan-recorded",
+      "status": "passed",
+      "notes": "Pre-write checks run from acceptance_checks; post-write checks add taxonomy validator and a session-only exercise smoke test."
+    },
+    {
+      "id": "privacy-and-publication-audit",
+      "status": "passed",
+      "notes": "Generated manifest contains no credentials, raw logs, or private memory paths; only kernel-derived metadata."
+    }
+  ],
+  "source_of_truth_paths": [
+    "schemas/skill-kernel/skill-kernel.schema.json",
+    "schemas/skill-kernel/examples/core-ops.kernel.json",
+    "schemas/skill-kernel/examples/paper-reading.kernel.json",
+    "schemas/skill-kernel/examples/research-distillation-workflow-contract.kernel.json",
+    "profiles/profile-index.yaml",
+    "skills",
+    "scripts/export_skill_kernel_adapters.py",
+    "schemas/skill-kernel/runtime-adapter-contracts.json"
+  ],
+  "validation_commands": [
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --check",
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/kernel-installable-manifests",
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/kernel-installable-manifests --exercise-skill-root /tmp/kernel-manifest-exercise",
+    "python3 -m unittest -v tests.test_skill_kernel_schema tests.test_skill_kernel_adapter_export",
+    "uv run scripts/validate_skill_taxonomy.py",
+    "git diff --check"
+  ],
+  "privacy_audit": {
+    "status": "passed",
+    "checked_paths": [
+      "schemas/skill-kernel/examples/core-ops.kernel.json",
+      "profiles/profile-index.yaml",
+      "scripts/export_skill_kernel_adapters.py"
+    ],
+    "notes": "Reviewed generated manifest body for credential strings, raw sidecar paths, and private memory references; none present."
+  },
+  "rollback": {
+    "snapshot_before_write": true,
+    "rollback_record_path": ".agent/install-plans/core-ops-project-local-rollback.json",
+    "restore_strategy": "Snapshot target_root before write; on rollback, remove generated SKILL.md and any sibling manifest files using the recorded file inventory."
+  },
+  "automation": {
+    "validator_only": true,
+    "writes_during_validation": false,
+    "real_installer_requested": false,
+    "will_touch_global_roots": false,
+    "explicit_user_request_for_global_scope": false
+  },
+  "acknowledged_forbidden_actions": [
+    "automatic-global-install",
+    "adapter-as-source-of-truth",
+    "implicit-full-bundle-install",
+    "unreviewed-repo-split",
+    "credential-or-private-path-copy"
+  ]
+}

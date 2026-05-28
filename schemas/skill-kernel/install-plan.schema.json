@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/a-green-hand-jack/ml-research-skills/schemas/skill-kernel/install-plan.schema.json",
+  "title": "Skill Kernel Install Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "mode",
+    "profile",
+    "runtime",
+    "target_root",
+    "requested_manifests",
+    "review_gates",
+    "source_of_truth_paths",
+    "validation_commands",
+    "privacy_audit",
+    "rollback",
+    "automation",
+    "acknowledged_forbidden_actions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "plan_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "mode": {
+      "type": "string"
+    },
+    "profile": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "runtime": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "target_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requested_manifests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "runtime",
+          "kernel_id"
+        ],
+        "properties": {
+          "runtime": {
+            "type": "string"
+          },
+          "kernel_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "review_gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "status"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "passed",
+                  "not-applicable"
+                ]
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "source_of_truth_paths": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "validation_commands": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "privacy_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "checked_paths"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "passed",
+            "not-applicable"
+          ]
+        },
+        "checked_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "snapshot_before_write",
+        "rollback_record_path",
+        "restore_strategy"
+      ],
+      "properties": {
+        "snapshot_before_write": {
+          "type": "boolean"
+        },
+        "rollback_record_path": {
+          "type": "string"
+        },
+        "restore_strategy": {
+          "type": "string"
+        }
+      }
+    },
+    "automation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "validator_only",
+        "writes_during_validation",
+        "real_installer_requested",
+        "will_touch_global_roots",
+        "explicit_user_request_for_global_scope"
+      ],
+      "properties": {
+        "validator_only": {
+          "const": true
+        },
+        "writes_during_validation": {
+          "const": false
+        },
+        "real_installer_requested": {
+          "const": false
+        },
+        "will_touch_global_roots": {
+          "type": "boolean"
+        },
+        "explicit_user_request_for_global_scope": {
+          "type": "boolean"
+        }
+      }
+    },
+    "acknowledged_forbidden_actions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

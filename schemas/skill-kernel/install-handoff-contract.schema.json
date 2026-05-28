@@ -1,0 +1,353 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/a-green-hand-jack/ml-research-skills/schemas/skill-kernel/install-handoff-contract.schema.json",
+  "title": "Reviewed Install And Repo Split Handoff Contract",
+  "description": "Contract that must exist before manifest-generated skills are installed into real runtime roots or profile packs are split into new repos.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_id",
+    "status",
+    "implementation_status",
+    "derived_from",
+    "scope",
+    "authoritative_sources",
+    "target_modes",
+    "review_gates",
+    "runtime_requirements",
+    "selection_semantics_policy",
+    "automation_policy",
+    "rollback_policy",
+    "forbidden_actions",
+    "acceptance_checks",
+    "next_actions"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^0\\.1$"
+    },
+    "contract_id": {
+      "$ref": "#/$defs/hyphen_name"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "active",
+        "superseded"
+      ]
+    },
+    "implementation_status": {
+      "enum": [
+        "contract-only",
+        "plan-validator",
+        "installer-authorized"
+      ]
+    },
+    "derived_from": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime_capture",
+        "manifest_schema_version",
+        "exercise_schema_version",
+        "evidence_ids",
+        "decision_ids"
+      ],
+      "properties": {
+        "runtime_capture": {
+          "$ref": "#/$defs/repo_path"
+        },
+        "manifest_schema_version": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "exercise_schema_version": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "evidence_ids": {
+          "$ref": "#/$defs/id_array"
+        },
+        "decision_ids": {
+          "$ref": "#/$defs/id_array"
+        }
+      }
+    },
+    "scope": {
+      "$ref": "#/$defs/non_empty_string"
+    },
+    "authoritative_sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "role",
+          "paths",
+          "may_be_overridden_by_runtime_adapter"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/hyphen_name"
+          },
+          "role": {
+            "$ref": "#/$defs/non_empty_string"
+          },
+          "paths": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/$defs/repo_path"
+            },
+            "uniqueItems": true
+          },
+          "may_be_overridden_by_runtime_adapter": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "target_modes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "allowed_now",
+          "target_root_policy",
+          "may_touch_global_roots",
+          "required_review_gates",
+          "output_contract"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/hyphen_name"
+          },
+          "status": {
+            "$ref": "#/$defs/non_empty_string"
+          },
+          "allowed_now": {
+            "type": "boolean"
+          },
+          "target_root_policy": {
+            "$ref": "#/$defs/non_empty_string"
+          },
+          "may_touch_global_roots": {
+            "type": "boolean"
+          },
+          "required_review_gates": {
+            "$ref": "#/$defs/hyphen_name_array"
+          },
+          "output_contract": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        }
+      }
+    },
+    "review_gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "summary",
+          "blocks_install_when"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/hyphen_name"
+          },
+          "summary": {
+            "$ref": "#/$defs/non_empty_string"
+          },
+          "blocks_install_when": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        }
+      }
+    },
+    "runtime_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "codex",
+        "claude-code",
+        "cursor",
+        "generic-agent"
+      ],
+      "properties": {
+        "codex": {
+          "$ref": "#/$defs/runtime_requirement"
+        },
+        "claude-code": {
+          "$ref": "#/$defs/runtime_requirement"
+        },
+        "cursor": {
+          "$ref": "#/$defs/runtime_requirement"
+        },
+        "generic-agent": {
+          "$ref": "#/$defs/runtime_requirement"
+        }
+      }
+    },
+    "selection_semantics_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "must_preserve_kernel_selection_semantics",
+        "core_ops_policy",
+        "full_root_delegation_policy"
+      ],
+      "properties": {
+        "must_preserve_kernel_selection_semantics": {
+          "type": "boolean"
+        },
+        "core_ops_policy": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "full_root_delegation_policy": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "automation_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_installer_authorized",
+        "may_write_runtime_files_without_review",
+        "may_write_global_roots_without_explicit_user_request",
+        "next_safe_step"
+      ],
+      "properties": {
+        "real_installer_authorized": {
+          "type": "boolean"
+        },
+        "may_write_runtime_files_without_review": {
+          "type": "boolean"
+        },
+        "may_write_global_roots_without_explicit_user_request": {
+          "type": "boolean"
+        },
+        "next_safe_step": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "rollback_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "snapshot_before_write",
+        "rollback_record_required",
+        "restore_strategy"
+      ],
+      "properties": {
+        "snapshot_before_write": {
+          "type": "boolean"
+        },
+        "rollback_record_required": {
+          "type": "boolean"
+        },
+        "restore_strategy": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "forbidden_actions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "rule"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/hyphen_name"
+          },
+          "rule": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        }
+      }
+    },
+    "acceptance_checks": {
+      "$ref": "#/$defs/non_empty_string_array"
+    },
+    "next_actions": {
+      "$ref": "#/$defs/non_empty_string_array"
+    }
+  },
+  "$defs": {
+    "hyphen_name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "repo_path": {
+      "type": "string",
+      "pattern": "^[^/][^\\n]*$"
+    },
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "non_empty_string_array": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/non_empty_string"
+      }
+    },
+    "hyphen_name_array": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/hyphen_name"
+      },
+      "uniqueItems": true
+    },
+    "id_array": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}-[0-9]{3}$"
+      },
+      "uniqueItems": true
+    },
+    "runtime_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "support_status",
+        "required_surface",
+        "session_only_status",
+        "real_install_status"
+      ],
+      "properties": {
+        "support_status": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "required_surface": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "session_only_status": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "real_install_status": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    }
+  }
+}

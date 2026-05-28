@@ -1,0 +1,70 @@
+{
+  "_comment": "Profile-level routing evals for the skill-matrix layer. These examples test which project profile should activate before leaf-skill routing. They are structural regression fixtures for validators and future routing harnesses.",
+  "_format": "expected_profile: profile from profiles/profile-index.yaml. expected_entrypoint: skill listed in that profile's entrypoints. should_not_profiles: common wrong profile choices.",
+  "evals": [
+    {
+      "id": "PRE-001",
+      "prompt": "I'm in a normal Python repo and I'm not sure whether I should install the full ml-research-skills bundle here.",
+      "expected_profile": "global-bootstrap",
+      "expected_entrypoint": "ml-research-bootstrap",
+      "should_not_profiles": ["ml-research", "core-ops"],
+      "rationale": "Generic repos should start at the thin global bootstrap, not activate the full ML research profile."
+    },
+    {
+      "id": "PRE-002",
+      "prompt": "This is an initialized ML research project. I need to plan experiments, track evidence, and write the paper.",
+      "expected_profile": "ml-research",
+      "expected_entrypoint": "ml-research-router",
+      "should_not_profiles": ["paper-reading", "core-ops", "global-bootstrap"],
+      "rationale": "The task spans the full ML research lifecycle and belongs to the complete project-local profile."
+    },
+    {
+      "id": "PRE-003",
+      "prompt": "I only want to read a folder of papers, make source cards, and compare the closest related work. I am not running experiments.",
+      "expected_profile": "paper-reading",
+      "expected_entrypoint": "discovery-router",
+      "should_not_profiles": ["ml-research", "automation", "global-bootstrap"],
+      "rationale": "Reading-only source intake and paper comparison should not activate experiment or full paper workflows."
+    },
+    {
+      "id": "PRE-004",
+      "prompt": "I want to study an excellent research project and distill its habits, repo structure, and writing patterns into reusable skills.",
+      "expected_profile": "research-distillation",
+      "expected_entrypoint": "discovery-router",
+      "should_not_profiles": ["paper-reading", "ml-research", "automation"],
+      "rationale": "The goal is to extract reusable work patterns and skill proposals, not only summarize sources."
+    },
+    {
+      "id": "PRE-005",
+      "prompt": "I need a Codex-driven automation with a runbook, scheduled checks, rollback steps, and safe handling of credentials.",
+      "expected_profile": "automation",
+      "expected_entrypoint": "project-ops-router",
+      "should_not_profiles": ["ml-research", "paper-reading", "research-distillation"],
+      "rationale": "Runbook-driven automation and rollback belong to the automation profile."
+    },
+    {
+      "id": "PRE-006",
+      "prompt": "This is a generic project. I need durable memory, safe git closeout, docs updates, and sidecar task delegation, but no ML-specific workflow.",
+      "expected_profile": "core-ops",
+      "expected_entrypoint": "project-ops-router",
+      "should_not_profiles": ["ml-research", "paper-reading", "global-bootstrap"],
+      "rationale": "Cross-project operations without ML semantics belong to core-ops once that pack is available."
+    },
+    {
+      "id": "PRE-007",
+      "prompt": "I have a reading group repo where each week we ingest papers, compare methods, and write discussion notes.",
+      "expected_profile": "paper-reading",
+      "expected_entrypoint": "discovery-router",
+      "should_not_profiles": ["research-distillation", "ml-research", "automation"],
+      "rationale": "A reading group needs source and corpus workflows, not full research execution or pattern-to-skill extraction by default."
+    },
+    {
+      "id": "PRE-008",
+      "prompt": "I want to turn repeated lessons from my own agent sessions into general reusable workflows, while keeping private paths and account details out.",
+      "expected_profile": "research-distillation",
+      "expected_entrypoint": "discovery-router",
+      "should_not_profiles": ["paper-reading", "automation", "global-bootstrap"],
+      "rationale": "This is private-to-public workflow distillation with publication boundaries, not ordinary paper reading."
+    }
+  ]
+}

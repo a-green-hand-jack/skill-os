@@ -1,0 +1,214 @@
+{
+  "schema_version": "0.1",
+  "kernel_id": "automation",
+  "owner_repo": "ml-research-skills",
+  "source_paths": [
+    "profiles/profile-index.yaml",
+    "docs/design/skill-matrix.md",
+    "skills/project-ops-router/references/route-table.md",
+    "skills/remote-project-control/SKILL.md",
+    "skills/run-status-monitor/SKILL.md",
+    "scripts/validate_skill_taxonomy.py"
+  ],
+  "profile": {
+    "name": "automation",
+    "status": "draft",
+    "scope": "cross-domain",
+    "future_repo": "automation-skills",
+    "intent": "Operate device, storage, network, and remote-runtime work — SSH/HPC/RunAI coordination, scheduler-backed job probes, credential boundaries, and routine automations — independent of the ML research paper lifecycle."
+  },
+  "routing": {
+    "entrypoints": [
+      "project-ops-router"
+    ],
+    "routers": [
+      "project-ops-router"
+    ],
+    "handoff_policy": "Enter through project-ops-router, then hand off to remote-project-control for SSH/HPC/RunAI work or run-status-monitor for scheduler/process status probes. Depends on core-ops for shared git/memory/docs/sidecar substrate; do not duplicate core-ops skills here."
+  },
+  "install_policy": {
+    "recommended": "project-local",
+    "full_bundle_allowed": false,
+    "notes": "Install alongside core-ops when a folder does remote/runtime/ops work without the full ML research lifecycle (e.g., cluster maintenance, remote experiment monitoring, storage cleanup). Do not auto-install ML lifecycle skills."
+  },
+  "skills": {
+    "required": [
+      "project-ops-router",
+      "remote-project-control",
+      "run-status-monitor"
+    ],
+    "optional": [
+      "token-usage-auditor",
+      "sidecar-task-runner",
+      "research-project-memory"
+    ]
+  },
+  "workflow_contract": {
+    "supported_lanes": [
+      "action",
+      "evidence",
+      "combined",
+      "no-contract"
+    ],
+    "default_lane": "combined",
+    "lane_selection_rule": "Use combined for durable remote ops because mutation should follow state inspection; use action for bounded scheduled tasks, evidence for status audits, and no-contract only for transient read-only probes.",
+    "action_lane": {
+      "mutation_surfaces": [
+        "remote",
+        "scheduler",
+        "credentials",
+        "files",
+        "network"
+      ],
+      "risk_classes": [
+        "read-only",
+        "safe-write",
+        "destructive",
+        "network",
+        "credentialed"
+      ],
+      "required_preflight": [
+        "Detect remote target (SSH host, HPC scheduler, RunAI namespace) and authentication state before any command.",
+        "Read project conventions for remote wrapper scripts and forbidden remote command shapes.",
+        "Classify whether the action is read-only status probe, scheduler submission, or destructive cleanup before executing."
+      ],
+      "forbidden_actions": [
+        "Do not run destructive remote cleanup without explicit approval and a rollback record.",
+        "Do not embed credentials or auth tokens in repo-tracked artifacts.",
+        "Do not copy raw remote SSH output or scheduler dumps into public memory or docs."
+      ],
+      "approval_boundary": "Escalate before destructive remote operations, credential rotation, scheduler-wide kills, network/firewall changes, or any operation that touches shared infrastructure beyond a single user namespace."
+    },
+    "evidence_lane": {
+      "modes": [
+        "none",
+        "light",
+        "standard",
+        "heavy"
+      ],
+      "source_ledger_required": true,
+      "source_types": [
+        "ssh status output",
+        "scheduler queue state",
+        "job logs",
+        "remote process status",
+        "storage usage reports",
+        "network connectivity probes",
+        "status artifacts"
+      ],
+      "confidence_policy": "Treat live remote command output as execution truth and status artifacts as durable summaries; never substitute one for the other when escalating.",
+      "citation_policy": "Cite remote command names, scheduler IDs, and status artifact paths; do not paste raw transcripts into public docs."
+    },
+    "combined_lane": {
+      "evidence_before_action": true,
+      "handoff_artifact": "status artifact under docs/ops/runs/, rollback record, or remote-command transcript summary",
+      "staleness_trigger": "Scheduler state changes, new job submissions, credential rotation, or remote wrapper policy changes."
+    },
+    "no_contract_lane": {
+      "allowed_when": "The probe is read-only, transient, does not write status artifacts or memory, and does not modify remote or local files.",
+      "escalation_trigger": "The task requires scheduler submission, credential access, remote mutation, status artifact persistence, or network changes."
+    }
+  },
+  "validation": {
+    "required_checks": [
+      {
+        "name": "skill sanity",
+        "command": "python3 scripts/validate_skills.py",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "taxonomy, profile, and kernel registry",
+        "command": "uv run scripts/validate_skill_taxonomy.py",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "skill-kernel schema tests",
+        "command": "python3 -m unittest -v tests.test_skill_kernel_schema",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      }
+    ],
+    "acceptance_checks": [
+      "Kernel example references the automation profile and project-ops-router entrypoint.",
+      "Action lane names remote, scheduler, credentialed, and network mutation surfaces with explicit approval boundary.",
+      "No ML paper lifecycle or experiment-design skills are required by default; depends on core-ops for shared substrate."
+    ]
+  },
+  "memory": {
+    "required_reads": [
+      "memory/BRIEFING.md",
+      "memory/project-conventions.md",
+      "memory/hot-results.md"
+    ],
+    "writeback_targets": [
+      "project-memory",
+      "component-memory",
+      "profile-artifacts",
+      "private-memory"
+    ],
+    "privacy_boundary": {
+      "public_safe": [
+        "wrapper policies",
+        "remote command names",
+        "status artifact summaries",
+        "scheduler queue interpretation rules",
+        "repo-relative artifact paths"
+      ],
+      "private_only": [
+        "credentials",
+        "auth tokens",
+        "raw SSH transcripts",
+        "scheduler API tokens",
+        "local cluster paths",
+        "raw remote command output"
+      ],
+      "publication_audit_required_when": "Use memory-publication-auditor before turning private remote-ops lessons, raw transcripts, or local cluster paths into public automation rules."
+    }
+  },
+  "adapters": {
+    "source_of_truth": "kernel",
+    "selection_semantics": {
+      "runtime_expectation": "direct-entrypoint",
+      "selection_contexts": [
+        "Select automation directly for remote-ops, scheduler-status, cluster-maintenance, or storage/network-management work without ML paper lifecycle context.",
+        "Pair automation with core-ops when the folder also needs git, memory, docs, or sidecar substrate.",
+        "Do not require automation to beat the ML research router in a full ML project context; ml-research absorbs automation skills there."
+      ],
+      "delegation_policy": "After selection, delegate to remote-project-control for SSH/HPC/RunAI work, run-status-monitor for scheduler/process probes, or sidecar-task-runner for bounded delegated subtasks. Depend on core-ops for git/memory/docs/sidecar substrate rather than reimplementing it.",
+      "installable_manifest_gate": "Installable manifests should preserve remote/runtime/ops selection before leaf-skill routing and keep ML paper lifecycle skills out of the default route."
+    },
+    "runtimes": [
+      {
+        "runtime": "codex",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "claude-code",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "generic-agent",
+        "status": "future-adapter"
+      }
+    ]
+  },
+  "promotion": {
+    "status": "repo-candidate",
+    "promotion_gates": [
+      "Remote-ops and scheduler-probe skills can be installed without pulling ML paper lifecycle skills.",
+      "Credential boundary, status artifact format, and remote wrapper policy remain coherent after extraction.",
+      "Runtime adapters can be generated without duplicating source logic into Codex or Claude Code metadata.",
+      "Depends-on-core-ops relationship is documented and respected by installers and routers."
+    ],
+    "rejection_checks": [
+      "Do not extract if automation still depends on ML-specific claims, experiment semantics, or paper-writing skills.",
+      "Do not make credentials, auth tokens, or local cluster paths part of public kernel examples.",
+      "Do not split before the core-ops dependency relationship is recorded in profile-index and adapter docs."
+    ]
+  }
+}

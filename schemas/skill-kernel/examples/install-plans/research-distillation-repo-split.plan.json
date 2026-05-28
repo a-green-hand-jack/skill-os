@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1",
+  "plan_id": "research-distillation-repo-split-generic-2026-05-28",
+  "mode": "repo-split-handoff",
+  "profile": "research-distillation",
+  "runtime": "generic-agent",
+  "target_root": "tests/fixtures/install-plans/example-repo-split/skill-kernel-research-distillation",
+  "requested_manifests": [
+    {
+      "runtime": "generic-agent",
+      "kernel_id": "research-distillation-workflow-contract"
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "profile-and-runtime-selected",
+      "status": "passed",
+      "notes": "Splitting the research-distillation profile (kernel id research-distillation-workflow-contract) into a standalone repo; generic-agent adapter is the portable surface."
+    },
+    {
+      "id": "source-of-truth-preserved",
+      "status": "passed",
+      "notes": "Kernel, profile-index entry, and skill files are copied as authoritative sources; workflow-contract artifacts under profiles/research-distillation/ remain in the source repo until a follow-up plan moves them."
+    },
+    {
+      "id": "selection-semantics-preserved",
+      "status": "passed",
+      "notes": "Direct-entrypoint selection semantics are carried over via selection_semantics in the manifest and kernel adapters block."
+    },
+    {
+      "id": "manual-review-recorded",
+      "status": "passed",
+      "notes": "Source inventory, file copy list, and exclusion list reviewed manually before scaffolding the destination repo."
+    },
+    {
+      "id": "validation-plan-recorded",
+      "status": "passed",
+      "notes": "Pre-split: acceptance_checks in source repo. Post-split: re-run exporter, validator, and inventory script against copied kernel in destination repo."
+    },
+    {
+      "id": "privacy-and-publication-audit",
+      "status": "passed",
+      "notes": "Privacy audit at schemas/skill-kernel/repo-split/research-distillation-privacy-audit-2026-05-28.json reports status: passed with zero hits over the proposed split set."
+    },
+    {
+      "id": "no-credential-or-private-path-leakage",
+      "status": "passed",
+      "notes": "Inventory + audit confirm no credential / concrete sidecar / personal-identifier patterns appear in any file the scaffolder would copy."
+    }
+  ],
+  "source_of_truth_paths": [
+    "schemas/skill-kernel/skill-kernel.schema.json",
+    "schemas/skill-kernel/examples/core-ops.kernel.json",
+    "schemas/skill-kernel/examples/paper-reading.kernel.json",
+    "schemas/skill-kernel/examples/research-distillation-workflow-contract.kernel.json",
+    "profiles/profile-index.yaml",
+    "skills",
+    "scripts/export_skill_kernel_adapters.py",
+    "schemas/skill-kernel/runtime-adapter-contracts.json"
+  ],
+  "validation_commands": [
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --check",
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/kernel-installable-manifests",
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/kernel-installable-manifests --exercise-skill-root /tmp/kernel-manifest-exercise",
+    "python3 -m unittest -v tests.test_skill_kernel_schema tests.test_skill_kernel_adapter_export",
+    "uv run scripts/validate_skill_taxonomy.py",
+    "git diff --check"
+  ],
+  "privacy_audit": {
+    "status": "passed",
+    "checked_paths": [
+      "schemas/skill-kernel/examples/research-distillation-workflow-contract.kernel.json",
+      "profiles/profile-index.yaml",
+      "skills"
+    ],
+    "notes": "Programmatic audit at schemas/skill-kernel/repo-split/research-distillation-privacy-audit-2026-05-28.json scans every included file for credential / personal-identifier / concrete sidecar patterns and reports 0 hits."
+  },
+  "rollback": {
+    "snapshot_before_write": true,
+    "rollback_record_path": ".agent/install-plans/research-distillation-repo-split-rollback.json",
+    "restore_strategy": "Record destination repo URL, commit hash before scaffolding, and exact file copy list; on rollback, delete the destination repo (or revert its first commit) and restore the source profile-index entry from the rollback record."
+  },
+  "automation": {
+    "validator_only": true,
+    "writes_during_validation": false,
+    "real_installer_requested": false,
+    "will_touch_global_roots": false,
+    "explicit_user_request_for_global_scope": false
+  },
+  "acknowledged_forbidden_actions": [
+    "automatic-global-install",
+    "adapter-as-source-of-truth",
+    "implicit-full-bundle-install",
+    "unreviewed-repo-split",
+    "credential-or-private-path-copy"
+  ]
+}

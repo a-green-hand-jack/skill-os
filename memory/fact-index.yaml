@@ -1,0 +1,264 @@
+schema: 1
+generated: "2026-05-26"
+project: ml-research-skills
+description: >
+  Machine-readable source of truth for P0/P1 project conventions.
+  Human-readable view: memory/project-conventions.md.
+  Update both together; run memory_bootstrap.py to confirm revision bump.
+
+facts:
+
+  - id: PC-001
+    type: convention
+    priority: P0
+    status: active
+    scope: project
+    owner_skill: research-project-memory
+    source_of_truth: memory/project-conventions.md#PC-001
+    text: >
+      Run scope detection before substantial memory work:
+      `git rev-parse --show-toplevel` and `git rev-parse --git-common-dir`.
+      If they differ, you are in a worktree.
+    applies_to:
+      - memory
+      - worktree
+      - any-skill-that-writes
+    read_triggers:
+      - session-start
+      - before-write
+      - before-memory-update
+    enforcement:
+      required_commands:
+        - "git rev-parse --git-common-dir"
+        - "git rev-parse --show-toplevel"
+
+  - id: PC-002
+    type: convention
+    priority: P0
+    status: active
+    scope: project
+    owner_skill: research-project-memory
+    source_of_truth: memory/project-conventions.md#PC-002
+    text: >
+      Read memory/BRIEFING.md, then memory/project-conventions.md, then
+      memory/hot-results.md before project-root maintenance decisions.
+      Do not load all boards at once.
+    applies_to:
+      - memory
+      - session-start
+      - any-project-decision
+    read_triggers:
+      - session-start
+      - before-plan
+      - before-commit
+    enforcement:
+      required_reads:
+        - memory/BRIEFING.md
+        - memory/project-conventions.md
+
+  - id: PC-003
+    type: convention
+    priority: P0
+    status: active
+    scope: project
+    owner_skill: skill-system-auditor
+    source_of_truth: memory/project-conventions.md#PC-003
+    text: >
+      Run `python3 scripts/validate_skills.py` and `uv run scripts/validate_skill_taxonomy.py`
+      before committing any skill, template, helper, inventory, profile, or memory protocol change.
+    applies_to:
+      - skill-change
+      - commit
+      - template-change
+      - profile-change
+      - memory-protocol-change
+    read_triggers:
+      - before-commit
+      - before-push
+    enforcement:
+      required_commands:
+        - "python3 scripts/validate_skills.py"
+        - "uv run scripts/validate_skill_taxonomy.py"
+      forbidden_if_failing:
+        - git commit
+
+  - id: PC-004
+    type: convention
+    priority: P0
+    status: active
+    scope: project
+    owner_skill: safe-git-ops
+    source_of_truth: memory/project-conventions.md#PC-004
+    text: >
+      Use `project-push /Users/jieke/Projects/project-skills origin main`
+      for routine pushes after safe-git preflight.
+      Never use raw git push variants for routine closeout.
+    applies_to:
+      - git
+      - push
+      - commit-closeout
+    read_triggers:
+      - push
+      - commit
+      - closeout
+    enforcement:
+      allowed_command_patterns:
+        - "^project-push "
+      forbidden_command_patterns:
+        - "\\bgit\\s+push\\b(?!.*project-push)"
+        - "git -C .* push"
+        - "cd .* && git push"
+        - "bash -lc \"git push\""
+
+  - id: PC-005
+    type: convention
+    priority: P0
+    status: active
+    scope: project
+    owner_skill: skill-system-auditor
+    source_of_truth: memory/project-conventions.md#PC-005
+    text: >
+      Keep skills/, README.md, AGENTS.md, CLAUDE.md, memory/, and installed
+      skill copies aligned after any skill behavior change.
+      Reinstall changed skills when routing metadata changes.
+    applies_to:
+      - skill-change
+      - routing-change
+      - maintenance
+    read_triggers:
+      - after-skill-edit
+      - before-push
+    enforcement:
+      required_when_skill_changed:
+        - "python3 scripts/validate_skills.py"
+        - "npx skills add a-green-hand-jack/ml-research-skills -g -a codex claude-code -s <changed-skill> -y"
+
+  - id: PC-006
+    type: convention
+    priority: P1
+    status: active
+    scope: project
+    owner_skill: ml-research-router
+    source_of_truth: memory/project-conventions.md#PC-006
+    text: >
+      Inside initialized ML research projects, when the user describes an ML
+      research workflow but does not know or name the skill, start at
+      ml-research-router. For clear-domain tasks, route through the relevant
+      domain router before guessing leaf skills. The root router uses
+      references/skill-index.md for budget-resilient discovery when leaf
+      descriptions are truncated.
+    applies_to:
+      - routing
+      - skill-selection
+      - skill-discovery
+    read_triggers:
+      - user-does-not-know-skill
+      - no-skill-named
+      - skill-listing-truncated
+      - ambiguous-task
+      - multi-bucket-task
+
+  - id: PC-008
+    type: convention
+    priority: P0
+    status: active
+    scope: project
+    owner_skill: ml-research-bootstrap
+    source_of_truth: memory/project-conventions.md#PC-008
+    text: >
+      Default global installation to ml-research-bootstrap. Install the full ML
+      research bundle only inside initialized ML research projects or for
+      maintainer/debug validation of this skill repo.
+    applies_to:
+      - install
+      - skill-distribution
+      - non-ml-projects
+    read_triggers:
+      - global-install
+      - project-local-install
+      - full-bundle-install
+      - generic-repo
+    enforcement:
+      recommended_global:
+        - "npx skills add a-green-hand-jack/ml-research-skills -g -a codex claude-code -s ml-research-bootstrap -y"
+      project_local_full:
+        - "cd <ML_PROJECT_ROOT> && npx skills add a-green-hand-jack/ml-research-skills"
+
+  - id: PC-009
+    type: convention
+    priority: P1
+    status: active
+    scope: project
+    owner_skill: skill-system-auditor
+    source_of_truth: memory/project-conventions.md#PC-009
+    text: >
+      Treat project profiles as the first-class install and routing boundary for
+      the broader skill-matrix design. Keep profiles/profile-index.yaml
+      agent-neutral, keep tests/profile-routing-evals.json,
+      scripts/score_profile_routing.py, and docs/design/skill-matrix.md
+      aligned, and validate all profile schema fields, skill references,
+      profile eval targets, and the profile-routing harness before closeout.
+    applies_to:
+      - profile
+      - routing
+      - install
+      - skill-distribution
+    read_triggers:
+      - profile-change
+      - skill-matrix-design
+      - install-policy-change
+      - routing-change
+    enforcement:
+      required_commands:
+        - "uv run scripts/validate_skill_taxonomy.py"
+        - "python3 -m unittest -v tests.test_profile_routing_harness"
+
+  - id: PC-010
+    type: convention
+    priority: P1
+    status: active
+    scope: project
+    owner_skill: skill-system-auditor
+    source_of_truth: memory/project-conventions.md#PC-010
+    text: >
+      Register profile-local docs, templates, and examples in
+      profiles/profile-index.yaml under artifacts, keep them under
+      profiles/<profile-name>/, and add a focused asset test when the assets
+      define reusable workflow structure.
+    applies_to:
+      - profile
+      - template-change
+      - validation
+      - skill-matrix-design
+    read_triggers:
+      - profile-artifact-change
+      - template-change
+      - profile-change
+      - before-commit
+    enforcement:
+      required_commands:
+        - "uv run scripts/validate_skill_taxonomy.py"
+        - "python3 -m unittest -v tests.test_research_distillation_assets"
+
+  - id: PC-007
+    type: convention
+    priority: P0
+    status: active
+    scope: project
+    owner_skill: research-project-memory
+    source_of_truth: memory/project-conventions.md#PC-007
+    text: >
+      When adding or materially changing memory/fact-index.yaml or
+      memory/project-conventions.md, increment the revision in
+      memory/memory-revision.json. Enables stale-session detection via
+      `uv run scripts/memory_bootstrap.py --check-stale`.
+    applies_to:
+      - memory
+      - memory-protocol-change
+    read_triggers:
+      - before-commit
+      - after-fact-index-edit
+    enforcement:
+      required_when_changed:
+        - memory/fact-index.yaml
+        - memory/project-conventions.md

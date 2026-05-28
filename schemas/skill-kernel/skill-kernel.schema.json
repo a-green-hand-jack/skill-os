@@ -1,0 +1,548 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/a-green-hand-jack/ml-research-skills/schemas/skill-kernel/skill-kernel.schema.json",
+  "title": "Skill Kernel",
+  "description": "Minimum portable contract for a skill-pack profile before it is adapted to a specific agent runtime.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kernel_id",
+    "owner_repo",
+    "source_paths",
+    "profile",
+    "routing",
+    "install_policy",
+    "skills",
+    "workflow_contract",
+    "validation",
+    "memory",
+    "adapters",
+    "promotion"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^0\\.1$"
+    },
+    "kernel_id": {
+      "$ref": "#/$defs/hyphen_name"
+    },
+    "owner_repo": {
+      "$ref": "#/$defs/non_empty_string"
+    },
+    "source_paths": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/repo_path"
+      },
+      "uniqueItems": true
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "status",
+        "scope",
+        "intent"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/hyphen_name"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "draft",
+            "deprecated"
+          ]
+        },
+        "scope": {
+          "enum": [
+            "global",
+            "project-local",
+            "cross-domain",
+            "private"
+          ]
+        },
+        "future_repo": {
+          "$ref": "#/$defs/hyphen_name"
+        },
+        "intent": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entrypoints",
+        "routers",
+        "handoff_policy"
+      ],
+      "properties": {
+        "entrypoints": {
+          "$ref": "#/$defs/skill_array"
+        },
+        "routers": {
+          "$ref": "#/$defs/skill_array"
+        },
+        "handoff_policy": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "install_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recommended",
+        "full_bundle_allowed"
+      ],
+      "properties": {
+        "recommended": {
+          "enum": [
+            "global",
+            "project-local",
+            "maintainer-debug",
+            "private"
+          ]
+        },
+        "full_bundle_allowed": {
+          "type": "boolean"
+        },
+        "notes": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "skills": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "optional"
+      ],
+      "properties": {
+        "required": {
+          "$ref": "#/$defs/skill_array"
+        },
+        "optional": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hyphen_name"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "workflow_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supported_lanes",
+        "default_lane",
+        "lane_selection_rule",
+        "action_lane",
+        "evidence_lane",
+        "combined_lane",
+        "no_contract_lane"
+      ],
+      "properties": {
+        "supported_lanes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lane"
+          },
+          "minItems": 4,
+          "uniqueItems": true
+        },
+        "default_lane": {
+          "$ref": "#/$defs/lane"
+        },
+        "lane_selection_rule": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "action_lane": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mutation_surfaces",
+            "risk_classes",
+            "required_preflight",
+            "forbidden_actions",
+            "approval_boundary"
+          ],
+          "properties": {
+            "mutation_surfaces": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "files",
+                  "git",
+                  "browser",
+                  "gui",
+                  "remote",
+                  "scheduler",
+                  "package-env",
+                  "cloud-api",
+                  "public-surface",
+                  "credentials"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "risk_classes": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "read-only",
+                  "safe-write",
+                  "destructive",
+                  "network",
+                  "credentialed",
+                  "public-facing"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "required_preflight": {
+              "$ref": "#/$defs/non_empty_string_array"
+            },
+            "forbidden_actions": {
+              "$ref": "#/$defs/non_empty_string_array"
+            },
+            "approval_boundary": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          }
+        },
+        "evidence_lane": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "modes",
+            "source_ledger_required",
+            "source_types",
+            "confidence_policy",
+            "citation_policy"
+          ],
+          "properties": {
+            "modes": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "none",
+                  "light",
+                  "standard",
+                  "heavy"
+                ]
+              },
+              "minItems": 4,
+              "uniqueItems": true
+            },
+            "source_ledger_required": {
+              "type": "boolean"
+            },
+            "source_types": {
+              "$ref": "#/$defs/non_empty_string_array"
+            },
+            "confidence_policy": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "citation_policy": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          }
+        },
+        "combined_lane": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "evidence_before_action",
+            "handoff_artifact",
+            "staleness_trigger"
+          ],
+          "properties": {
+            "evidence_before_action": {
+              "type": "boolean"
+            },
+            "handoff_artifact": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "staleness_trigger": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          }
+        },
+        "no_contract_lane": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "allowed_when",
+            "escalation_trigger"
+          ],
+          "properties": {
+            "allowed_when": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "escalation_trigger": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          }
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_checks",
+        "acceptance_checks"
+      ],
+      "properties": {
+        "required_checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/validation_check"
+          }
+        },
+        "acceptance_checks": {
+          "$ref": "#/$defs/non_empty_string_array"
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_reads",
+        "writeback_targets",
+        "privacy_boundary"
+      ],
+      "properties": {
+        "required_reads": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/repo_path"
+          },
+          "uniqueItems": true
+        },
+        "writeback_targets": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "project-memory",
+              "component-memory",
+              "profile-artifacts",
+              "reference-memory",
+              "private-memory",
+              "no-writeback"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "privacy_boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "public_safe",
+            "private_only",
+            "publication_audit_required_when"
+          ],
+          "properties": {
+            "public_safe": {
+              "$ref": "#/$defs/non_empty_string_array"
+            },
+            "private_only": {
+              "$ref": "#/$defs/non_empty_string_array"
+            },
+            "publication_audit_required_when": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          }
+        }
+      }
+    },
+    "adapters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_of_truth",
+        "runtimes"
+      ],
+      "properties": {
+        "source_of_truth": {
+          "enum": [
+            "kernel",
+            "profile-index",
+            "skill-files"
+          ]
+        },
+        "selection_semantics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "runtime_expectation",
+            "selection_contexts",
+            "delegation_policy",
+            "installable_manifest_gate"
+          ],
+          "properties": {
+            "runtime_expectation": {
+              "enum": [
+                "direct-entrypoint",
+                "profile-first-entrypoint",
+                "substrate-delegator",
+                "schema-only"
+              ]
+            },
+            "selection_contexts": {
+              "$ref": "#/$defs/non_empty_string_array"
+            },
+            "delegation_policy": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "installable_manifest_gate": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          }
+        },
+        "runtimes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "runtime",
+              "status"
+            ],
+            "properties": {
+              "runtime": {
+                "enum": [
+                  "codex",
+                  "claude-code",
+                  "cursor",
+                  "generic-agent"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "supported",
+                  "future-adapter",
+                  "unsupported"
+                ]
+              },
+              "metadata_path": {
+                "$ref": "#/$defs/repo_path"
+              }
+            }
+          }
+        }
+      }
+    },
+    "promotion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "promotion_gates",
+        "rejection_checks"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "schema-only",
+            "profile-local",
+            "skill-candidate",
+            "skill",
+            "repo-candidate"
+          ]
+        },
+        "promotion_gates": {
+          "$ref": "#/$defs/non_empty_string_array"
+        },
+        "rejection_checks": {
+          "$ref": "#/$defs/non_empty_string_array"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "hyphen_name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "lane": {
+      "enum": [
+        "action",
+        "evidence",
+        "combined",
+        "no-contract"
+      ]
+    },
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "non_empty_string_array": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/non_empty_string"
+      }
+    },
+    "repo_path": {
+      "type": "string",
+      "pattern": "^[^/][^\\n]*$"
+    },
+    "skill_array": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/hyphen_name"
+      },
+      "uniqueItems": true
+    },
+    "validation_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "scope",
+        "mutates_files",
+        "required"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "command": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "scope": {
+          "enum": [
+            "repo",
+            "profile",
+            "skill",
+            "memory",
+            "runtime"
+          ]
+        },
+        "mutates_files": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

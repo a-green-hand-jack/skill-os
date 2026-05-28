@@ -1,0 +1,154 @@
+{
+  "schema_version": "0.1",
+  "captured_at": "2026-05-27",
+  "purpose": "Check whether review-gated installable manifests exercised into session-only runtime-like skill roots are visible to Codex and Claude Code prompt surfaces before real install automation or repo splitting.",
+  "manifest_exercise_source": {
+    "command": "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/ml-research-act063-manifests --exercise-skill-root /tmp/ml-research-act063-exercise",
+    "exercise_root": "/tmp/ml-research-act063-exercise",
+    "manifest_root": "/tmp/ml-research-act063-manifests",
+    "exercise_schema_version": "0.1-session-only",
+    "manifest_schema_version": "0.1-prototype",
+    "expected_skills": [
+      "core-ops",
+      "paper-reading",
+      "research-distillation-workflow-contract"
+    ],
+    "source_of_truth": "kernel",
+    "session_only": true,
+    "global_install_modified": false,
+    "safe_to_install_automatically": false
+  },
+  "codex": {
+    "runtime_version": "codex-cli 0.133.0",
+    "staging": {
+      "method": "temporary CODEX_HOME with manifest-exercised Codex skills copied under skills/; existing local auth was reused only for model-route calls and no credentials were recorded",
+      "session_skill_root": "$CODEX_HOME/skills",
+      "global_install_modified": false
+    },
+    "prompt_visibility": {
+      "status": "passed",
+      "shared_repo_root_command": "CODEX_HOME=/tmp/ml-research-act063-codex-home codex debug prompt-input <routing prompt>",
+      "isolated_empty_workdir_command": "HOME=/tmp/ml-research-act063-isolated-home CODEX_HOME=/tmp/ml-research-act063-codex-home codex debug prompt-input <routing prompt>",
+      "visible_session_only_skills": [
+        "core-ops",
+        "paper-reading",
+        "research-distillation-workflow-contract"
+      ],
+      "shared_repo_root_observation": "The temporary session skills appeared as r0 entries while the normal shared user skill root was also visible.",
+      "isolated_empty_workdir_observation": "Only the temporary session skills plus system skills were visible; shared user skill roots and repo AGENTS guidance were not present."
+    },
+    "model_route": {
+      "status": "passed-with-runtime-notes",
+      "network_note": "The first sandboxed Codex exec attempt failed DNS/network access. Network-escalated calls completed after transient WebSocket reconnects.",
+      "tasks": [
+        {
+          "id": "shared-repo-root-profile-first-closeout",
+          "staging": "Temporary CODEX_HOME with session-only manifest-exercised skills, normal shared user skill root, and project AGENTS.md visible.",
+          "prompt_condition": "Explicitly asked for profile-first selection before leaf skills.",
+          "selected_profile_skill": "project-ops-router",
+          "selected_leaf_skills": [
+            "research-project-memory",
+            "update-docs",
+            "safe-git-ops"
+          ],
+          "expected_session_skill": "core-ops",
+          "session_skill_selected": false,
+          "interpretation": "Project-local guidance and mature owner skills still dominate full shared-root maintenance routing; core-ops should not be expected to override them in this setting."
+        },
+        {
+          "id": "isolated-empty-workdir-core-ops-closeout",
+          "staging": "Temporary HOME plus temporary CODEX_HOME in an empty /tmp workdir so only session skills and system skills were visible.",
+          "prompt_condition": "No repo AGENTS.md or shared user skill root.",
+          "selected_profile_skill": "core-ops",
+          "selected_leaf_skills": [
+            "memory-writeback",
+            "docs-validation",
+            "test-execution",
+            "git-commit",
+            "git-push"
+          ],
+          "expected_session_skill": "core-ops",
+          "session_skill_selected": true,
+          "interpretation": "The manifest-exercised core-ops skill works as the profile-level operational entrypoint in an isolated/session-only context."
+        },
+        {
+          "id": "isolated-empty-workdir-paper-reading",
+          "staging": "Temporary HOME plus temporary CODEX_HOME in an empty /tmp workdir.",
+          "prompt_condition": "Reading-only paper/source-card comparison without experiment execution or full paper writing.",
+          "selected_profile_skill": "paper-reading",
+          "selected_leaf_skills": [],
+          "expected_session_skill": "paper-reading",
+          "session_skill_selected": true,
+          "interpretation": "The manifest-exercised paper-reading skill is selected for evidence-heavy reading workflows."
+        },
+        {
+          "id": "isolated-empty-workdir-research-distillation",
+          "staging": "Temporary HOME plus temporary CODEX_HOME in an empty /tmp workdir.",
+          "prompt_condition": "Distill public agent workflow sources into reusable patterns, workflow contracts, and future skill proposals.",
+          "selected_profile_skill": null,
+          "selected_leaf_skills": [
+            "research-distillation-workflow-contract"
+          ],
+          "expected_session_skill": "research-distillation-workflow-contract",
+          "session_skill_selected": true,
+          "interpretation": "Codex selected the manifest-exercised research-distillation workflow-contract surface directly for the matching distillation task."
+        }
+      ]
+    }
+  },
+  "claude_code": {
+    "runtime_version": "Claude Code 2.1.133",
+    "staging": {
+      "method": "session-only --plugin-dir with manifest-exercised Claude Code skills copied under plugin skills/",
+      "plugin_dir": "/tmp/ml-research-act063-claude-plugin",
+      "global_install_modified": false
+    },
+    "plugin_validation": {
+      "command": "claude plugin validate /tmp/ml-research-act063-claude-plugin",
+      "status": "passed-with-warning",
+      "warning": "author metadata omitted in temporary plugin manifest"
+    },
+    "prompt_visibility": {
+      "command": "claude --print --plugin-dir /tmp/ml-research-act063-claude-plugin --debug-file /tmp/ml-research-act063-claude-debug.log <routing prompt>",
+      "status": "passed",
+      "observed_debug_signals": [
+        "Loaded inline plugin from path: ml-research-act063-manifest-exercise",
+        "Loaded 3 skills from plugin ml-research-act063-manifest-exercise default directory",
+        "Skill prompt: showing \"ml-research-act063-manifest-exercise:core-ops\"",
+        "Skill prompt: showing \"ml-research-act063-manifest-exercise:paper-reading\"",
+        "Skill prompt: showing \"ml-research-act063-manifest-exercise:research-distillation-workflow-contract\""
+      ],
+      "visible_session_only_skills": [
+        "core-ops",
+        "paper-reading",
+        "research-distillation-workflow-contract"
+      ]
+    },
+    "bare_plugin_probe": {
+      "command": "claude --bare --print --plugin-dir /tmp/ml-research-act063-claude-plugin --debug-file /tmp/ml-research-act063-claude-bare-debug.log <routing prompt>",
+      "status": "plugin-load-passed-model-route-blocked",
+      "observed_debug_signals": [
+        "[bare] Skipping skill dir discovery (no --add-dir)",
+        "Loaded 3 skills from plugin ml-research-act063-manifest-exercise default directory",
+        "getSkills returning: 0 skill dir commands, 7 plugin skills, 11 bundled skills, 0 builtin plugin skills"
+      ]
+    },
+    "model_route": {
+      "status": "blocked",
+      "blocker": "Local Claude Code CLI returned `Not logged in` / no API key before model inference, after the plugin skills were loaded.",
+      "api_usage": "none"
+    }
+  },
+  "conclusions": [
+    "Manifest-exercised skill directories are visible to Codex and Claude Code prompt surfaces without modifying global installs.",
+    "Codex selects `core-ops` for operational closeout only in an isolated/session-only root without repo AGENTS or mature owner skills; in the full shared repo root it still routes to `project-ops-router`, `research-project-memory`, `update-docs`, and `safe-git-ops`.",
+    "Codex selects `paper-reading` and directly selects `research-distillation-workflow-contract` for matching isolated session-only tasks.",
+    "Claude Code accepts the temporary plugin and shows all three manifest-exercised skills in the skill prompt, but model-choice capture remains blocked by local CLI authentication.",
+    "The installability boundary should remain review-gated and profile-first; real automation should preserve isolated/session-only profile behavior and should not expect `core-ops` to override mature project-local owner skills."
+  ],
+  "next_actions": [
+    "Use this capture as the evidence gate before designing any reviewed install automation or repo split.",
+    "If Claude model-choice evidence becomes necessary, rerun the same session-only plugin capture in an authenticated Claude Code environment.",
+    "Keep automatic global installation disabled until a reviewed install contract specifies target root, profile, source-of-truth, and rollback behavior."
+  ]
+}

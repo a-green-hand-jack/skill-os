@@ -1,0 +1,211 @@
+{
+  "schema_version": "0.1",
+  "kernel_id": "quick-experiment",
+  "owner_repo": "ml-research-skills",
+  "source_paths": [
+    "profiles/profile-index.yaml",
+    "docs/design/skill-matrix.md",
+    "skills/experiment-evidence-router/references/route-table.md",
+    "skills/run-experiment/SKILL.md",
+    "skills/experiment-debugger/SKILL.md",
+    "skills/compute-budget-planner/SKILL.md"
+  ],
+  "profile": {
+    "name": "quick-experiment",
+    "status": "draft",
+    "scope": "cross-domain",
+    "future_repo": "quick-experiment-skills",
+    "intent": "Run lightweight scratchpad experiments — launch a job, watch it, debug crashes, estimate cost — without committing to the full ML research paper lifecycle (no rebuttal / submission / camera-ready / paper-writing apparatus)."
+  },
+  "routing": {
+    "entrypoints": [
+      "experiment-evidence-router"
+    ],
+    "routers": [
+      "experiment-evidence-router"
+    ],
+    "handoff_policy": "Enter through experiment-evidence-router, then hand off to run-experiment, experiment-debugger, compute-budget-planner, or result-diagnosis according to lifecycle stage. Depends on core-ops for git/memory/docs/sidecar substrate and on automation for remote-runtime and scheduler-probe skills; do not duplicate those here."
+  },
+  "install_policy": {
+    "recommended": "project-local",
+    "full_bundle_allowed": false,
+    "notes": "Install alongside core-ops + automation when a folder runs experiments without producing a paper. Common targets: idea-validation scratchpad, baseline reproduction, ad-hoc debugging session, sweep without ablation-rigor commitment. Do not auto-install paper-writing or submission skills."
+  },
+  "skills": {
+    "required": [
+      "experiment-evidence-router",
+      "run-experiment",
+      "experiment-debugger",
+      "compute-budget-planner"
+    ],
+    "optional": [
+      "result-diagnosis",
+      "data-pipeline-manager",
+      "experiment-design-planner",
+      "experiment-report-writer",
+      "research-project-memory"
+    ]
+  },
+  "workflow_contract": {
+    "supported_lanes": [
+      "action",
+      "evidence",
+      "combined",
+      "no-contract"
+    ],
+    "default_lane": "combined",
+    "lane_selection_rule": "Use combined for durable experiment turns because submission should follow design and result interpretation; use action for bounded job submission, evidence for status / debugging audits, and no-contract only for transient read-only probes.",
+    "action_lane": {
+      "mutation_surfaces": [
+        "files",
+        "scheduler",
+        "remote",
+        "package-env"
+      ],
+      "risk_classes": [
+        "read-only",
+        "safe-write",
+        "destructive",
+        "credentialed"
+      ],
+      "required_preflight": [
+        "Detect compute budget envelope and resource availability before submitting any non-trivial job.",
+        "Size a smoke test (<30 min) before any formal run.",
+        "Classify whether the action is exploratory scratchpad (no paper claim attached) or a step toward a real claim — escalate to ml-research if the latter."
+      ],
+      "forbidden_actions": [
+        "Do not promote scratchpad results into paper-facing tables, figures, or claim boards without an explicit lifecycle transition.",
+        "Do not run formal multi-seed sweeps without an experiment-design-planner step first.",
+        "Do not write rebuttal, camera-ready, or submission artifacts from a quick-experiment folder; that requires the full ml-research bundle."
+      ],
+      "approval_boundary": "Escalate before opening a paper writing contract, before committing scratchpad outputs to a public release, or before a sweep exceeds the declared compute budget."
+    },
+    "evidence_lane": {
+      "modes": [
+        "none",
+        "light",
+        "standard",
+        "heavy"
+      ],
+      "source_ledger_required": true,
+      "source_types": [
+        "job logs",
+        "status artifacts",
+        "metric tables",
+        "scratchpad result reports",
+        "compute budget records"
+      ],
+      "confidence_policy": "Treat scratchpad results as exploratory until variance and confounds are addressed; do not phrase one-seed runs as durable claims.",
+      "citation_policy": "Cite job IDs, status artifact paths, and metric tables; do not import scratchpad findings as paper claims without a separate ml-research lifecycle step."
+    },
+    "combined_lane": {
+      "evidence_before_action": true,
+      "handoff_artifact": "status artifact under docs/ops/runs/, scratchpad result report, or compute budget record",
+      "staleness_trigger": "Job state changes, new submission, exhausted compute budget, or transition to a paper-bound experiment."
+    },
+    "no_contract_lane": {
+      "allowed_when": "The probe is read-only, transient, does not submit a job, does not write status artifacts, and does not modify remote scheduler state.",
+      "escalation_trigger": "The task requires job submission, scheduler mutation, credential access, durable result interpretation, or transition into paper lifecycle."
+    }
+  },
+  "validation": {
+    "required_checks": [
+      {
+        "name": "skill sanity",
+        "command": "python3 scripts/validate_skills.py",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "taxonomy, profile, and kernel registry",
+        "command": "uv run scripts/validate_skill_taxonomy.py",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "skill-kernel schema tests",
+        "command": "python3 -m unittest -v tests.test_skill_kernel_schema",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      }
+    ],
+    "acceptance_checks": [
+      "Kernel example references the quick-experiment profile and experiment-evidence-router entrypoint.",
+      "Action lane names scheduler / remote / package-env mutation surfaces with an explicit escalation rule for paper-bound work.",
+      "No paper-writing, submission, camera-ready, or rebuttal skills are required by default; depends on core-ops and automation for shared substrate."
+    ]
+  },
+  "memory": {
+    "required_reads": [
+      "memory/BRIEFING.md",
+      "memory/project-conventions.md",
+      "memory/hot-results.md"
+    ],
+    "writeback_targets": [
+      "project-memory",
+      "component-memory",
+      "profile-artifacts"
+    ],
+    "privacy_boundary": {
+      "public_safe": [
+        "job submission commands",
+        "metric table summaries",
+        "compute budget envelopes",
+        "status artifact summaries",
+        "repo-relative artifact paths"
+      ],
+      "private_only": [
+        "raw scheduler API output",
+        "raw job logs",
+        "credentials",
+        "local cluster paths",
+        "internal sweep configurations"
+      ],
+      "publication_audit_required_when": "Use memory-publication-auditor before turning scratchpad results, raw job logs, or internal sweep configurations into public quick-experiment rules or paper-facing claims."
+    }
+  },
+  "adapters": {
+    "source_of_truth": "kernel",
+    "selection_semantics": {
+      "runtime_expectation": "direct-entrypoint",
+      "selection_contexts": [
+        "Select quick-experiment directly for scratchpad / idea-validation / baseline-reproduction folders without paper-writing context.",
+        "Pair quick-experiment with core-ops and automation; the three together cover the lightweight-experiment work without pulling in the full ml-research bundle.",
+        "Do not require quick-experiment to beat ml-research in a full ML research project; ml-research absorbs quick-experiment skills there and remains the right entrypoint."
+      ],
+      "delegation_policy": "After selection, delegate to experiment-evidence-router, then to run-experiment, experiment-debugger, compute-budget-planner, or result-diagnosis. Depend on core-ops and automation rather than reimplementing git / memory / docs / remote / status-probe behavior.",
+      "installable_manifest_gate": "Installable manifests should preserve scratchpad-experiment selection before leaf-skill routing and keep paper-writing skills out of the default route."
+    },
+    "runtimes": [
+      {
+        "runtime": "codex",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "claude-code",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "generic-agent",
+        "status": "future-adapter"
+      }
+    ]
+  },
+  "promotion": {
+    "status": "repo-candidate",
+    "promotion_gates": [
+      "Scratchpad experiment workflows can run without pulling paper-writing or submission skills.",
+      "Lifecycle boundary between quick-experiment and ml-research is explicit: scratchpad results require an explicit transition before becoming paper claims.",
+      "Runtime adapters can be generated without duplicating source logic into Codex or Claude Code metadata.",
+      "Depends-on relationships (core-ops + automation) are documented and respected by installers and routers."
+    ],
+    "rejection_checks": [
+      "Do not extract if quick-experiment still requires paper-writing or rebuttal skills by default.",
+      "Do not make credentials, raw job logs, or local cluster paths part of public kernel examples.",
+      "Do not split before the depends-on chain to core-ops and automation is recorded in profile-index and adapter docs."
+    ]
+  }
+}

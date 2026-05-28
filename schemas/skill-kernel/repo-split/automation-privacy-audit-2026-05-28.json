@@ -1,0 +1,137 @@
+{
+  "checked_paths": [
+    "schemas/skill-kernel/examples/automation.kernel.json",
+    "docs/design/skill-matrix.md",
+    "profiles/profile-index.yaml",
+    "scripts/validate_skill_taxonomy.py",
+    "skills/research-project-memory/SKILL.md",
+    "skills/research-project-memory/references/claim-lifecycle-protocol.md",
+    "skills/research-project-memory/references/closeout-protocol.md",
+    "skills/research-project-memory/references/consistency-checks.md",
+    "skills/research-project-memory/references/cross-module-handoff-contracts.md",
+    "skills/research-project-memory/references/evidence-provenance-protocol.md",
+    "skills/research-project-memory/references/memory-architecture.md",
+    "skills/research-project-memory/references/object-schemas.md",
+    "skills/research-project-memory/references/paper-source-visibility-protocol.md",
+    "skills/research-project-memory/references/phase-dashboard-protocol.md",
+    "skills/research-project-memory/references/toolchain-gates-protocol.md",
+    "skills/research-project-memory/references/writeback-protocol.md",
+    "skills/research-project-memory/templates/component/component-status.md",
+    "skills/research-project-memory/templates/component/worktree-index.md",
+    "skills/research-project-memory/templates/component/worktree-status.md",
+    "skills/research-project-memory/templates/memory/BRIEFING.md",
+    "skills/research-project-memory/templates/memory/action-board.md",
+    "skills/research-project-memory/templates/memory/claim-board.md",
+    "skills/research-project-memory/templates/memory/component-index.yaml",
+    "skills/research-project-memory/templates/memory/current-status.md",
+    "skills/research-project-memory/templates/memory/decision-log.md",
+    "skills/research-project-memory/templates/memory/evidence-board.md",
+    "skills/research-project-memory/templates/memory/handoff-board.md",
+    "skills/research-project-memory/templates/memory/hot-results.md",
+    "skills/research-project-memory/templates/memory/phase-dashboard.md",
+    "skills/research-project-memory/templates/memory/project-conventions.md",
+    "skills/research-project-memory/templates/memory/project.yaml",
+    "skills/research-project-memory/templates/memory/provenance-board.md",
+    "skills/research-project-memory/templates/memory/risk-board.md",
+    "skills/research-project-memory/templates/memory/source-visibility-board.md",
+    "skills/sidecar-task-runner/SKILL.md",
+    "skills/sidecar-task-runner/agents/openai.yaml",
+    "skills/sidecar-task-runner/scripts/prepare_sidecar_task.py",
+    "skills/sidecar-task-runner/templates/personalization-scanner.md",
+    "skills/sidecar-task-runner/templates/precommit-classifier.md",
+    "skills/token-usage-auditor/SKILL.md",
+    "skills/token-usage-auditor/agents/openai.yaml",
+    "skills/token-usage-auditor/references/data-model.md",
+    "skills/token-usage-auditor/scripts/collect_token_usage.py",
+    "skills/project-ops-router/SKILL.md",
+    "skills/project-ops-router/references/contrastive-routing.md",
+    "skills/project-ops-router/references/route-table.md",
+    "skills/remote-project-control/SKILL.md",
+    "skills/remote-project-control/references/memory-model.md",
+    "skills/remote-project-control/references/operations.md",
+    "skills/remote-project-control/references/ssh-command-wrappers.md",
+    "skills/remote-project-control/scripts/remote-bash",
+    "skills/remote-project-control/scripts/remote-cmd",
+    "skills/remote-project-control/template_manifest.json",
+    "skills/remote-project-control/templates/agent/local-overrides.yaml",
+    "skills/remote-project-control/templates/docs/ops/current-status.md",
+    "skills/remote-project-control/templates/docs/ops/decision-log.md",
+    "skills/remote-project-control/templates/infra/remote-projects.yaml",
+    "skills/run-status-monitor/SKILL.md",
+    "skills/run-status-monitor/agents/openai.yaml",
+    "skills/run-status-monitor/references/backends.md",
+    "skills/run-status-monitor/scripts/run_status_probe.py",
+    "skills/run-status-monitor/templates/runs.yaml",
+    "skills/run-status-monitor/templates/status.md"
+  ],
+  "hits": [],
+  "ignored_paths": [
+    ".agent/sidecars/",
+    "memory/",
+    "*/.DS_Store",
+    "*/__pycache__/*"
+  ],
+  "inventory_path": "schemas/skill-kernel/repo-split/automation-source-inventory-2026-05-28.json",
+  "kernel_id": "automation",
+  "patterns_scanned": [
+    {
+      "id": "absolute-mac-home",
+      "pattern": "/Users/[A-Za-z0-9._-]+/",
+      "rationale": "Absolute macOS home paths leak machine-specific user identity."
+    },
+    {
+      "id": "absolute-linux-home",
+      "pattern": "/home/[A-Za-z0-9._-]+/",
+      "rationale": "Absolute Linux home paths leak machine-specific user identity."
+    },
+    {
+      "id": "sidecar-private-path",
+      "pattern": "\\.agent/sidecars/[A-Za-z0-9][A-Za-z0-9._-]{4,}/",
+      "rationale": "Concrete sidecar artifact paths (with a real task id segment) are local-only and must not enter a public split repo. Placeholder forms like `.agent/sidecars/<task-id>/` are documented conventions and are not matched by this pattern."
+    },
+    {
+      "id": "ssh-private-key-block",
+      "pattern": "-----BEGIN [A-Z ]*PRIVATE KEY-----",
+      "rationale": "Private key material must never be copied."
+    },
+    {
+      "id": "openssh-public-marker",
+      "pattern": "ssh-(rsa|ed25519|ecdsa) AAAA",
+      "rationale": "Hard-coded public keys often indicate accidental key material copy."
+    },
+    {
+      "id": "aws-access-key-id",
+      "pattern": "AKIA[0-9A-Z]{16}",
+      "rationale": "AWS access key IDs are credentials."
+    },
+    {
+      "id": "github-token-prefix",
+      "pattern": "gh[pousr]_[A-Za-z0-9]{20,}",
+      "rationale": "GitHub personal access / OAuth tokens are credentials."
+    },
+    {
+      "id": "anthropic-api-key",
+      "pattern": "sk-ant-[A-Za-z0-9_-]{20,}",
+      "rationale": "Anthropic API keys are credentials."
+    },
+    {
+      "id": "user-email-kaust",
+      "pattern": "[A-Za-z0-9._%+-]+@kaust\\.edu\\.sa",
+      "rationale": "Personal institutional email leaks user identity."
+    },
+    {
+      "id": "user-email-northwestern",
+      "pattern": "[A-Za-z0-9._%+-]+@northwestern\\.edu",
+      "rationale": "Personal institutional email leaks user identity."
+    },
+    {
+      "id": "user-email-epfl",
+      "pattern": "[A-Za-z0-9._%+-]+@epfl\\.ch",
+      "rationale": "Personal institutional email leaks user identity."
+    }
+  ],
+  "profile": "automation",
+  "schema_version": "0.1",
+  "status": "passed",
+  "summary": "no credential / private-path / personal-identifier hits in the proposed split set"
+}

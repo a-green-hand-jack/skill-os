@@ -1,0 +1,272 @@
+{
+  "acceptance_checks": [
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --check",
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/kernel-installable-manifests",
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/kernel-installable-manifests --exercise-skill-root /tmp/kernel-manifest-exercise",
+    "python3 -m unittest -v tests.test_skill_kernel_schema tests.test_skill_kernel_adapter_export",
+    "uv run scripts/validate_skill_taxonomy.py",
+    "git diff --check"
+  ],
+  "authoritative_sources": [
+    {
+      "id": "skill-kernel",
+      "may_be_overridden_by_runtime_adapter": false,
+      "paths": [
+        "schemas/skill-kernel/skill-kernel.schema.json",
+        "schemas/skill-kernel/examples/core-ops.kernel.json",
+        "schemas/skill-kernel/examples/paper-reading.kernel.json",
+        "schemas/skill-kernel/examples/research-distillation-workflow-contract.kernel.json"
+      ],
+      "role": "Portable profile, routing, lane, validation, memory, adapter, and promotion contract."
+    },
+    {
+      "id": "profile-index",
+      "may_be_overridden_by_runtime_adapter": false,
+      "paths": [
+        "profiles/profile-index.yaml"
+      ],
+      "role": "Profile membership, install policy, future repo boundary, and profile-local artifact registry."
+    },
+    {
+      "id": "skill-files",
+      "may_be_overridden_by_runtime_adapter": false,
+      "paths": [
+        "skills"
+      ],
+      "role": "Current implemented skill instructions, helpers, templates, and bundled references."
+    },
+    {
+      "id": "adapter-manifests",
+      "may_be_overridden_by_runtime_adapter": false,
+      "paths": [
+        "scripts/export_skill_kernel_adapters.py",
+        "schemas/skill-kernel/runtime-adapter-contracts.json"
+      ],
+      "role": "Generated runtime-facing candidate files for review only; never the workflow source of truth."
+    }
+  ],
+  "automation_policy": {
+    "may_write_global_roots_without_explicit_user_request": false,
+    "may_write_runtime_files_without_review": false,
+    "next_safe_step": "Build a non-mutating install-plan validator that consumes this contract and generated manifest indexes before any runtime write command is added.",
+    "real_installer_authorized": false
+  },
+  "contract_id": "reviewed-install-repo-split-handoff-2026-05-27",
+  "derived_from": {
+    "decision_ids": [
+      "DEC-050"
+    ],
+    "evidence_ids": [
+      "EVD-048"
+    ],
+    "exercise_schema_version": "0.1-session-only",
+    "manifest_schema_version": "0.1-prototype",
+    "runtime_capture": "schemas/skill-kernel/manifest-exercise-runtime-capture-2026-05-27.json"
+  },
+  "forbidden_actions": [
+    {
+      "id": "automatic-global-install",
+      "rule": "Do not write generated profile skills into global runtime roots automatically."
+    },
+    {
+      "id": "adapter-as-source-of-truth",
+      "rule": "Do not edit generated adapter manifests or runtime SKILL.md files as the only copy of workflow logic."
+    },
+    {
+      "id": "implicit-full-bundle-install",
+      "rule": "Do not install the full ml-research bundle globally as a side effect of profile or repo-split work."
+    },
+    {
+      "id": "unreviewed-repo-split",
+      "rule": "Do not scaffold or push a split repo until file inventory, visibility audit, validation, and compatibility checks are recorded."
+    },
+    {
+      "id": "credential-or-private-path-copy",
+      "rule": "Do not copy auth files, raw debug logs, local sidecar artifacts, or private memory paths into public contract, manifest, or split-repo outputs."
+    }
+  ],
+  "implementation_status": "contract-only",
+  "next_actions": [
+    "ACT-065: Implement a non-mutating install-plan validator that reads this handoff contract and a generated manifest index, then reports whether a requested install or repo split would pass the review gates.",
+    "Keep real runtime writes disabled until an install plan is reviewed and the validator has focused tests.",
+    "For repo splitting, start with a source inventory and publication audit for core-ops before creating any destination repository."
+  ],
+  "review_gates": [
+    {
+      "blocks_install_when": "The plan uses an implicit root, a home-directory shortcut, or an inferred runtime.",
+      "id": "target-root-declared",
+      "summary": "The runtime, target root, and write scope are named before any plan can be accepted."
+    },
+    {
+      "blocks_install_when": "The plan tries to install every generated manifest without explaining the profile boundary.",
+      "id": "profile-and-runtime-selected",
+      "summary": "The profile, kernel id, runtime, and install mode are selected explicitly."
+    },
+    {
+      "blocks_install_when": "A generated adapter file contains behavior not traceable to kernel, profile, or skill sources.",
+      "id": "source-of-truth-preserved",
+      "summary": "Kernels, profile-index, and skill files remain authoritative; generated manifests and runtime files are derived artifacts."
+    },
+    {
+      "blocks_install_when": "The plan expects core-ops to override mature owner skills in a full shared root.",
+      "id": "selection-semantics-preserved",
+      "summary": "Runtime installation preserves kernel selection_semantics, especially core-ops profile-first behavior and full-root delegation."
+    },
+    {
+      "blocks_install_when": "The plan writes generated profile packs into ~/.codex, ~/.agents, or ~/.claude roots by default.",
+      "id": "global-root-policy-checked",
+      "summary": "Global roots are touched only for global-bootstrap or explicit maintainer/debug requests."
+    },
+    {
+      "blocks_install_when": "The plan relies on safe_to_install_automatically or skips manual review.",
+      "id": "manual-review-recorded",
+      "summary": "A human-readable review record exists before the first real write."
+    },
+    {
+      "blocks_install_when": "The target files may be overwritten but no snapshot or restore strategy is listed.",
+      "id": "rollback-plan-recorded",
+      "summary": "The plan records how to restore previous runtime files or undo repo scaffolding."
+    },
+    {
+      "blocks_install_when": "The plan does not name focused tests, adapter smoke checks, or taxonomy validation.",
+      "id": "validation-plan-recorded",
+      "summary": "The plan lists non-mutating checks before write and post-write checks after install or split."
+    },
+    {
+      "blocks_install_when": "The plan copies local auth paths, raw session logs, private memories, or unsanitized sidecar artifacts.",
+      "id": "privacy-and-publication-audit",
+      "summary": "Private paths, credentials, raw logs, and unpublished user memory are excluded before public repo split or global install."
+    },
+    {
+      "blocks_install_when": "The generated or copied files contain tokens, auth paths, local private memory paths, or raw debug logs.",
+      "id": "no-credential-or-private-path-leakage",
+      "summary": "Runtime files and manifests must not embed credentials or machine-specific private paths."
+    }
+  ],
+  "rollback_policy": {
+    "restore_strategy": "Before real install or repo split, record target paths, previous file hashes or copy source, generated source manifest, and exact restore or delete steps in a review artifact.",
+    "rollback_record_required": true,
+    "snapshot_before_write": true
+  },
+  "runtime_requirements": {
+    "claude-code": {
+      "real_install_status": "Not authorized by this contract.",
+      "required_surface": "SKILL.md frontmatter with name and description under a plugin or skill root.",
+      "session_only_status": "Temporary plugin loaded exercised skills and showed them in the skill prompt; model-choice capture was auth-blocked.",
+      "support_status": "observed-session-only-prompt-surface"
+    },
+    "codex": {
+      "real_install_status": "Not authorized by this contract.",
+      "required_surface": "SKILL.md frontmatter with name and description under a runtime skill root.",
+      "session_only_status": "Manifest-exercised roots were visible and selected in isolated contexts.",
+      "support_status": "observed-session-only-and-model-route"
+    },
+    "cursor": {
+      "real_install_status": "Not authorized by this contract.",
+      "required_surface": "SKILL.md-style runtime directory contract is unobserved.",
+      "session_only_status": "Not captured.",
+      "support_status": "draft-runtime-contract-only"
+    },
+    "generic-agent": {
+      "real_install_status": "Not authorized by this contract.",
+      "required_surface": "SKILL.md-style directory with optional interface metadata when supported.",
+      "session_only_status": "Generated only, not runtime-captured.",
+      "support_status": "portable-fallback"
+    }
+  },
+  "schema_version": "0.1",
+  "scope": "Defines the review boundary before any generated adapter manifest is installed into a real runtime skill root or any profile pack is split into a separate repository.",
+  "selection_semantics_policy": {
+    "core_ops_policy": "core-ops is a profile-first entrypoint for isolated/profile-first installs and may delegate to mature owner skills when a full shared root is visible.",
+    "full_root_delegation_policy": "A real install plan must not treat session-only core-ops selection as proof that core-ops should override project-local routers or owner skills in the ml-research-skills maintenance repo.",
+    "must_preserve_kernel_selection_semantics": true
+  },
+  "status": "superseded",
+  "superseded_at": "2026-05-28",
+  "superseded_by": "reviewed-install-repo-split-handoff-2026-05-28",
+  "target_modes": [
+    {
+      "allowed_now": true,
+      "id": "session-only-exercise",
+      "may_touch_global_roots": false,
+      "output_contract": "Must write manifest-exercise-summary.json with session_only true and global_install_modified false.",
+      "required_review_gates": [
+        "target-root-declared",
+        "source-of-truth-preserved",
+        "selection-semantics-preserved",
+        "global-root-policy-checked",
+        "validation-plan-recorded"
+      ],
+      "status": "allowed-currently",
+      "target_root_policy": "Temporary roots under /tmp or another explicit session-local root; must refuse known global skill roots."
+    },
+    {
+      "allowed_now": false,
+      "id": "project-local-profile-install",
+      "may_touch_global_roots": false,
+      "output_contract": "A reviewed install plan must list every file to be written, every source file it was generated from, and the rollback record path before any write happens.",
+      "required_review_gates": [
+        "target-root-declared",
+        "profile-and-runtime-selected",
+        "source-of-truth-preserved",
+        "selection-semantics-preserved",
+        "manual-review-recorded",
+        "rollback-plan-recorded",
+        "validation-plan-recorded",
+        "privacy-and-publication-audit"
+      ],
+      "status": "requires-reviewed-plan",
+      "target_root_policy": "An initialized project root or runtime-specific project skill root must be declared; profile install_policy must allow project-local use."
+    },
+    {
+      "allowed_now": false,
+      "id": "global-bootstrap-install",
+      "may_touch_global_roots": true,
+      "output_contract": "Global bootstrap installs must name the exact skill subset, runtime targets, and reason for global scope.",
+      "required_review_gates": [
+        "profile-and-runtime-selected",
+        "source-of-truth-preserved",
+        "global-root-policy-checked",
+        "manual-review-recorded",
+        "rollback-plan-recorded"
+      ],
+      "status": "manual-existing-command-only",
+      "target_root_policy": "Only the thin global-bootstrap profile may be installed globally by default; use the existing npx skills command, not a generated manifest installer."
+    },
+    {
+      "allowed_now": false,
+      "id": "maintainer-debug-global-install",
+      "may_touch_global_roots": true,
+      "output_contract": "The install plan must prove why project-local install is insufficient and how to restore the previous global skill state.",
+      "required_review_gates": [
+        "target-root-declared",
+        "profile-and-runtime-selected",
+        "source-of-truth-preserved",
+        "global-root-policy-checked",
+        "manual-review-recorded",
+        "rollback-plan-recorded",
+        "validation-plan-recorded",
+        "privacy-and-publication-audit"
+      ],
+      "status": "requires-explicit-user-request",
+      "target_root_policy": "Full-bundle or profile-pack global installs are maintainer/debug only and require explicit user approval plus rollback."
+    },
+    {
+      "allowed_now": false,
+      "id": "repo-split-handoff",
+      "may_touch_global_roots": false,
+      "output_contract": "The split handoff must list files to copy, files to exclude, profile-index changes, install commands, and compatibility tests for the source and destination repos.",
+      "required_review_gates": [
+        "profile-and-runtime-selected",
+        "source-of-truth-preserved",
+        "selection-semantics-preserved",
+        "manual-review-recorded",
+        "validation-plan-recorded",
+        "privacy-and-publication-audit",
+        "no-credential-or-private-path-leakage"
+      ],
+      "status": "design-only-until-reviewed-plan",
+      "target_root_policy": "A destination repo name, profile boundary, source inventory, public/private visibility audit, and validation plan must be declared before scaffolding."
+    }
+  ]
+}

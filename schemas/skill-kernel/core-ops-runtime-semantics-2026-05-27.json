@@ -1,0 +1,61 @@
+{
+  "schema_version": "0.1",
+  "captured_at": "2026-05-27",
+  "purpose": "Resolve ACT-060 by checking whether core-ops should be treated as a direct entrypoint, a profile-first entrypoint, or a substrate/delegator before installable adapter manifests exist.",
+  "preview_source": {
+    "command": "python3 scripts/export_skill_kernel_adapters.py --runtime all --preview-skill-root /tmp/ml-research-act060-preview.g2l4QG",
+    "kernel": "schemas/skill-kernel/examples/core-ops.kernel.json",
+    "installable": false,
+    "source_of_truth": "kernel"
+  },
+  "codex": {
+    "runtime_version": "codex-cli 0.133.0",
+    "network_note": "Model-route calls completed after transient WebSocket certificate/reconnect errors in the local network path.",
+    "scenarios": [
+      {
+        "id": "full-shared-root",
+        "staging": "Temporary CODEX_HOME with preview core-ops plus the normal shared user skill root visible.",
+        "prompt_condition": "No explicit profile-first instruction.",
+        "selected_profile_skill": null,
+        "selected_leaf_skills": [
+          "project-ops-router",
+          "safe-git-ops",
+          "update-docs"
+        ],
+        "core_ops_selected": false,
+        "interpretation": "When mature owner skills are visible and no profile-first instruction is given, Codex routes the maintenance task directly to leaf/router skills rather than to core-ops."
+      },
+      {
+        "id": "profile-first-hinted",
+        "staging": "Temporary CODEX_HOME with preview skills plus the normal shared user skill root visible.",
+        "prompt_condition": "The prompt explicitly requires profile-first selection before leaf skills.",
+        "selected_profile_skill": "core-ops",
+        "selected_leaf_skills": [
+          "safe-git-ops",
+          "update-docs",
+          "project-ops-router"
+        ],
+        "core_ops_selected": true,
+        "interpretation": "Codex can use core-ops as the profile-level entrypoint when the runtime or prompt enforces a profile-first selection step."
+      },
+      {
+        "id": "isolated-core-ops-root",
+        "staging": "Temporary HOME without the shared user skill root plus temporary CODEX_HOME containing only the preview core-ops skill and built-in system skills.",
+        "prompt_condition": "No explicit profile-first instruction.",
+        "selected_profile_skill": "core-ops",
+        "selected_leaf_skills": [],
+        "core_ops_selected": true,
+        "interpretation": "Codex selects core-ops directly when it is the only installed operational profile surface."
+      }
+    ]
+  },
+  "decision": {
+    "core_ops_runtime_expectation": "profile-first-entrypoint",
+    "delegation_policy": "Core-ops should be selected in isolated or profile-first contexts, but should not be forced to override mature owner skills when the full shared skill root is visible.",
+    "installable_manifest_gate": "Installable adapters may proceed only if manifests preserve profile-first or isolated-profile activation semantics and document full-root delegation to mature owner skills."
+  },
+  "next_actions": [
+    "Encode selection_semantics in skill-kernel adapter metadata.",
+    "Prototype installable adapter manifests after the selection_semantics field is validated."
+  ]
+}

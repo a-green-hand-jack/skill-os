@@ -1,0 +1,164 @@
+# Stable project memory for ml-research-skills.
+
+project:
+  name: ml-research-skills
+  root: /Users/jieke/Projects/project-skills
+  repository: a-green-hand-jack/ml-research-skills
+  purpose: Agent skill system for the full ML research lifecycle.
+  research_question: "How can artifact-driven skills, memory, tool use, and sidecar agents make ML research projects faster, better coordinated, and easier to audit?"
+  positioning: "A public skill collection plus durable project memory for planning, execution, review, writing, release, and lifecycle telemetry."
+  target_milestone: "Profile-driven skill matrix with portable domain packs and self-maintaining project memory."
+  status: active
+  certainty: observed
+  last_updated: "2026-05-27"
+
+memory_policy:
+  commit_shared_memory: true
+  keep_private_paths_out_of_shared_memory: true
+  require_certainty_labels: true
+  reverify_volatile_state_before_action: true
+  local_sidecar_artifacts_private: true
+  notes: "Public memory records durable workflow decisions and artifact pointers. Raw agent transcripts, local machine facts, and private session logs stay outside the repo."
+
+toolchain_gates:
+  policy: risk-tiered-check-before-mutate
+  commit_paths:
+    fast:
+      use_for: "small text, README, paper prose, memory, comments, or narrow docs changes"
+      commands:
+        - "git status --short"
+        - "git diff --check"
+        - "git diff --cached --stat"
+      reinstall: false
+    skill:
+      use_for: "installed skill behavior without executable helper script changes"
+      commands:
+        - "python3 scripts/validate_skills.py"
+        - "git diff --check"
+      reinstall: "target changed skills when practical"
+    code:
+      use_for: "helper scripts, tests, validators, executable templates, lockfiles, or CI/config changes"
+      commands:
+        - "python3 scripts/validate_skills.py"
+        - "git diff --check"
+        - "targeted unit tests for changed helpers"
+      reinstall: "target changed skills after push when skill behavior changes"
+    risk:
+      use_for: "merge/rebase/cherry-pick, branch/worktree ambiguity, destructive actions, release/tag/publication, security/privacy-sensitive changes, or unclear broad scope"
+      commands:
+        - "full safe-git-ops orientation and failure-mode protocol"
+      reinstall: "case-specific"
+  root:
+    skill_schema_check:
+      command: "python3 scripts/validate_skills.py"
+      required: true
+      mutates_files: false
+    python_smoke_tests:
+      command: "python3 -m unittest -v tests.test_sidecar_task_runner tests.test_token_usage_auditor tests.test_code_reviewer_bundle tests.test_init_python_project_scaffold tests.test_latex_layout_issue_bundler tests.test_reference_library_manager tests.test_memory_publication_auditor tests.test_run_status_monitor tests.test_remote_command_wrappers tests.test_project_push_wrapper tests.test_skill_kernel_schema tests.test_skill_kernel_adapter_export tests.test_install_handoff_plan_validator"
+      required: true
+      mutates_files: false
+    whitespace_check:
+      command: "git diff --check"
+      required: true
+      mutates_files: false
+    install_check:
+      command: "npx skills add a-green-hand-jack/ml-research-skills -g -a codex claude-code -s <changed-skill> -y"
+      required_after_skill_changes: true
+      mutates_files: true
+  docs:
+    inventory_sync:
+      required: true
+      surfaces:
+        - README.md
+        - AGENTS.md
+        - CLAUDE.md
+        - asset/README.md
+  sidecar:
+    default_model: gpt-5.3-codex-spark
+    default_sandbox: read-only
+    artifact_root: .agent/sidecars
+    commit_sidecar_artifacts: false
+    precommit_classifier:
+      preset: precommit-classifier
+      purpose: "classify current diff as Fast Path, Skill Path, Code Path, or Risk Path and recommend minimal validation/reinstall scope"
+    personalization_scanner:
+      preset: personalization-scanner
+      purpose: "scan sanitized trajectories, sidecar artifacts, diffs, and memory for reusable preferences without asking the user or copying raw logs"
+
+github_project:
+  enabled: false
+  sync_policy: none
+
+components:
+  root_docs:
+    path: .
+    owns:
+      - README.md
+      - AGENTS.md
+      - CLAUDE.md
+      - docs/design/
+      - asset/
+    status: active
+  skills:
+    path: skills
+    owns:
+      - skill instructions
+      - agents/openai.yaml metadata
+      - scripts and templates bundled with skills
+    status: active
+  validation:
+    path: tests
+    owns:
+      - smoke tests for skill helper scripts
+      - repository validator coverage
+      - profile and skill routing eval fixtures
+      - profile-routing scoring harness tests
+      - profile-local artifact tests
+      - install-plan validator tests
+    status: active
+  profiles:
+    path: profiles
+    owns:
+      - agent-neutral project profile registry
+      - skill-pack extraction boundaries
+      - profile install and routing policy
+      - profile-local docs, templates, and examples before repo extraction
+    status: active
+  schemas:
+    path: schemas
+    owns:
+      - portable skill-kernel schema
+      - cross-repo kernel examples
+      - adapter-neutral profile/runtime metadata contracts
+      - preview runtime-like skill fixtures
+      - review-gated installable manifest prototypes
+      - session-only manifest exercise roots
+      - manifest-exercise runtime capture artifacts
+      - reviewed install and repo-split handoff contracts
+      - non-mutating install-plan schema and validator
+      - runtime trigger capture artifacts for preview adapters
+      - runtime selection semantics for profile-first adapters
+    status: active
+  memory:
+    path: memory
+    owns:
+      - project status
+      - decisions
+      - claims
+      - evidence
+      - risks
+      - actions
+      - provenance
+      - phase dashboard
+    status: active
+
+id_counters:
+  claim: 26
+  evidence: 50
+  risk: 24
+  action: 66
+  decision: 51
+  provenance: 39
+  handoff: 5
+  visibility: 1
+  gate: 4

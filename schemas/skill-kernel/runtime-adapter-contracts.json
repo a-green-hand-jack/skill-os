@@ -1,0 +1,250 @@
+{
+  "schema_version": "0.1",
+  "source_basis": [
+    {
+      "runtime": "codex",
+      "certainty": "observed-local-install",
+      "observed_at": "2026-05-26",
+      "evidence": [
+        "~/.codex/skills/<skill-name>/SKILL.md",
+        "~/.agents/skills/<skill-name>/SKILL.md",
+        "Codex system skill-creator describes SKILL.md frontmatter name/description as the trigger surface"
+      ]
+    },
+    {
+      "runtime": "claude-code",
+      "certainty": "observed-local-install",
+      "observed_at": "2026-05-26",
+      "evidence": [
+        "~/.claude/skills/<skill-name>/SKILL.md",
+        "Existing Claude Code skill installs use SKILL.md frontmatter and optional bundled resources"
+      ]
+    },
+    {
+      "runtime": "openai-interface",
+      "certainty": "repo-convention",
+      "observed_at": "2026-05-26",
+      "evidence": [
+        "skills/*/agents/openai.yaml uses interface.display_name, interface.short_description, and interface.default_prompt"
+      ]
+    },
+    {
+      "runtime": "codex",
+      "certainty": "observed-runtime-prompt",
+      "observed_at": "2026-05-27",
+      "evidence": [
+        "schemas/skill-kernel/runtime-trigger-capture-2026-05-27.json records Codex prompt visibility for generated preview skills and model-route selection for paper-reading and research-distillation"
+      ]
+    },
+    {
+      "runtime": "claude-code",
+      "certainty": "observed-runtime-prompt",
+      "observed_at": "2026-05-27",
+      "evidence": [
+        "schemas/skill-kernel/runtime-trigger-capture-2026-05-27.json records Claude Code session-only plugin validation and skill prompt visibility; model-choice capture was blocked by local login state"
+      ]
+    },
+    {
+      "runtime": "codex",
+      "certainty": "observed-runtime-selection-semantics",
+      "observed_at": "2026-05-27",
+      "evidence": [
+        "schemas/skill-kernel/core-ops-runtime-semantics-2026-05-27.json records that core-ops is selected in isolated or explicit profile-first contexts, but delegates to mature owner skills in a full shared skill root"
+      ]
+    },
+    {
+      "runtime": "codex",
+      "certainty": "observed-manifest-exercise-runtime-prompt",
+      "observed_at": "2026-05-27",
+      "evidence": [
+        "schemas/skill-kernel/manifest-exercise-runtime-capture-2026-05-27.json records Codex prompt visibility and model-route selection from session-only manifest-exercised roots"
+      ]
+    },
+    {
+      "runtime": "claude-code",
+      "certainty": "observed-manifest-exercise-runtime-prompt",
+      "observed_at": "2026-05-27",
+      "evidence": [
+        "schemas/skill-kernel/manifest-exercise-runtime-capture-2026-05-27.json records Claude Code session-only plugin validation and skill prompt visibility for manifest-exercised roots; model-choice capture was blocked by local login state"
+      ]
+    }
+  ],
+  "field_classes": {
+    "runtime_mappable": [
+      "kernel.kernel_id -> SKILL.md frontmatter.name",
+      "profile.intent -> SKILL.md frontmatter.description",
+      "profile.name -> runtime_projection.profile_name",
+      "routing.entrypoints -> runtime_projection.routing_hints.entrypoints",
+      "skills.required -> runtime_projection.routing_hints.required_skills",
+      "adapters.selection_semantics -> runtime_projection.routing_hints.selection_semantics"
+    ],
+    "docs_only": [
+      "workflow",
+      "validation",
+      "memory",
+      "promotion",
+      "install_policy",
+      "kernel.source_paths"
+    ],
+    "never_authoritative_in_adapter": [
+      "workflow logic",
+      "memory writeback policy",
+      "validation gate definitions",
+      "private paths or credentials"
+    ]
+  },
+  "contracts": {
+    "codex": {
+      "contract_id": "codex-skill-directory-v0",
+      "support_level": "observed-local-install",
+      "skill_roots": [
+        "~/.codex/skills/<skill-name>",
+        "~/.agents/skills/<skill-name>"
+      ],
+      "required_files": [
+        "SKILL.md"
+      ],
+      "frontmatter": {
+        "required": [
+          "name",
+          "description"
+        ],
+        "optional": [
+          "allowed-tools",
+          "argument-hint",
+          "metadata"
+        ],
+        "name_pattern": "^[a-z0-9-]+$",
+        "description_max_chars": 500
+      },
+      "optional_files": [
+        "agents/openai.yaml",
+        "scripts/",
+        "references/",
+        "templates/",
+        "assets/"
+      ],
+      "interface_metadata": {
+        "path": "agents/openai.yaml",
+        "support": "optional-openai-interface",
+        "required_fields": [
+          "interface.display_name",
+          "interface.short_description"
+        ],
+        "optional_fields": [
+          "interface.default_prompt"
+        ]
+      }
+    },
+    "claude-code": {
+      "contract_id": "claude-code-skill-directory-v0",
+      "support_level": "observed-local-install",
+      "skill_roots": [
+        "~/.claude/skills/<skill-name>"
+      ],
+      "required_files": [
+        "SKILL.md"
+      ],
+      "frontmatter": {
+        "required": [
+          "name",
+          "description"
+        ],
+        "optional": [
+          "allowed-tools",
+          "argument-hint",
+          "metadata"
+        ],
+        "name_pattern": "^[a-z0-9-]+$",
+        "description_max_chars": 500
+      },
+      "optional_files": [
+        "scripts/",
+        "references/",
+        "templates/",
+        "assets/"
+      ],
+      "interface_metadata": {
+        "path": "agents/openai.yaml",
+        "support": "not-observed-for-claude-code",
+        "required_fields": [],
+        "optional_fields": []
+      }
+    },
+    "cursor": {
+      "contract_id": "cursor-skill-directory-v0-draft",
+      "support_level": "not-observed-draft",
+      "skill_roots": [
+        "<cursor-skill-root>/<skill-name>"
+      ],
+      "required_files": [
+        "SKILL.md"
+      ],
+      "frontmatter": {
+        "required": [
+          "name",
+          "description"
+        ],
+        "optional": [
+          "allowed-tools",
+          "argument-hint",
+          "metadata"
+        ],
+        "name_pattern": "^[a-z0-9-]+$",
+        "description_max_chars": 500
+      },
+      "optional_files": [
+        "scripts/",
+        "references/",
+        "templates/",
+        "assets/"
+      ],
+      "interface_metadata": {
+        "path": "agents/openai.yaml",
+        "support": "not-observed",
+        "required_fields": [],
+        "optional_fields": []
+      }
+    },
+    "generic-agent": {
+      "contract_id": "generic-agent-skill-directory-v0",
+      "support_level": "portable-fallback",
+      "skill_roots": [
+        "<skill-root>/<skill-name>"
+      ],
+      "required_files": [
+        "SKILL.md"
+      ],
+      "frontmatter": {
+        "required": [
+          "name",
+          "description"
+        ],
+        "optional": [
+          "allowed-tools",
+          "argument-hint",
+          "metadata"
+        ],
+        "name_pattern": "^[a-z0-9-]+$",
+        "description_max_chars": 500
+      },
+      "optional_files": [
+        "scripts/",
+        "references/",
+        "templates/",
+        "assets/"
+      ],
+      "interface_metadata": {
+        "path": "agents/openai.yaml",
+        "support": "optional-if-runtime-supports-interface-metadata",
+        "required_fields": [
+          "interface.display_name",
+          "interface.short_description"
+        ],
+        "optional_fields": [
+          "interface.default_prompt"
+        ]
+      }
+    }
+  }
+}

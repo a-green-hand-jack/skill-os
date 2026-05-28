@@ -1,0 +1,108 @@
+{
+  "schema_version": "0.1",
+  "captured_at": "2026-05-27",
+  "purpose": "Check whether generated preview SKILL.md fixtures are visible to real Codex and Claude Code runtime prompt surfaces before installable adapter manifests exist.",
+  "preview_source": {
+    "command": "python3 scripts/export_skill_kernel_adapters.py --runtime all --preview-skill-root /tmp/ml-research-act059-preview",
+    "expected_skills": [
+      "core-ops",
+      "paper-reading",
+      "research-distillation-workflow-contract"
+    ],
+    "installable": false,
+    "source_of_truth": "kernel"
+  },
+  "codex": {
+    "runtime_version": "codex-cli 0.133.0",
+    "staging": {
+      "method": "temporary CODEX_HOME with preview skills copied under skills/",
+      "global_install_modified": false
+    },
+    "prompt_visibility": {
+      "command": "CODEX_HOME=/tmp/ml-research-act059-codex-home codex debug prompt-input <routing prompt>",
+      "status": "passed",
+      "observed_skill_root": "$CODEX_HOME/skills",
+      "visible_preview_skills": [
+        "core-ops",
+        "paper-reading",
+        "research-distillation-workflow-contract"
+      ]
+    },
+    "model_route": {
+      "status": "partially-passed",
+      "network_note": "The first Codex exec attempt failed under sandboxed DNS; rerun with approved network escalation completed after transient reconnects.",
+      "tasks": [
+        {
+          "task": "safe project maintenance with memory, docs validation, and commit closeout",
+          "selected_skills": [
+            "project-ops-router",
+            "safe-git-ops",
+            "update-docs"
+          ],
+          "expected_preview_skill": "core-ops",
+          "preview_skill_selected": false,
+          "interpretation": "core-ops was prompt-visible, but the model chose mature leaf/utility skills when the shared full skill root was also available."
+        },
+        {
+          "task": "reading-only literature/source intake without experiments",
+          "selected_skills": [
+            "paper-reading"
+          ],
+          "expected_preview_skill": "paper-reading",
+          "preview_skill_selected": true
+        },
+        {
+          "task": "distill public agent workflow sources into reusable workflow contracts and future skill proposals",
+          "selected_skills": [
+            "research-distillation-workflow-contract"
+          ],
+          "expected_preview_skill": "research-distillation-workflow-contract",
+          "preview_skill_selected": true
+        }
+      ]
+    }
+  },
+  "claude_code": {
+    "runtime_version": "Claude Code 2.1.133",
+    "staging": {
+      "method": "session-only --plugin-dir with preview skills under plugin skills/",
+      "global_install_modified": false
+    },
+    "plugin_validation": {
+      "command": "claude plugin validate /tmp/ml-research-act059-claude-plugin",
+      "status": "passed-with-warning",
+      "warning": "author metadata omitted in temporary plugin manifest"
+    },
+    "prompt_visibility": {
+      "command": "claude --print --plugin-dir /tmp/ml-research-act059-claude-plugin --debug-file /tmp/ml-research-act059-claude-debug.log <routing prompt>",
+      "status": "passed",
+      "observed_debug_signals": [
+        "Loaded inline plugin from path: ml-research-act059-preview",
+        "Loaded 3 skills from plugin ml-research-act059-preview default directory",
+        "Skill prompt: showing \"ml-research-act059-preview:research-distillation-workflow-contract\"",
+        "Skill prompt: showing \"ml-research-act059-preview:paper-reading\"",
+        "Skill prompt: showing \"ml-research-act059-preview:core-ops\""
+      ],
+      "visible_preview_skills": [
+        "core-ops",
+        "paper-reading",
+        "research-distillation-workflow-contract"
+      ]
+    },
+    "model_route": {
+      "status": "blocked",
+      "blocker": "Local Claude Code CLI returned `Not logged in` before model inference, after the plugin and skill prompt were built.",
+      "api_usage": "none"
+    }
+  },
+  "conclusions": [
+    "Generated preview skill directories are structurally accepted by Codex and Claude Code prompt surfaces without modifying global installs.",
+    "Codex selected the paper-reading and research-distillation preview skills for matching profile-level tasks.",
+    "Codex did not select core-ops for a general maintenance prompt when mature leaf skills were also visible; installable core-ops adapters need either profile-first isolation or a stronger entrypoint/routing contract.",
+    "Claude Code prompt visibility is confirmed through plugin debug logs, but auth-enabled model-choice capture remains a separate follow-up."
+  ],
+  "next_actions": [
+    "Do not create installable adapter manifests until core-ops selection semantics are resolved.",
+    "If Claude model-choice evidence is needed, rerun the same session-only plugin capture in an authenticated Claude Code environment."
+  ]
+}

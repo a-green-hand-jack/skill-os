@@ -1,0 +1,224 @@
+{
+  "schema_version": "0.1",
+  "kernel_id": "core-ops",
+  "owner_repo": "ml-research-skills",
+  "source_paths": [
+    "profiles/profile-index.yaml",
+    "docs/design/skill-matrix.md",
+    "skills/project-ops-router/references/route-table.md",
+    "skills/safe-git-ops/SKILL.md",
+    "skills/research-project-memory/SKILL.md",
+    "scripts/validate_skill_taxonomy.py"
+  ],
+  "profile": {
+    "name": "core-ops",
+    "status": "draft",
+    "scope": "cross-domain",
+    "future_repo": "core-ops-skills",
+    "intent": "Provide the shared operational substrate for memory, git closeout, docs, sidecars, validation, workspaces, and safe project maintenance across project types."
+  },
+  "routing": {
+    "entrypoints": [
+      "project-ops-router"
+    ],
+    "routers": [
+      "project-ops-router"
+    ],
+    "handoff_policy": "Enter through project-ops-router, then hand off to mature owner skills such as safe-git-ops, research-project-memory, update-docs, sidecar-task-runner, or work-timeline-planner. Remote-runtime and scheduler-probe work belongs to the sibling `automation` profile and should not be duplicated here."
+  },
+  "install_policy": {
+    "recommended": "project-local",
+    "full_bundle_allowed": false,
+    "notes": "Core operations should be available across many project types, but full ML research lifecycle skills should not be pulled in by default."
+  },
+  "skills": {
+    "required": [
+      "project-ops-router",
+      "research-project-memory",
+      "safe-git-ops",
+      "update-docs",
+      "skill-system-auditor",
+      "sidecar-task-runner"
+    ],
+    "optional": [
+      "token-usage-auditor",
+      "work-timeline-planner",
+      "code-reviewer",
+      "new-workspace",
+      "add-git-tag",
+      "memory-publication-auditor"
+    ]
+  },
+  "workflow_contract": {
+    "supported_lanes": [
+      "action",
+      "evidence",
+      "combined",
+      "no-contract"
+    ],
+    "default_lane": "combined",
+    "lane_selection_rule": "Use combined for most durable ops because mutation should follow state inspection; use action for bounded known writes, evidence for audits, and no-contract only for transient read-only answers.",
+    "action_lane": {
+      "mutation_surfaces": [
+        "files",
+        "git",
+        "remote",
+        "scheduler",
+        "package-env",
+        "public-surface",
+        "credentials"
+      ],
+      "risk_classes": [
+        "read-only",
+        "safe-write",
+        "destructive",
+        "network",
+        "credentialed",
+        "public-facing"
+      ],
+      "required_preflight": [
+        "Detect repository scope, worktree status, and dirty state before writes.",
+        "Read project conventions for wrappers and forbidden command shapes.",
+        "Classify the closeout path before validation, commit, push, or release actions."
+      ],
+      "forbidden_actions": [
+        "Do not run destructive Git operations without explicit approval.",
+        "Do not push with raw git push when a project-push wrapper is required.",
+        "Do not publish private memory, credentials, raw logs, or local machine facts into public docs."
+      ],
+      "approval_boundary": "Escalate before destructive recovery, force push, credential or environment changes, public release, branch deletion, or broad unrelated cleanup."
+    },
+    "evidence_lane": {
+      "modes": [
+        "none",
+        "light",
+        "standard",
+        "heavy"
+      ],
+      "source_ledger_required": true,
+      "source_types": [
+        "git status",
+        "memory boards",
+        "profile registry",
+        "validator output",
+        "sidecar artifacts",
+        "remote status artifacts",
+        "docs and README surfaces"
+      ],
+      "confidence_policy": "Treat live command output as execution truth and memory as coordination context; write only durable summaries back to memory.",
+      "citation_policy": "Cite repo-local paths and command names; avoid copying raw logs or private session transcripts into public artifacts."
+    },
+    "combined_lane": {
+      "evidence_before_action": true,
+      "handoff_artifact": "preflight summary, validation result, commit hash, status artifact, or memory update",
+      "staleness_trigger": "Dirty state changes, branch divergence, wrapper policy changes, failing validators, or new sidecar/remote output."
+    },
+    "no_contract_lane": {
+      "allowed_when": "The task is read-only, transient, and does not change files, memory, Git state, remotes, or public surfaces.",
+      "escalation_trigger": "The task requires mutation, credentialed access, durable memory, public output, or a remote/network operation."
+    }
+  },
+  "validation": {
+    "required_checks": [
+      {
+        "name": "skill sanity",
+        "command": "python3 scripts/validate_skills.py",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "taxonomy, profile, and kernel registry",
+        "command": "uv run scripts/validate_skill_taxonomy.py",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "skill-kernel schema tests",
+        "command": "python3 -m unittest -v tests.test_skill_kernel_schema",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      }
+    ],
+    "acceptance_checks": [
+      "Kernel example references real core-ops profile skills and router.",
+      "Action and combined lanes name mutation, wrapper, approval, and rollback boundaries.",
+      "Memory writeback distinguishes durable summaries from private or raw operational logs."
+    ]
+  },
+  "memory": {
+    "required_reads": [
+      "memory/BRIEFING.md",
+      "memory/project-conventions.md",
+      "memory/hot-results.md"
+    ],
+    "writeback_targets": [
+      "project-memory",
+      "component-memory",
+      "profile-artifacts",
+      "private-memory"
+    ],
+    "privacy_boundary": {
+      "public_safe": [
+        "wrapper policies",
+        "validation commands",
+        "durable memory IDs",
+        "repo-relative artifact paths"
+      ],
+      "private_only": [
+        "credentials",
+        "raw SSH output",
+        "raw session transcripts",
+        "local-only paths",
+        "private sidecar artifacts"
+      ],
+      "publication_audit_required_when": "Use memory-publication-auditor before turning private operational lessons, logs, or local memories into public core-ops rules."
+    }
+  },
+  "adapters": {
+    "source_of_truth": "kernel",
+    "selection_semantics": {
+      "runtime_expectation": "profile-first-entrypoint",
+      "selection_contexts": [
+        "Select core-ops directly when it is installed as the only operational profile entrypoint.",
+        "Select core-ops when a runtime or prompt explicitly asks for profile-first routing.",
+        "Do not require core-ops to beat mature leaf or router skills when a full shared skill root is also visible."
+      ],
+      "delegation_policy": "In a full shared skill root, core-ops may act as a substrate and allow project-ops-router, safe-git-ops, update-docs, research-project-memory, or other mature owner skills to be selected directly.",
+      "installable_manifest_gate": "Installable manifests must preserve profile-first or isolated-profile activation semantics; prompt visibility alone is not sufficient evidence that core-ops should override mature leaf skills."
+    },
+    "runtimes": [
+      {
+        "runtime": "codex",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "claude-code",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "cursor",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "generic-agent",
+        "status": "future-adapter"
+      }
+    ]
+  },
+  "promotion": {
+    "status": "repo-candidate",
+    "promotion_gates": [
+      "Core operations can be installed without pulling ML-specific lifecycle skills.",
+      "Project memory, Git closeout, docs, sidecar, validation, and remote wrappers remain coherent after extraction.",
+      "Runtime adapters can be generated without duplicating source logic in Codex or Claude Code metadata."
+    ],
+    "rejection_checks": [
+      "Do not extract if core-ops still depends on ML-specific claims or experiment semantics.",
+      "Do not make project-private paths or credentials part of public kernel examples.",
+      "Do not split before profile registry, validators, and docs agree on install boundaries."
+    ]
+  }
+}

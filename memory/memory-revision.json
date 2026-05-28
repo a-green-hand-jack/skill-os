@@ -1,0 +1,12 @@
+{
+  "_comment": "Increment revision whenever BRIEFING.md, fact-index.yaml, project-conventions.md, or hot-results.md changes materially. Agents use this to detect stale sessions.",
+  "revision": 32,
+  "updated_at": "2026-05-27T12:40:07+08:00",
+  "changelog": "Add non-mutating install-plan validator",
+  "file_hashes": {
+    "BRIEFING.md": "volatile",
+    "fact-index.yaml": "2026-05-26",
+    "project-conventions.md": "2026-05-26",
+    "hot-results.md": "volatile"
+  }
+}

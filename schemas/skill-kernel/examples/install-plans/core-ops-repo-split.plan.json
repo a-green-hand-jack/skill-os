@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1",
+  "plan_id": "core-ops-repo-split-generic-2026-05-27",
+  "mode": "repo-split-handoff",
+  "profile": "core-ops",
+  "runtime": "generic-agent",
+  "target_root": "tests/fixtures/install-plans/example-repo-split/skill-kernel-core-ops",
+  "requested_manifests": [
+    {
+      "runtime": "generic-agent",
+      "kernel_id": "core-ops"
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "profile-and-runtime-selected",
+      "status": "passed",
+      "notes": "Splitting the core-ops profile into a standalone repo; generic-agent adapter is the portable surface and runtime-specific adapters are re-generated downstream."
+    },
+    {
+      "id": "source-of-truth-preserved",
+      "status": "passed",
+      "notes": "core-ops kernel, profile-index entry, and skill files are copied as authoritative sources; generated manifests remain derived artifacts in the destination repo."
+    },
+    {
+      "id": "selection-semantics-preserved",
+      "status": "passed",
+      "notes": "profile-first entrypoint and full-root delegation semantics are carried over via selection_semantics in the manifest and the kernel adapters block."
+    },
+    {
+      "id": "manual-review-recorded",
+      "status": "passed",
+      "notes": "Source inventory, file copy list, and exclusion list reviewed manually before scaffolding the destination repo."
+    },
+    {
+      "id": "validation-plan-recorded",
+      "status": "passed",
+      "notes": "Pre-split: acceptance_checks in source repo. Post-split: re-run exporter and validator against copied kernel in destination repo plus compatibility test that source repo still passes after removal."
+    },
+    {
+      "id": "privacy-and-publication-audit",
+      "status": "passed",
+      "notes": "Audited core-ops kernel, profile-index, and skill bodies for credentials, raw logs, private memory paths, and machine-specific user paths; only public agent-neutral metadata present."
+    },
+    {
+      "id": "no-credential-or-private-path-leakage",
+      "status": "passed",
+      "notes": "Grepped destination file copy list for token, secret, ~/Projects, .agent/sidecars, and raw debug log patterns; none found."
+    }
+  ],
+  "source_of_truth_paths": [
+    "schemas/skill-kernel/skill-kernel.schema.json",
+    "schemas/skill-kernel/examples/core-ops.kernel.json",
+    "schemas/skill-kernel/examples/paper-reading.kernel.json",
+    "schemas/skill-kernel/examples/research-distillation-workflow-contract.kernel.json",
+    "profiles/profile-index.yaml",
+    "skills",
+    "scripts/export_skill_kernel_adapters.py",
+    "schemas/skill-kernel/runtime-adapter-contracts.json"
+  ],
+  "validation_commands": [
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --check",
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/kernel-installable-manifests",
+    "python3 scripts/export_skill_kernel_adapters.py --runtime all --installable-manifest-root /tmp/kernel-installable-manifests --exercise-skill-root /tmp/kernel-manifest-exercise",
+    "python3 -m unittest -v tests.test_skill_kernel_schema tests.test_skill_kernel_adapter_export",
+    "uv run scripts/validate_skill_taxonomy.py",
+    "git diff --check"
+  ],
+  "privacy_audit": {
+    "status": "passed",
+    "checked_paths": [
+      "schemas/skill-kernel/examples/core-ops.kernel.json",
+      "profiles/profile-index.yaml",
+      "skills"
+    ],
+    "notes": "Verified that no skill body, kernel field, or profile-index entry references private memory paths, credentials, or local machine user paths before the public destination repo is scaffolded."
+  },
+  "rollback": {
+    "snapshot_before_write": true,
+    "rollback_record_path": ".agent/install-plans/core-ops-repo-split-rollback.json",
+    "restore_strategy": "Record destination repo URL, commit hash before scaffolding, and exact file copy list; on rollback, delete the destination repo (or revert its first commit) and restore the source profile-index entry from the rollback record."
+  },
+  "automation": {
+    "validator_only": true,
+    "writes_during_validation": false,
+    "real_installer_requested": false,
+    "will_touch_global_roots": false,
+    "explicit_user_request_for_global_scope": false
+  },
+  "acknowledged_forbidden_actions": [
+    "automatic-global-install",
+    "adapter-as-source-of-truth",
+    "implicit-full-bundle-install",
+    "unreviewed-repo-split",
+    "credential-or-private-path-copy"
+  ]
+}

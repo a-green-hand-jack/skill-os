@@ -1,0 +1,336 @@
+schema_version: "0.1"
+generated_at: "2026-05-26"
+description: >
+  Project-profile registry for the ml-research-skills repo. Profiles are
+  agent-neutral install and routing bundles; they should be portable across
+  Codex, Claude Code, and future code-agent runtimes through thin adapters.
+
+design_principles:
+  - Profile first, skill list second.
+  - Keep global installs thin; domain packs should be project-local.
+  - Keep reusable workflow knowledge in Markdown, YAML, scripts, and templates.
+  - Treat agent-specific files as adapters, not the source of truth.
+  - Promote repeated use into skills through lessons, conventions, validators, and routing evals.
+
+repo_matrix:
+  skill-kernel:
+    status: proposed
+    role: >
+      Agent-neutral schema, profile manifest rules, validators, memory contracts,
+      routing eval conventions, runtime adapters, and reviewed install/repo-split
+      handoff contracts.
+    schema_path: schemas/skill-kernel/skill-kernel.schema.json
+    handoff_contract_schema_path: schemas/skill-kernel/install-handoff-contract.schema.json
+    handoff_contract_path: schemas/skill-kernel/install-handoff-contract-2026-05-28.json
+    superseded_handoff_contract_path: schemas/skill-kernel/install-handoff-contract-2026-05-27.json
+    install_plan_schema_path: schemas/skill-kernel/install-plan.schema.json
+    example_paths:
+      - schemas/skill-kernel/examples/core-ops.kernel.json
+      - schemas/skill-kernel/examples/paper-reading.kernel.json
+      - schemas/skill-kernel/examples/automation.kernel.json
+      - schemas/skill-kernel/examples/quick-experiment.kernel.json
+      - schemas/skill-kernel/examples/research-distillation-workflow-contract.kernel.json
+  core-ops-skills:
+    status: active
+    github_url: https://github.com/a-green-hand-jack/core-ops-skills
+    role: >
+      Cross-project operational substrate such as memory, git closeout, artifact
+      hygiene, environment boundaries, sidecars, validation, and docs updates.
+  ml-research-skills:
+    status: active
+    github_url: https://github.com/a-green-hand-jack/ml-research-skills
+    role: >
+      Domain pack for AI PhD and ML research workflows from idea through
+      paper, experiments, rebuttal, artifacts, and release. Currently also
+      hosts the full skill source-of-truth pending Phase B2 slim.
+  paper-reading-skills:
+    status: active
+    github_url: https://github.com/a-green-hand-jack/paper-reading-skills
+    role: >
+      Focused paper, source, corpus, and note-reading workflows that can serve
+      reading-only projects without activating the full ML research lifecycle.
+  research-distillation-skills:
+    status: active
+    github_url: https://github.com/a-green-hand-jack/research-distillation-skills
+    role: >
+      Distill excellent papers, projects, people, courses, and workflows into
+      source cards, pattern cards, and reusable skill proposals.
+  automation-skills:
+    status: active
+    github_url: https://github.com/a-green-hand-jack/automation-skills
+    role: >
+      Device, storage, network, and remote-runtime ops — SSH/HPC/RunAI
+      coordination, scheduler probes, runbooks, credential boundaries.
+  quick-experiment-skills:
+    status: active
+    github_url: https://github.com/a-green-hand-jack/quick-experiment-skills
+    role: >
+      Lightweight scratchpad experiments — launch, monitor, debug, estimate
+      cost — without committing to the full ML paper lifecycle.
+  skill-os:
+    status: active
+    github_url: https://github.com/a-green-hand-jack/skill-os
+    role: >
+      Hub / framework repo. Holds kernel schema, install/repo-split handoff
+      contract, validators, scaffolder, installer, registry of the matrix.
+      Source of truth for the OS-level rules across all profile-pack repos.
+  private-overlays:
+    status: private
+    role: >
+      Local or personal memory, paths, accounts, preferences, and unpublished
+      project facts. Never publish directly into public skill packs.
+
+profiles:
+  global-bootstrap:
+    status: active
+    scope: global
+    intent: >
+      Minimal global entry point for deciding whether this ML research pack
+      belongs in the current project.
+    entrypoints:
+      - ml-research-bootstrap
+    skills:
+      required:
+        - ml-research-bootstrap
+      optional:
+        - project-init
+    install_policy:
+      recommended: global
+      full_bundle_allowed: false
+      notes: >
+        Use for generic agent runtimes. It may initialize or enable an ML
+        research project, but should not activate the full lifecycle bundle in
+        ordinary non-ML repositories.
+
+  core-ops:
+    status: draft
+    scope: cross-domain
+    future_repo: core-ops-skills
+    intent: >
+      Reusable operational substrate shared by research, reading, automation,
+      and future project types. Owns git, memory, docs, sidecar, validation,
+      and workspaces. Does not own remote-runtime or scheduler-probe skills —
+      those belong to the sibling automation profile.
+    entrypoints:
+      - project-ops-router
+    routers:
+      - project-ops-router
+    skills:
+      required:
+        - project-ops-router
+        - research-project-memory
+        - safe-git-ops
+        - update-docs
+        - skill-system-auditor
+        - sidecar-task-runner
+      optional:
+        - token-usage-auditor
+        - work-timeline-planner
+        - code-reviewer
+        - new-workspace
+        - add-git-tag
+        - memory-publication-auditor
+    install_policy:
+      recommended: project-local
+      full_bundle_allowed: false
+      notes: >
+        Candidate extraction target. Keep ML-specific claims and experiment
+        semantics out when this becomes an independent pack.
+
+  paper-reading:
+    status: draft
+    scope: project-local
+    future_repo: paper-reading-skills
+    intent: >
+      Read papers, source bundles, notes, and small corpora without activating
+      experiment execution or full paper-writing workflows.
+    entrypoints:
+      - discovery-router
+    routers:
+      - discovery-router
+    skills:
+      required:
+        - discovery-router
+        - reference-library-manager
+        - reference-reading-summarizer
+        - reference-project-synthesizer
+        - reference-corpus-analyzer
+        - literature-review-sprint
+      optional:
+        - citation-coverage-audit
+        - research-project-memory
+        - related-work-positioning-writer
+        - paper-writing-memory-manager
+        - advisor-update-writer
+    install_policy:
+      recommended: project-local
+      full_bundle_allowed: false
+      notes: >
+        Useful for reading-only projects, reading groups, or focused source
+        surveys before a full ML project exists.
+
+  research-distillation:
+    status: draft
+    scope: project-local
+    future_repo: research-distillation-skills
+    intent: >
+      Distill exemplary papers, projects, people, public talks, or workflows
+      into reusable patterns and eventually new skills.
+    entrypoints:
+      - discovery-router
+    routers:
+      - discovery-router
+    skills:
+      required:
+        - discovery-router
+        - reference-library-manager
+        - reference-reading-summarizer
+        - reference-project-synthesizer
+        - reference-corpus-analyzer
+        - literature-review-sprint
+        - memory-publication-auditor
+        - skill-system-auditor
+        - personalization-memory
+      optional:
+        - sidecar-task-runner
+        - paper-writing-assistant
+        - advisor-update-writer
+        - work-timeline-planner
+    install_policy:
+      recommended: project-local
+      full_bundle_allowed: false
+    artifacts:
+      docs:
+        - profiles/research-distillation/README.md
+      templates:
+        - profiles/research-distillation/templates/distillation-run.md
+        - profiles/research-distillation/templates/pattern-card.md
+        - profiles/research-distillation/templates/skill-proposal.md
+        - profiles/research-distillation/templates/workflow-contract.md
+      examples:
+        - profiles/research-distillation/examples/pattern-card-source-to-evidence.md
+        - profiles/research-distillation/examples/skill-proposal-source-card-practice.md
+        - profiles/research-distillation/examples/agent-workflow-contract-planner-proposal.md
+        - profiles/research-distillation/examples/workflow-contract-routing-evals.json
+        - profiles/research-distillation/examples/workflow-contract-trials/automation-validated-profile-closeout.md
+        - profiles/research-distillation/examples/workflow-contract-trials/research-distillation-agent-rl-promotion.md
+        - profiles/research-distillation/examples/workflow-contract-trials/assessment.md
+        - profiles/research-distillation/examples/ui-tars-1-5/distillation-run.md
+        - profiles/research-distillation/examples/ui-tars-1-5/pattern-card-thought-action-contract.md
+        - profiles/research-distillation/examples/ui-tars-1-5/pattern-card-trajectory-reflection-loop.md
+        - profiles/research-distillation/examples/ui-tars-1-5/skill-proposal-agent-action-contract-reviewer.md
+        - profiles/research-distillation/examples/tongyi-deep-research/distillation-run.md
+        - profiles/research-distillation/examples/tongyi-deep-research/pattern-card-search-agent-training-ladder.md
+        - profiles/research-distillation/examples/tongyi-deep-research/pattern-card-heavy-light-agent-mode-split.md
+        - profiles/research-distillation/examples/tongyi-deep-research/skill-proposal-deep-research-agent-evaluator.md
+        - profiles/research-distillation/examples/tongyi-deep-research/comparison-ui-tars-vs-tongyi-deep-research.md
+    gaps:
+      - Cross-source comparator for people, projects, papers, and courses.
+
+  automation:
+    status: draft
+    scope: cross-domain
+    future_repo: automation-skills
+    depends_on:
+      - core-ops
+    intent: >
+      Device, storage, network, and remote-runtime work — SSH/HPC/RunAI
+      coordination, scheduler-backed job probes, credential boundaries, and
+      routine automations — independent of the ML research paper lifecycle.
+      Depends on core-ops for shared git/memory/docs/sidecar substrate.
+    entrypoints:
+      - project-ops-router
+    routers:
+      - project-ops-router
+    skills:
+      required:
+        - project-ops-router
+        - remote-project-control
+        - run-status-monitor
+      optional:
+        - token-usage-auditor
+        - sidecar-task-runner
+        - research-project-memory
+    install_policy:
+      recommended: project-local
+      full_bundle_allowed: false
+      notes: >
+        Install alongside core-ops. Common targets: cluster maintenance,
+        remote experiment monitoring, storage cleanup, network probes.
+    gaps:
+      - Credential and environment-variable boundary skill.
+      - Storage layout and artifact-retention skill.
+      - Scheduled automation runbook and rollback skill.
+
+  quick-experiment:
+    status: draft
+    scope: cross-domain
+    future_repo: quick-experiment-skills
+    depends_on:
+      - core-ops
+      - automation
+    intent: >
+      Run lightweight scratchpad experiments — launch a job, watch it, debug
+      crashes, estimate cost — without committing to the full ML research
+      paper lifecycle. Depends on core-ops for substrate and on automation
+      for remote-runtime and scheduler-probe skills.
+    entrypoints:
+      - experiment-evidence-router
+    routers:
+      - experiment-evidence-router
+    skills:
+      required:
+        - experiment-evidence-router
+        - run-experiment
+        - experiment-debugger
+        - compute-budget-planner
+      optional:
+        - result-diagnosis
+        - data-pipeline-manager
+        - experiment-design-planner
+        - experiment-report-writer
+        - research-project-memory
+    install_policy:
+      recommended: project-local
+      full_bundle_allowed: false
+      notes: >
+        Install alongside core-ops + automation. Common targets:
+        idea-validation scratchpad, baseline reproduction, ad-hoc debugging
+        session, sweep without ablation-rigor commitment.
+    gaps:
+      - Lightweight result-table builder that does not require paper-evidence-board.
+      - Scratchpad-to-paper promotion checklist for moving validated results into ml-research.
+
+  ml-research:
+    status: active
+    scope: project-local
+    future_repo: ml-research-skills
+    intent: >
+      Full AI PhD / ML research lifecycle: ideas, literature, project setup,
+      data, experiments, evidence, paper writing, review, rebuttal, artifact
+      release, and project memory.
+    entrypoints:
+      - ml-research-router
+    routers:
+      - ml-research-router
+      - experiment-evidence-router
+      - paper-writing-router
+      - discovery-router
+      - project-ops-router
+    include_all_repo_skills: true
+    skills:
+      required:
+        - ml-research-router
+        - project-init
+        - research-project-memory
+        - experiment-evidence-router
+        - paper-writing-router
+        - discovery-router
+        - project-ops-router
+      optional: []
+    install_policy:
+      recommended: project-local
+      full_bundle_allowed: true
+      notes: >
+        This is the current complete pack. Keep full global installs
+        maintainer/debug-only; use `global-bootstrap` for global runtimes.

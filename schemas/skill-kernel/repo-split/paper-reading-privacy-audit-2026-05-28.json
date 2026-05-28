@@ -1,0 +1,162 @@
+{
+  "checked_paths": [
+    "schemas/skill-kernel/examples/paper-reading.kernel.json",
+    "docs/design/skill-matrix.md",
+    "profiles/profile-index.yaml",
+    "tests/profile-routing-evals.json",
+    "skills/advisor-update-writer/SKILL.md",
+    "skills/advisor-update-writer/references/decision-framing.md",
+    "skills/advisor-update-writer/references/memory-writeback.md",
+    "skills/advisor-update-writer/references/update-template.md",
+    "skills/citation-coverage-audit/SKILL.md",
+    "skills/citation-coverage-audit/references/coverage-taxonomy.md",
+    "skills/citation-coverage-audit/references/discovery-protocol.md",
+    "skills/citation-coverage-audit/references/memory-model.md",
+    "skills/citation-coverage-audit/references/report-template.md",
+    "skills/paper-writing-memory-manager/SKILL.md",
+    "skills/paper-writing-memory-manager/references/impact-propagation.md",
+    "skills/paper-writing-memory-manager/references/memory-schema.md",
+    "skills/paper-writing-memory-manager/references/update-protocol.md",
+    "skills/paper-writing-memory-manager/references/writing-layers.md",
+    "skills/paper-writing-memory-manager/templates/dependency-map.md",
+    "skills/paper-writing-memory-manager/templates/edit-impact-log.md",
+    "skills/paper-writing-memory-manager/templates/open-writing-threads.md",
+    "skills/paper-writing-memory-manager/templates/section-ledger.md",
+    "skills/paper-writing-memory-manager/templates/session-notes.md",
+    "skills/paper-writing-memory-manager/templates/style-and-terminology.md",
+    "skills/paper-writing-memory-manager/templates/writing-state.md",
+    "skills/paper-writing-memory-manager/templates/writing-style.md",
+    "skills/related-work-positioning-writer/SKILL.md",
+    "skills/related-work-positioning-writer/references/boundary-patterns.md",
+    "skills/related-work-positioning-writer/references/paragraph-recipes.md",
+    "skills/related-work-positioning-writer/templates/related-work-plan.md",
+    "skills/research-project-memory/SKILL.md",
+    "skills/research-project-memory/references/claim-lifecycle-protocol.md",
+    "skills/research-project-memory/references/closeout-protocol.md",
+    "skills/research-project-memory/references/consistency-checks.md",
+    "skills/research-project-memory/references/cross-module-handoff-contracts.md",
+    "skills/research-project-memory/references/evidence-provenance-protocol.md",
+    "skills/research-project-memory/references/memory-architecture.md",
+    "skills/research-project-memory/references/object-schemas.md",
+    "skills/research-project-memory/references/paper-source-visibility-protocol.md",
+    "skills/research-project-memory/references/phase-dashboard-protocol.md",
+    "skills/research-project-memory/references/toolchain-gates-protocol.md",
+    "skills/research-project-memory/references/writeback-protocol.md",
+    "skills/research-project-memory/templates/component/component-status.md",
+    "skills/research-project-memory/templates/component/worktree-index.md",
+    "skills/research-project-memory/templates/component/worktree-status.md",
+    "skills/research-project-memory/templates/memory/BRIEFING.md",
+    "skills/research-project-memory/templates/memory/action-board.md",
+    "skills/research-project-memory/templates/memory/claim-board.md",
+    "skills/research-project-memory/templates/memory/component-index.yaml",
+    "skills/research-project-memory/templates/memory/current-status.md",
+    "skills/research-project-memory/templates/memory/decision-log.md",
+    "skills/research-project-memory/templates/memory/evidence-board.md",
+    "skills/research-project-memory/templates/memory/handoff-board.md",
+    "skills/research-project-memory/templates/memory/hot-results.md",
+    "skills/research-project-memory/templates/memory/phase-dashboard.md",
+    "skills/research-project-memory/templates/memory/project-conventions.md",
+    "skills/research-project-memory/templates/memory/project.yaml",
+    "skills/research-project-memory/templates/memory/provenance-board.md",
+    "skills/research-project-memory/templates/memory/risk-board.md",
+    "skills/research-project-memory/templates/memory/source-visibility-board.md",
+    "skills/discovery-router/SKILL.md",
+    "skills/discovery-router/references/contrastive-routing.md",
+    "skills/discovery-router/references/route-table.md",
+    "skills/literature-review-sprint/SKILL.md",
+    "skills/literature-review-sprint/references/memory-writeback.md",
+    "skills/literature-review-sprint/references/paper-taxonomy.md",
+    "skills/literature-review-sprint/references/reading-priority.md",
+    "skills/literature-review-sprint/references/search-protocol.md",
+    "skills/literature-review-sprint/references/synthesis-template.md",
+    "skills/reference-corpus-analyzer/SKILL.md",
+    "skills/reference-corpus-analyzer/templates/comparison-matrix.md",
+    "skills/reference-library-manager/SKILL.md",
+    "skills/reference-library-manager/agents/openai.yaml",
+    "skills/reference-library-manager/references/library-policy.md",
+    "skills/reference-library-manager/scripts/scan_reference_library.py",
+    "skills/reference-library-manager/templates/reading-status.md",
+    "skills/reference-library-manager/templates/reference-index.md",
+    "skills/reference-project-synthesizer/SKILL.md",
+    "skills/reference-project-synthesizer/agents/openai.yaml",
+    "skills/reference-project-synthesizer/references/project-link-routing.md",
+    "skills/reference-project-synthesizer/templates/project-use-note.md",
+    "skills/reference-reading-summarizer/SKILL.md",
+    "skills/reference-reading-summarizer/agents/openai.yaml",
+    "skills/reference-reading-summarizer/references/model-routing.md",
+    "skills/reference-reading-summarizer/references/reading-modes.md",
+    "skills/reference-reading-summarizer/templates/paper-card.md",
+    "skills/reference-reading-summarizer/templates/reading-run.md",
+    "skills/reference-reading-summarizer/templates/source-card.md"
+  ],
+  "hits": [],
+  "ignored_paths": [
+    ".agent/sidecars/",
+    "memory/",
+    "*/.DS_Store",
+    "*/__pycache__/*"
+  ],
+  "inventory_path": "schemas/skill-kernel/repo-split/paper-reading-source-inventory-2026-05-28.json",
+  "kernel_id": "paper-reading",
+  "patterns_scanned": [
+    {
+      "id": "absolute-mac-home",
+      "pattern": "/Users/[A-Za-z0-9._-]+/",
+      "rationale": "Absolute macOS home paths leak machine-specific user identity."
+    },
+    {
+      "id": "absolute-linux-home",
+      "pattern": "/home/[A-Za-z0-9._-]+/",
+      "rationale": "Absolute Linux home paths leak machine-specific user identity."
+    },
+    {
+      "id": "sidecar-private-path",
+      "pattern": "\\.agent/sidecars/[A-Za-z0-9][A-Za-z0-9._-]{4,}/",
+      "rationale": "Concrete sidecar artifact paths (with a real task id segment) are local-only and must not enter a public split repo. Placeholder forms like `.agent/sidecars/<task-id>/` are documented conventions and are not matched by this pattern."
+    },
+    {
+      "id": "ssh-private-key-block",
+      "pattern": "-----BEGIN [A-Z ]*PRIVATE KEY-----",
+      "rationale": "Private key material must never be copied."
+    },
+    {
+      "id": "openssh-public-marker",
+      "pattern": "ssh-(rsa|ed25519|ecdsa) AAAA",
+      "rationale": "Hard-coded public keys often indicate accidental key material copy."
+    },
+    {
+      "id": "aws-access-key-id",
+      "pattern": "AKIA[0-9A-Z]{16}",
+      "rationale": "AWS access key IDs are credentials."
+    },
+    {
+      "id": "github-token-prefix",
+      "pattern": "gh[pousr]_[A-Za-z0-9]{20,}",
+      "rationale": "GitHub personal access / OAuth tokens are credentials."
+    },
+    {
+      "id": "anthropic-api-key",
+      "pattern": "sk-ant-[A-Za-z0-9_-]{20,}",
+      "rationale": "Anthropic API keys are credentials."
+    },
+    {
+      "id": "user-email-kaust",
+      "pattern": "[A-Za-z0-9._%+-]+@kaust\\.edu\\.sa",
+      "rationale": "Personal institutional email leaks user identity."
+    },
+    {
+      "id": "user-email-northwestern",
+      "pattern": "[A-Za-z0-9._%+-]+@northwestern\\.edu",
+      "rationale": "Personal institutional email leaks user identity."
+    },
+    {
+      "id": "user-email-epfl",
+      "pattern": "[A-Za-z0-9._%+-]+@epfl\\.ch",
+      "rationale": "Personal institutional email leaks user identity."
+    }
+  ],
+  "profile": "paper-reading",
+  "schema_version": "0.1",
+  "status": "passed",
+  "summary": "no credential / private-path / personal-identifier hits in the proposed split set"
+}

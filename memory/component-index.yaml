@@ -1,0 +1,40 @@
+# Component index for the ml-research-skills repository.
+
+project_name: ml-research-skills
+last_updated: "2026-05-05"
+
+components:
+  - name: root-docs
+    path: .
+    owns:
+      - README.md
+      - AGENTS.md
+      - CLAUDE.md
+      - asset/
+    status: active
+  - name: skills
+    path: skills
+    owns:
+      - skill instruction bundles
+      - helper scripts
+      - templates and references
+      - agent metadata
+    status: active
+  - name: validation
+    path: tests
+    owns:
+      - smoke tests
+      - helper-script test fixtures
+    status: active
+  - name: memory
+    path: memory
+    owns:
+      - project identity
+      - decisions
+      - current status
+      - claims/evidence/risks/actions
+      - provenance and handoffs
+    status: active
+
+worktrees:
+  entries: []

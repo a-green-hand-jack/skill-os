@@ -1,0 +1,217 @@
+{
+  "schema_version": "0.1",
+  "kernel_id": "paper-reading",
+  "owner_repo": "ml-research-skills",
+  "source_paths": [
+    "profiles/profile-index.yaml",
+    "docs/design/skill-matrix.md",
+    "tests/profile-routing-evals.json",
+    "skills/discovery-router/references/route-table.md",
+    "skills/reference-reading-summarizer/SKILL.md",
+    "skills/reference-corpus-analyzer/SKILL.md"
+  ],
+  "profile": {
+    "name": "paper-reading",
+    "status": "draft",
+    "scope": "project-local",
+    "future_repo": "paper-reading-skills",
+    "intent": "Support reading-only projects, focused source intake, source cards, corpus comparison, and literature maps without activating experiment execution or full paper-writing machinery."
+  },
+  "routing": {
+    "entrypoints": [
+      "discovery-router"
+    ],
+    "routers": [
+      "discovery-router"
+    ],
+    "handoff_policy": "Enter through discovery-router, then use reference-library-manager, reference-reading-summarizer, reference-project-synthesizer, reference-corpus-analyzer, or literature-review-sprint according to corpus size and output depth."
+  },
+  "install_policy": {
+    "recommended": "project-local",
+    "full_bundle_allowed": false,
+    "notes": "Reading-only projects should not install experiment, rebuttal, release, or full ML paper lifecycle skills by default."
+  },
+  "skills": {
+    "required": [
+      "discovery-router",
+      "reference-library-manager",
+      "reference-reading-summarizer",
+      "reference-project-synthesizer",
+      "reference-corpus-analyzer",
+      "literature-review-sprint"
+    ],
+    "optional": [
+      "citation-coverage-audit",
+      "research-project-memory",
+      "related-work-positioning-writer",
+      "paper-writing-memory-manager",
+      "advisor-update-writer"
+    ]
+  },
+  "workflow_contract": {
+    "supported_lanes": [
+      "action",
+      "evidence",
+      "combined",
+      "no-contract"
+    ],
+    "default_lane": "evidence",
+    "lane_selection_rule": "Use evidence for source reading, standard or heavy mode for durable literature decisions, combined when source-library files or project memory are updated, and no-contract only for informal read-only answers.",
+    "action_lane": {
+      "mutation_surfaces": [
+        "files",
+        "git",
+        "public-surface"
+      ],
+      "risk_classes": [
+        "read-only",
+        "safe-write",
+        "public-facing"
+      ],
+      "required_preflight": [
+        "Classify source visibility before writing source cards or summaries.",
+        "Check whether source files, reference cards, or project memory already exist.",
+        "Use source-card compression before promoting claims into project memory or public docs."
+      ],
+      "forbidden_actions": [
+        "Do not copy long copyrighted passages into public artifacts.",
+        "Do not promote raw private notes or reading trajectories without publication audit.",
+        "Do not activate experiment or code-execution workflows for a reading-only project unless the user changes scope."
+      ],
+      "approval_boundary": "Escalate before publishing summaries, importing private notes, changing source visibility, or turning reading output into paper claims."
+    },
+    "evidence_lane": {
+      "modes": [
+        "none",
+        "light",
+        "standard",
+        "heavy"
+      ],
+      "source_ledger_required": true,
+      "source_types": [
+        "papers",
+        "PDFs",
+        "BibTeX files",
+        "Markdown notes",
+        "source cards",
+        "project-use notes",
+        "literature maps",
+        "corpus comparison tables"
+      ],
+      "confidence_policy": "Distinguish skimmed, partial, and deep-read sources; do not make durable novelty or citation-coverage claims without enough source coverage.",
+      "citation_policy": "Use source cards and citation keys for durable claims; keep quotes short and avoid raw copyrighted text in public memory."
+    },
+    "combined_lane": {
+      "evidence_before_action": true,
+      "handoff_artifact": "source card, project-use note, literature map, or corpus matrix",
+      "staleness_trigger": "New papers, updated source files, missing citation metadata, or changed project scope."
+    },
+    "no_contract_lane": {
+      "allowed_when": "The request is a transient, low-stakes explanation that does not write source cards, project memory, or citation decisions.",
+      "escalation_trigger": "The answer will become a durable source card, literature decision, project claim, public summary, or publication-facing citation recommendation."
+    }
+  },
+  "validation": {
+    "required_checks": [
+      {
+        "name": "skill sanity",
+        "command": "python3 scripts/validate_skills.py",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "taxonomy, profile, and kernel registry",
+        "command": "uv run scripts/validate_skill_taxonomy.py",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "profile routing harness",
+        "command": "python3 -m unittest -v tests.test_profile_routing_harness",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      },
+      {
+        "name": "skill-kernel schema tests",
+        "command": "python3 -m unittest -v tests.test_skill_kernel_schema",
+        "scope": "repo",
+        "mutates_files": false,
+        "required": true
+      }
+    ],
+    "acceptance_checks": [
+      "Kernel example references the paper-reading profile and discovery-router entrypoint.",
+      "Evidence lane defines source-ledger, citation, and source-visibility boundaries.",
+      "No experiment-execution or full ML lifecycle skills are required by default."
+    ]
+  },
+  "memory": {
+    "required_reads": [
+      "memory/BRIEFING.md",
+      "memory/project-conventions.md",
+      "memory/hot-results.md"
+    ],
+    "writeback_targets": [
+      "project-memory",
+      "reference-memory",
+      "profile-artifacts"
+    ],
+    "privacy_boundary": {
+      "public_safe": [
+        "citation metadata",
+        "source-card summaries",
+        "literature map structure",
+        "repo-relative source artifact paths"
+      ],
+      "private_only": [
+        "raw copyrighted source text",
+        "private notes",
+        "unpublished collaborator feedback",
+        "raw reading trajectories"
+      ],
+      "publication_audit_required_when": "Use memory-publication-auditor before publishing private notes, raw reading traces, or source-derived patterns as reusable skills."
+    }
+  },
+  "adapters": {
+    "source_of_truth": "kernel",
+    "selection_semantics": {
+      "runtime_expectation": "direct-entrypoint",
+      "selection_contexts": [
+        "Select paper-reading directly for reading-only source intake, source-card, literature map, or corpus comparison projects.",
+        "Keep experiment execution and full paper-writing machinery out of the default route unless the task explicitly asks for them."
+      ],
+      "delegation_policy": "After selection, delegate to discovery-router, reference-library-manager, reference-reading-summarizer, reference-project-synthesizer, reference-corpus-analyzer, or literature-review-sprint as appropriate.",
+      "installable_manifest_gate": "Installable manifests should preserve reading-only selection before leaf-skill routing and keep the profile independent from ML experiment execution."
+    },
+    "runtimes": [
+      {
+        "runtime": "codex",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "claude-code",
+        "status": "future-adapter"
+      },
+      {
+        "runtime": "generic-agent",
+        "status": "future-adapter"
+      }
+    ]
+  },
+  "promotion": {
+    "status": "repo-candidate",
+    "promotion_gates": [
+      "Reading-only projects can run source-card and corpus workflows without the full ML research pack.",
+      "Source visibility, citation policy, and reference-memory writeback remain intact outside ml-research-skills.",
+      "Profile routing evals show paper-reading can be selected before leaf-skill routing."
+    ],
+    "rejection_checks": [
+      "Do not extract if reading workflows still require experiment or paper-submission machinery by default.",
+      "Do not publish private notes or raw copyrighted text in kernel examples.",
+      "Do not let runtime-specific adapters replace the Markdown/YAML/JSON source of truth."
+    ]
+  }
+}

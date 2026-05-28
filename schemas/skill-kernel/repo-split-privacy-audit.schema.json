@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/a-green-hand-jack/ml-research-skills/schemas/skill-kernel/repo-split-privacy-audit.schema.json",
+  "title": "Profile Repo-Split Privacy Audit",
+  "description": "Read-only privacy audit over every file a repo-split scaffolder would copy. Records pattern hits and a final pass/fail verdict before any destination repo is scaffolded.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile",
+    "kernel_id",
+    "inventory_path",
+    "checked_paths",
+    "patterns_scanned",
+    "hits",
+    "status",
+    "summary"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "profile": {
+      "type": "string"
+    },
+    "kernel_id": {
+      "type": "string"
+    },
+    "inventory_path": {
+      "type": "string"
+    },
+    "checked_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "patterns_scanned": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "pattern",
+          "rationale"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "hits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "line_number",
+          "pattern_id",
+          "snippet"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "line_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "pattern_id": {
+            "type": "string"
+          },
+          "snippet": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "ignored_paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

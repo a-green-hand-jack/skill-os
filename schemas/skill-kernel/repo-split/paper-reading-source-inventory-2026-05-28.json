@@ -1,0 +1,832 @@
+{
+  "excluded_sources": [
+    {
+      "path_pattern": ".agent/sidecars/",
+      "reason": "private sidecar artifacts are excluded by repo policy"
+    },
+    {
+      "path_pattern": "memory/",
+      "reason": "project memory is not part of the public profile pack"
+    },
+    {
+      "path_pattern": "*/.DS_Store",
+      "reason": "OS metadata files are never copied into a split repo"
+    },
+    {
+      "path_pattern": "*/__pycache__/*",
+      "reason": "compiled bytecode is never copied"
+    }
+  ],
+  "kernel_id": "paper-reading",
+  "kernel_path": "schemas/skill-kernel/examples/paper-reading.kernel.json",
+  "kernel_source_paths": [
+    "profiles/profile-index.yaml",
+    "docs/design/skill-matrix.md",
+    "tests/profile-routing-evals.json",
+    "skills/discovery-router/references/route-table.md",
+    "skills/reference-reading-summarizer/SKILL.md",
+    "skills/reference-corpus-analyzer/SKILL.md"
+  ],
+  "profile": "paper-reading",
+  "profile_index": {
+    "destination_path": "profiles/profile-index.yaml",
+    "key": "paper-reading",
+    "path": "profiles/profile-index.yaml"
+  },
+  "schema_version": "0.1",
+  "sources": [
+    {
+      "class": "kernel",
+      "destination_path": "schemas/skill-kernel/examples/paper-reading.kernel.json",
+      "include_in_split": true,
+      "path": "schemas/skill-kernel/examples/paper-reading.kernel.json",
+      "sha256": "sha256:e8b67d1fc89a52835fdc75b19ef33afaf714f97db80dd722b2a1d06aac6e3ca5",
+      "size_bytes": 8453
+    },
+    {
+      "class": "kernel-source",
+      "destination_path": "docs/design/skill-matrix.md",
+      "include_in_split": true,
+      "path": "docs/design/skill-matrix.md",
+      "sha256": "sha256:de6d1477aaca67ebaeab8906b3e7c70ad67eda8dc8e8096610f0d6ce35a57459",
+      "size_bytes": 14902
+    },
+    {
+      "class": "kernel-source",
+      "destination_path": "profiles/profile-index.yaml",
+      "include_in_split": true,
+      "path": "profiles/profile-index.yaml",
+      "sha256": "sha256:c9b642b62dd9712d4f72c9a9c81a85d8b32bb731288b1188cd2bb80639eecc7e",
+      "size_bytes": 12249
+    },
+    {
+      "class": "kernel-source",
+      "destination_path": "tests/profile-routing-evals.json",
+      "include_in_split": true,
+      "path": "tests/profile-routing-evals.json",
+      "sha256": "sha256:c50e7d01699a2b0614e41851c6e5585efe5ff2fc4725564cb6f2b0317a423cbe",
+      "size_bytes": 4228
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/advisor-update-writer/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "advisor-update-writer",
+      "path": "skills/advisor-update-writer/SKILL.md",
+      "sha256": "sha256:4eb0dae854100bfbf911a9acd4e0f0350f6fd7b055e8361176e26f21f81c59c0",
+      "size_bytes": 5542
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/advisor-update-writer/references/decision-framing.md",
+      "include_in_split": true,
+      "owning_skill": "advisor-update-writer",
+      "path": "skills/advisor-update-writer/references/decision-framing.md",
+      "sha256": "sha256:7dd37dd2e64865a175e9ae25c43dccbd10fd703013612b76f24d81d71d831646",
+      "size_bytes": 880
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/advisor-update-writer/references/memory-writeback.md",
+      "include_in_split": true,
+      "owning_skill": "advisor-update-writer",
+      "path": "skills/advisor-update-writer/references/memory-writeback.md",
+      "sha256": "sha256:3cf5784e69b4fb7555bd54ee7f9ba576a21e1ae60ccdf25a713f04dcdd8df501",
+      "size_bytes": 1075
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/advisor-update-writer/references/update-template.md",
+      "include_in_split": true,
+      "owning_skill": "advisor-update-writer",
+      "path": "skills/advisor-update-writer/references/update-template.md",
+      "sha256": "sha256:eae7a561e531a1c12995fb361c5f9a5a523fd31b0100def69cb41a47cb853756",
+      "size_bytes": 669
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/citation-coverage-audit/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "citation-coverage-audit",
+      "path": "skills/citation-coverage-audit/SKILL.md",
+      "sha256": "sha256:6f34bafc68d878127569f021bc6bd7e0d26a8712f39b0b89056e4ce459a019ad",
+      "size_bytes": 9623
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/citation-coverage-audit/references/coverage-taxonomy.md",
+      "include_in_split": true,
+      "owning_skill": "citation-coverage-audit",
+      "path": "skills/citation-coverage-audit/references/coverage-taxonomy.md",
+      "sha256": "sha256:39a7d3dde9ecc887ac872546acc1e4f71fae774e8ae112efb7f6d8d1ea2d1176",
+      "size_bytes": 3725
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/citation-coverage-audit/references/discovery-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "citation-coverage-audit",
+      "path": "skills/citation-coverage-audit/references/discovery-protocol.md",
+      "sha256": "sha256:174ca45efd148dbe8b9e712dce689694e0c48c45301ab2531d6090dd5b3a315d",
+      "size_bytes": 2816
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/citation-coverage-audit/references/memory-model.md",
+      "include_in_split": true,
+      "owning_skill": "citation-coverage-audit",
+      "path": "skills/citation-coverage-audit/references/memory-model.md",
+      "sha256": "sha256:11f698f6a9a85cf3e0a50defe716a0c3e06a86e9cf94f984d1d5e9da2cc579d7",
+      "size_bytes": 1475
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/citation-coverage-audit/references/report-template.md",
+      "include_in_split": true,
+      "owning_skill": "citation-coverage-audit",
+      "path": "skills/citation-coverage-audit/references/report-template.md",
+      "sha256": "sha256:da60170748cfff180a1fdb4b95b1ab458fa01cb29991122f8c2222e7fc62d444",
+      "size_bytes": 1938
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/SKILL.md",
+      "sha256": "sha256:e714d43d90c71b3d086e3369641ac62bb6704eb56c34281a6429ad0f0dbee4db",
+      "size_bytes": 9800
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/references/impact-propagation.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/references/impact-propagation.md",
+      "sha256": "sha256:dbb2445937c6782425e3868c9767316478d0ece8941513468f9b1bc93b92565f",
+      "size_bytes": 2501
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/references/memory-schema.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/references/memory-schema.md",
+      "sha256": "sha256:b707e2e7839546de45b1522f60be8fbf9b80242b5609473add447fad45eaee09",
+      "size_bytes": 3365
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/references/update-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/references/update-protocol.md",
+      "sha256": "sha256:28e37217ecd1f0e79bfa13678afeacd982e882d1efbca68431fb3eeb93b79a94",
+      "size_bytes": 2764
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/references/writing-layers.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/references/writing-layers.md",
+      "sha256": "sha256:8445677b45bb53284abd635cbdd179ce75e700a144e75767f8d54d7ecfc95a8c",
+      "size_bytes": 5031
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/templates/dependency-map.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/templates/dependency-map.md",
+      "sha256": "sha256:554ab0efbae5b897481c55c18816d749fd151c93986245df733e4dff4574b0b5",
+      "size_bytes": 502
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/templates/edit-impact-log.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/templates/edit-impact-log.md",
+      "sha256": "sha256:caec36818aa89d1c234f78e760a76ef59dfb6d2045c9d671aa4716d30e36280c",
+      "size_bytes": 173
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/templates/open-writing-threads.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/templates/open-writing-threads.md",
+      "sha256": "sha256:b2cd47cd457c744b78f840d887b2399a4d13236f0c85f6a2d19a6bec8bd7476b",
+      "size_bytes": 218
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/templates/section-ledger.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/templates/section-ledger.md",
+      "sha256": "sha256:a458403181ef342f44e68a765bb65df1bfbec83699f96a062747ea423487f463",
+      "size_bytes": 524
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/templates/session-notes.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/templates/session-notes.md",
+      "sha256": "sha256:896a18d9ac7ccd219b0d56f8e8afe1af9e9ea3b2789848ccf3c367d17602018c",
+      "size_bytes": 187
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/templates/style-and-terminology.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/templates/style-and-terminology.md",
+      "sha256": "sha256:b7c0b59a9133d09c7a18c58762f4963179f6cf18501e3d91b72a193b024f4c5e",
+      "size_bytes": 1005
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/templates/writing-state.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/templates/writing-state.md",
+      "sha256": "sha256:037896498bc7ac3b95e89cf36ef8b731c84f433321cfeaa61cbbb4a01112868f",
+      "size_bytes": 625
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/paper-writing-memory-manager/templates/writing-style.md",
+      "include_in_split": true,
+      "owning_skill": "paper-writing-memory-manager",
+      "path": "skills/paper-writing-memory-manager/templates/writing-style.md",
+      "sha256": "sha256:ce89d2d6cc999302cb5240604518e62fb98a7cd3fce4354d214522092ed34301",
+      "size_bytes": 1313
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/related-work-positioning-writer/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "related-work-positioning-writer",
+      "path": "skills/related-work-positioning-writer/SKILL.md",
+      "sha256": "sha256:f0f7ac12d581eef2739e59cb783738a6cd1334c92f118b931e55fcaedd615828",
+      "size_bytes": 6863
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/related-work-positioning-writer/references/boundary-patterns.md",
+      "include_in_split": true,
+      "owning_skill": "related-work-positioning-writer",
+      "path": "skills/related-work-positioning-writer/references/boundary-patterns.md",
+      "sha256": "sha256:9eebea094b20579849e4cda0fbb17410931ee144f65df25a94edad181f89fd7c",
+      "size_bytes": 3276
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/related-work-positioning-writer/references/paragraph-recipes.md",
+      "include_in_split": true,
+      "owning_skill": "related-work-positioning-writer",
+      "path": "skills/related-work-positioning-writer/references/paragraph-recipes.md",
+      "sha256": "sha256:453fff16a86b2c78d06700ead7c9e01bc46cfed7a99c59c50fa2fab6da838421",
+      "size_bytes": 3269
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/related-work-positioning-writer/templates/related-work-plan.md",
+      "include_in_split": true,
+      "owning_skill": "related-work-positioning-writer",
+      "path": "skills/related-work-positioning-writer/templates/related-work-plan.md",
+      "sha256": "sha256:633f4c969385158f3819dbe99ccdf3974d3021e4666f5cdf599c1b97b0a0d9a5",
+      "size_bytes": 1522
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/SKILL.md",
+      "sha256": "sha256:2cbc65cf9794020d6cdbd458e366ddbc3288be7abbdf27807221443cce05fbcf",
+      "size_bytes": 21683
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/claim-lifecycle-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/claim-lifecycle-protocol.md",
+      "sha256": "sha256:6fe7d41c86ca213a9c86635a9ffc771761570981ba8addf5e609245f8907f1b8",
+      "size_bytes": 3760
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/closeout-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/closeout-protocol.md",
+      "sha256": "sha256:9e09c182cedaf69e7a1f0472e3c13b6fb848f3495d3bcdf0171f1b321e7483ef",
+      "size_bytes": 3372
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/consistency-checks.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/consistency-checks.md",
+      "sha256": "sha256:ff6676edf4354d740104ed2fb26a67fffd21b13b737e62339e77d18d4cb438f7",
+      "size_bytes": 4632
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/cross-module-handoff-contracts.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/cross-module-handoff-contracts.md",
+      "sha256": "sha256:a8b6d5e3297a02ac510b822db6c89a65d9fad71a36f3e485c7c7c779026f957d",
+      "size_bytes": 3114
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/evidence-provenance-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/evidence-provenance-protocol.md",
+      "sha256": "sha256:b569a3e5d6cdc521c08870b23c3b89045c7737278297890552ef5b82c17b1655",
+      "size_bytes": 3220
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/memory-architecture.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/memory-architecture.md",
+      "sha256": "sha256:6df5051a30b495c34b72ddc2ced51ea5f94d48ae9d10fff7b19d9c672b30c654",
+      "size_bytes": 8829
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/object-schemas.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/object-schemas.md",
+      "sha256": "sha256:e967421fb7b6923bb7e02a115210ce393ac7320507e17644746e6e0fe9984ef3",
+      "size_bytes": 6197
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/paper-source-visibility-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/paper-source-visibility-protocol.md",
+      "sha256": "sha256:7661cbbf8676f53103e72716b659d6e451ed6969703c14d19d1b471333b4449c",
+      "size_bytes": 6182
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/phase-dashboard-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/phase-dashboard-protocol.md",
+      "sha256": "sha256:34e4dd5fbede8b4bf549620f1740ea7e220f2945891af220f92503b8879e0a1b",
+      "size_bytes": 3357
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/toolchain-gates-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/toolchain-gates-protocol.md",
+      "sha256": "sha256:00f6a9f996d79c863a7835d1d3d9a0400a9d32534c70a4d01c8afe821638f711",
+      "size_bytes": 5079
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/references/writeback-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/references/writeback-protocol.md",
+      "sha256": "sha256:d80946b5ec97ff8234db0df95e3e4c674eb43c66a865564af109a4b2db0d551b",
+      "size_bytes": 11654
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/component/component-status.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/component/component-status.md",
+      "sha256": "sha256:698fc13237a9d34b05b174db500d5a5e255c961e299afac5cef8684fe557f5e9",
+      "size_bytes": 648
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/component/worktree-index.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/component/worktree-index.md",
+      "sha256": "sha256:4a376806ffda7c4686328f13aae4f09864e63a166573c12a58f6baa89605af63",
+      "size_bytes": 909
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/component/worktree-status.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/component/worktree-status.md",
+      "sha256": "sha256:be2e66f39828dcab230b363247eb8407b22ba8c2967b9b019b4b5761b4b4c959",
+      "size_bytes": 2293
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/BRIEFING.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/BRIEFING.md",
+      "sha256": "sha256:7b3c5d83799e59f5c6fa2203ce6bd1c56f1eb07deee5f756f8a5c5b607621cc0",
+      "size_bytes": 1413
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/action-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/action-board.md",
+      "sha256": "sha256:483b3f163a9a8c28e859c2450e78a9c04c256b76c1b459f68a60c82f3ba0d086",
+      "size_bytes": 448
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/claim-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/claim-board.md",
+      "sha256": "sha256:c76d8694a348a86ee2cb42c026d820b4f119b484421e6e770f94ac56b911829d",
+      "size_bytes": 1130
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/component-index.yaml",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/component-index.yaml",
+      "sha256": "sha256:19040a3521b5ca122beed1790cb9186ab089a607c8c71b6b091776a52435e3da",
+      "size_bytes": 2003
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/current-status.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/current-status.md",
+      "sha256": "sha256:5cb1fa4cfa426046087e9ca68f0134cc4c260f29c4276fe66ab5ae048d4e9be1",
+      "size_bytes": 740
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/decision-log.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/decision-log.md",
+      "sha256": "sha256:59abccaa0117c558e0ab583cb65ea136a0104d963a1d28dd31701854aedb2d21",
+      "size_bytes": 314
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/evidence-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/evidence-board.md",
+      "sha256": "sha256:7c787d7d9b427167610eb5323d2623ba89e86a69720df9f556703c190c64d5a4",
+      "size_bytes": 876
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/handoff-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/handoff-board.md",
+      "sha256": "sha256:3b44eec1b317b6b5d557af428c5cd153cda4ebe27b2dbdfb050653dfb3dc3e3e",
+      "size_bytes": 793
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/hot-results.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/hot-results.md",
+      "sha256": "sha256:44829584062dd4f8f7f9ff212e1918b15466054995375187821aac919fba400f",
+      "size_bytes": 1070
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/phase-dashboard.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/phase-dashboard.md",
+      "sha256": "sha256:bf66235a28fb1615cb715f432199615dd73897763c1c01fde861076000c176e3",
+      "size_bytes": 2102
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/project-conventions.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/project-conventions.md",
+      "sha256": "sha256:bae82ddad31f1586a0ba4e14b13fe95ae377926aec5aa270ae0b728fa8ca6b22",
+      "size_bytes": 1560
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/project.yaml",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/project.yaml",
+      "sha256": "sha256:75913196b440fa8dfeaaceaf8576d24bd721b40d063d251204246a3a7a7ea272",
+      "size_bytes": 3972
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/provenance-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/provenance-board.md",
+      "sha256": "sha256:868869a902515c99a98d6639b712cca536fce529fbe806af3b3a59ee9bc0927b",
+      "size_bytes": 836
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/risk-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/risk-board.md",
+      "sha256": "sha256:6eb589e9d8410af8adc575c61415a9a0948d61409156009cfec551a754a50105",
+      "size_bytes": 483
+    },
+    {
+      "class": "skill-optional",
+      "destination_path": "skills/research-project-memory/templates/memory/source-visibility-board.md",
+      "include_in_split": true,
+      "owning_skill": "research-project-memory",
+      "path": "skills/research-project-memory/templates/memory/source-visibility-board.md",
+      "sha256": "sha256:b4aaf3a663d2da826aac35f1684248893b750a1c19f319c2a49d97dbaf1b4262",
+      "size_bytes": 1320
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/discovery-router/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "discovery-router",
+      "path": "skills/discovery-router/SKILL.md",
+      "sha256": "sha256:57100eed8a37c8ae2ad0114cc5a8b6501f80695742e736b05609ce7fbdab8644",
+      "size_bytes": 2651
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/discovery-router/references/contrastive-routing.md",
+      "include_in_split": true,
+      "owning_skill": "discovery-router",
+      "path": "skills/discovery-router/references/contrastive-routing.md",
+      "sha256": "sha256:66c44ee8e411dcf794b97bb94609d917ea66241da5325ea48011473aa8056352",
+      "size_bytes": 2638
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/discovery-router/references/route-table.md",
+      "include_in_split": true,
+      "owning_skill": "discovery-router",
+      "path": "skills/discovery-router/references/route-table.md",
+      "sha256": "sha256:0a2a472d80756778e15b6a5e20e517e5e2b627b9aa28b994a1cc7f1d54626c4f",
+      "size_bytes": 1681
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/SKILL.md",
+      "sha256": "sha256:0862bf462c8345e95a54af00a60a1cbbb8e68c71299a005e4f52b41a460e700a",
+      "size_bytes": 9018
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/references/memory-writeback.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/references/memory-writeback.md",
+      "sha256": "sha256:4376ddcaafec1b07eee9d75e9a08700aa51bf90f485ec55e68fdc366d29295d7",
+      "size_bytes": 2680
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/references/paper-taxonomy.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/references/paper-taxonomy.md",
+      "sha256": "sha256:df0e3149e3a7813b6f6fd4d63beb0fa041ab9703723788bddb942bdc83a469c3",
+      "size_bytes": 2124
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/references/reading-priority.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/references/reading-priority.md",
+      "sha256": "sha256:021be2408c6d5545aabf50b93e850e52ebf3956c9803e7634fdde224feacb22e",
+      "size_bytes": 2078
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/references/search-protocol.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/references/search-protocol.md",
+      "sha256": "sha256:e26148e3973093a2ad73e0280c6dd840441f8b30ef85acde84cac5e3a666d5c7",
+      "size_bytes": 2537
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/literature-review-sprint/references/synthesis-template.md",
+      "include_in_split": true,
+      "owning_skill": "literature-review-sprint",
+      "path": "skills/literature-review-sprint/references/synthesis-template.md",
+      "sha256": "sha256:62594aec053b8d115d33f9a08b9f7bdb3eb6c1eaf54e829136c3f052956df148",
+      "size_bytes": 1337
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-corpus-analyzer/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "reference-corpus-analyzer",
+      "path": "skills/reference-corpus-analyzer/SKILL.md",
+      "sha256": "sha256:8a71f40e00b742472c34fd952e0b6f25063544149a6bff2f34426cca82592a8e",
+      "size_bytes": 6981
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-corpus-analyzer/templates/comparison-matrix.md",
+      "include_in_split": true,
+      "owning_skill": "reference-corpus-analyzer",
+      "path": "skills/reference-corpus-analyzer/templates/comparison-matrix.md",
+      "sha256": "sha256:69ed27334f1da9671807cf20c83323b29e93e56eb97a74076220338c20bfe961",
+      "size_bytes": 1562
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/SKILL.md",
+      "sha256": "sha256:3cec72b1877d223c8f72cf192a2d7c342d6ff82d9e84f02ee8df731f19f028a4",
+      "size_bytes": 5041
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/agents/openai.yaml",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/agents/openai.yaml",
+      "sha256": "sha256:88c306855af9266c0a08959c2c6f94012943beb9e9a23742edd2f288390dea89",
+      "size_bytes": 316
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/references/library-policy.md",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/references/library-policy.md",
+      "sha256": "sha256:70c7884d4b2502e5af2ff460a5d6ad83a7ec017fb0d87e438cceda285dd484dc",
+      "size_bytes": 3823
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/scripts/scan_reference_library.py",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/scripts/scan_reference_library.py",
+      "sha256": "sha256:95751012a98d5d4543c84798370debfd058a7f51eda65586171b9f6d444f21a1",
+      "size_bytes": 11373
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/templates/reading-status.md",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/templates/reading-status.md",
+      "sha256": "sha256:9bf880840e965ea9deafe3bf78f51827cc96b55381eca36b721efbefa150f097",
+      "size_bytes": 483
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-library-manager/templates/reference-index.md",
+      "include_in_split": true,
+      "owning_skill": "reference-library-manager",
+      "path": "skills/reference-library-manager/templates/reference-index.md",
+      "sha256": "sha256:6563432def3d48a2bc911ae13661061792541c57d2498ab78af399c5c5cdbdf4",
+      "size_bytes": 550
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-project-synthesizer/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "reference-project-synthesizer",
+      "path": "skills/reference-project-synthesizer/SKILL.md",
+      "sha256": "sha256:dc43d1eded96a212107a82ccb834446ebfe6f92712f1fde6fca96e4aa99fde70",
+      "size_bytes": 4726
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-project-synthesizer/agents/openai.yaml",
+      "include_in_split": true,
+      "owning_skill": "reference-project-synthesizer",
+      "path": "skills/reference-project-synthesizer/agents/openai.yaml",
+      "sha256": "sha256:061e625e1ab594018734186033da395103deac1c620b3a520ea691998ad9baca",
+      "size_bytes": 375
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-project-synthesizer/references/project-link-routing.md",
+      "include_in_split": true,
+      "owning_skill": "reference-project-synthesizer",
+      "path": "skills/reference-project-synthesizer/references/project-link-routing.md",
+      "sha256": "sha256:af12b08619cf6303c493dfda4f959fe4748b26957a3e416548df92078f0dd266",
+      "size_bytes": 2579
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-project-synthesizer/templates/project-use-note.md",
+      "include_in_split": true,
+      "owning_skill": "reference-project-synthesizer",
+      "path": "skills/reference-project-synthesizer/templates/project-use-note.md",
+      "sha256": "sha256:4c6bfa5c196d33c0f1fc291c4019227d621ddb0cf830c0514e7638b00d4bb0d1",
+      "size_bytes": 936
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/SKILL.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/SKILL.md",
+      "sha256": "sha256:e3f30cdd67796d44d34550fb90b6fbd263d14e765096925efdca901599b91295",
+      "size_bytes": 5944
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/agents/openai.yaml",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/agents/openai.yaml",
+      "sha256": "sha256:b1cf6fc041eb2f28c20a7ef4da643abb9a89d40e834f4b24d78044dc5725565e",
+      "size_bytes": 315
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/references/model-routing.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/references/model-routing.md",
+      "sha256": "sha256:f23b6400ef04f8965acd799e3b801a110196502028c1c6a3f61a207acce63278",
+      "size_bytes": 2798
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/references/reading-modes.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/references/reading-modes.md",
+      "sha256": "sha256:5e0cc7e58235e511c285862ec65b786762202403e0b157deac91794aecdceae1",
+      "size_bytes": 2629
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/templates/paper-card.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/templates/paper-card.md",
+      "sha256": "sha256:902c7975fd8f3a00807dfa36fd16e921b8470ea488c407f37e4bb718cd682b9d",
+      "size_bytes": 937
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/templates/reading-run.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/templates/reading-run.md",
+      "sha256": "sha256:e84af84a16fd56ccd854b3e15b386c5ccc70062f6a8cd7f928520256642555b9",
+      "size_bytes": 292
+    },
+    {
+      "class": "skill-required",
+      "destination_path": "skills/reference-reading-summarizer/templates/source-card.md",
+      "include_in_split": true,
+      "owning_skill": "reference-reading-summarizer",
+      "path": "skills/reference-reading-summarizer/templates/source-card.md",
+      "sha256": "sha256:852caabbf176fa3f24175cf0be78fb5d6d3d9a80bddf7a6a2448f308bb366118",
+      "size_bytes": 1168
+    }
+  ],
+  "totals": {
+    "file_count": 88,
+    "skill_count": 11,
+    "total_bytes": 294074
+  }
+}
