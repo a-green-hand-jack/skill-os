@@ -339,6 +339,7 @@ profiles:
     status: active
     scope: project-local
     future_repo: ml-research-skills
+    include_all_repo_skills: true
     depends_on:
       - core-ops
       - automation

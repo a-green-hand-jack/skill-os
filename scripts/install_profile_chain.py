@@ -323,6 +323,86 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def build_install_report(
+    *,
+    requested_profile: str,
+    execute: bool,
+    no_leaf_skills: bool,
+    target_parent: Path,
+    resolution_order: list[str],
+    profiles: dict[str, dict[str, Any]],
+    steps: list[dict[str, Any]],
+    leaf_sources: dict[str, str],
+) -> dict[str, Any]:
+    """Build a compact human-facing summary while keeping stdout JSON."""
+    applied_steps = [step for step in steps if step.get("applied")]
+    failed_steps = [step for step in steps if not step.get("applied")]
+    dedup_skipped: list[dict[str, str]] = []
+    per_profile: list[dict[str, Any]] = []
+    for step in steps:
+        leaf_info = step.get("leaf_skills", {})
+        skipped = leaf_info.get("skipped_dedup", []) if isinstance(leaf_info, dict) else []
+        if isinstance(skipped, list):
+            for item in skipped:
+                if isinstance(item, dict):
+                    dedup_skipped.append(
+                        {
+                            "profile": step.get("profile", ""),
+                            "name": item.get("name", ""),
+                            "kept_from": item.get("kept_from", ""),
+                            "skipped_from": item.get("skipped_from", ""),
+                        }
+                    )
+        per_profile.append(
+            {
+                "profile": step.get("profile"),
+                "pack_root": step.get("pack_root"),
+                "profile_adapter_target": step.get("target_root"),
+                "entrypoints": profiles.get(step.get("profile"), {}).get("entrypoints", []),
+                "applied": step.get("applied", False),
+                "leaf_staged_count": len(leaf_info.get("staged", [])) if isinstance(leaf_info, dict) else 0,
+                "leaf_skipped_dedup_count": len(skipped) if isinstance(skipped, list) else 0,
+                "leaf_total_in_pack": leaf_info.get("total_in_pack") if isinstance(leaf_info, dict) else None,
+            }
+        )
+
+    if not execute:
+        status = "dry-run"
+    elif failed_steps:
+        status = "blocked"
+    else:
+        status = "applied"
+
+    top_entrypoints = profiles.get(requested_profile, {}).get("entrypoints", [])
+    return {
+        "status": status,
+        "requested_profile": requested_profile,
+        "target_parent": str(target_parent),
+        "profiles_planned": resolution_order,
+        "profiles_applied": [step["profile"] for step in applied_steps],
+        "profile_adapters_count": len(applied_steps),
+        "suggested_entrypoints": top_entrypoints,
+        "per_profile": per_profile,
+        "leaf_staging": {
+            "enabled": not no_leaf_skills,
+            "unique_count": len(leaf_sources) if not no_leaf_skills else 0,
+            "dedup_skipped_count": len(dedup_skipped),
+            "dedup_skipped": dedup_skipped,
+            "sources": [
+                {"name": name, "pack_root": pack_root}
+                for name, pack_root in sorted(leaf_sources.items())
+            ]
+            if not no_leaf_skills
+            else [],
+        },
+        "next_action": (
+            f"Start with {', '.join(top_entrypoints)} for `{requested_profile}`."
+            if top_entrypoints
+            else f"Use the installed `{requested_profile}` profile adapter as the entrypoint."
+        ),
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
     contract = load_json(args.contract)
@@ -467,27 +547,32 @@ def main(argv: list[str] | None = None) -> int:
             overall_ok = False
             break
 
-    print(
-        json.dumps(
-            {
-                "chain_resolved": True,
-                "execute": args.execute,
-                "target_parent": str(args.target_parent),
-                "work_dir": str(work_dir),
-                "resolution_order": resolution_order_names,
-                "steps": steps_report,
-                "all_applied": overall_ok and all(s.get("applied", False) for s in steps_report) if args.execute else False,
-                "leaf_skills_staged_unique": (
-                    sorted(leaf_staged_across_chain.keys()) if not args.no_leaf_skills else []
-                ),
-                "leaf_skills_unique_count": (
-                    len(leaf_staged_across_chain) if not args.no_leaf_skills else 0
-                ),
-            },
-            indent=2,
-            sort_keys=True,
-        )
+    final_report = {
+        "chain_resolved": True,
+        "execute": args.execute,
+        "target_parent": str(args.target_parent),
+        "work_dir": str(work_dir),
+        "resolution_order": resolution_order_names,
+        "steps": steps_report,
+        "all_applied": overall_ok and all(s.get("applied", False) for s in steps_report) if args.execute else False,
+        "leaf_skills_staged_unique": (
+            sorted(leaf_staged_across_chain.keys()) if not args.no_leaf_skills else []
+        ),
+        "leaf_skills_unique_count": (
+            len(leaf_staged_across_chain) if not args.no_leaf_skills else 0
+        ),
+    }
+    final_report["install_report"] = build_install_report(
+        requested_profile=args.profile,
+        execute=args.execute,
+        no_leaf_skills=args.no_leaf_skills,
+        target_parent=args.target_parent,
+        resolution_order=resolution_order_names,
+        profiles=profiles,
+        steps=steps_report,
+        leaf_sources=leaf_staged_across_chain,
     )
+    print(json.dumps(final_report, indent=2, sort_keys=True))
     if args.execute and not overall_ok:
         return 1
     return 0

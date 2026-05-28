@@ -31,11 +31,11 @@ Run the full skill-os test suite:
 python3 -m unittest discover tests
 ```
 
-64 tests across 10 files. Coverage:
+69 tests across 11 files. Coverage:
 
 - `test_skill_kernel_adapter_export.py` (16) — kernel → adapter dry-run
 - `test_profile_routing_harness.py` (6) — profile-routing eval fixtures
-- `test_resolve_profile_dependencies.py` (7) — depends_on resolver
+- `test_resolve_profile_dependencies.py` (8) — depends_on resolver + router metadata
 - `test_synthetic_install_chain.py` (7) — single-profile install chain on synthetic fixture
 - `test_synthetic_repo_split_chain.py` (2) — repo-split chain on synthetic fixture
 - `test_synthetic_cross_repo_install.py` (5) — cross-repo install via --source-root
@@ -43,6 +43,7 @@ python3 -m unittest discover tests
 - `test_routing_evals.py` (7) — matrix-wide leaf-routing eval regression (`tests/routing-evals.json`)
 - `test_verify_pack_pins.py` (4) — sibling-pack commit pin verifier
 - `test_taxonomy_matrix_aware.py` (4) — `--pack-search-path` / `--pack` flag handling
+- `test_validate_matrix.py` (4) — full matrix validation wrapper and pack override normalization
 
 Dry-run adapter export must always pass:
 
@@ -53,7 +54,13 @@ python3 scripts/export_skill_kernel_adapters.py --runtime all --check
 Deep taxonomy + profile + kernel schema consistency:
 
 ```bash
-uv run scripts/validate_skill_taxonomy.py
+uv run scripts/validate_skill_taxonomy.py --pack-search-path <parent-of-cloned-packs>
+```
+
+One-command matrix validation across the hub plus sibling packs:
+
+```bash
+python3 scripts/validate_matrix.py --pack-search-path <parent-of-cloned-packs>
 ```
 
 Skill sanity (validates `SKILL.md` frontmatter — there are no skills in
@@ -127,6 +134,16 @@ Use `--pack <name>=<path>` to override the path for one pack (e.g. when the
 local checkout lives under a different name). The script is read-only — it
 never checks out the pinned commit. Exit code is non-zero on any mismatch or
 missing pack.
+
+For a full cross-repo check, prefer:
+
+```bash
+python3 scripts/validate_matrix.py --pack-search-path <parent-of-cloned-packs>
+```
+
+It runs unit tests, adapter export, matrix-aware taxonomy validation, and pack
+pin verification with one shared pack-discovery configuration. It is also
+read-only and accepts `--pack <profile-or-repo>=<path>` overrides.
 
 Update pins with the helper one-liner after a sibling-pack commit lands:
 

@@ -35,14 +35,16 @@ def _strip_block_scalar(value: str) -> str:
 def parse_profile_dependencies(text: str) -> dict[str, dict[str, Any]]:
     """Line-based parser for profile metadata we care about.
 
-    Only extracts ``depends_on`` lists, ``status``, and ``future_repo`` per
-    profile. Avoids a PyYAML dependency — the profile-index file uses stable
-    two-space indentation with profile keys at column 2.
+    Only extracts the metadata chain installers and diagnostics need:
+    ``depends_on``, ``entrypoints``, ``routers``, ``status``, ``future_repo``,
+    and ``github_url`` per profile. Avoids a PyYAML dependency — the
+    profile-index file uses stable two-space indentation with profile keys at
+    column 2.
     """
     profiles: dict[str, dict[str, Any]] = {}
     in_profiles_block = False
     current: str | None = None
-    in_depends_on = False
+    active_list_field: str | None = None
     lines = text.splitlines()
     for line in lines:
         stripped = line.strip()
@@ -60,8 +62,15 @@ def parse_profile_dependencies(text: str) -> dict[str, dict[str, Any]]:
             match = re.match(r"^\s\s([a-z0-9][a-z0-9-]*):\s*$", line)
             if match:
                 current = match.group(1)
-                profiles[current] = {"depends_on": [], "status": None, "future_repo": None, "github_url": None}
-                in_depends_on = False
+                profiles[current] = {
+                    "depends_on": [],
+                    "entrypoints": [],
+                    "routers": [],
+                    "status": None,
+                    "future_repo": None,
+                    "github_url": None,
+                }
+                active_list_field = None
             else:
                 # column-2 line that isn't a profile key — leaves profiles block
                 if stripped and not stripped.startswith("#"):
@@ -70,9 +79,12 @@ def parse_profile_dependencies(text: str) -> dict[str, dict[str, Any]]:
         if current is None:
             continue
         if line.startswith("    ") and not line.startswith("      "):
-            in_depends_on = False
-            if stripped.startswith("depends_on:"):
-                in_depends_on = True
+            active_list_field = None
+            for field in ("depends_on", "entrypoints", "routers"):
+                if stripped.startswith(f"{field}:"):
+                    active_list_field = field
+                    break
+            if active_list_field is not None:
                 continue
             for field in ("status", "future_repo", "github_url"):
                 marker = f"{field}:"
@@ -80,8 +92,8 @@ def parse_profile_dependencies(text: str) -> dict[str, dict[str, Any]]:
                     profiles[current][field] = stripped[len(marker):].strip()
                     break
             continue
-        if in_depends_on and stripped.startswith("- "):
-            profiles[current]["depends_on"].append(stripped[2:].strip())
+        if active_list_field is not None and stripped.startswith("- "):
+            profiles[current][active_list_field].append(stripped[2:].strip())
     return profiles
 
 
@@ -169,6 +181,8 @@ def main(argv: list[str] | None = None) -> int:
                 "future_repo": info.get("future_repo"),
                 "github_url": info.get("github_url"),
                 "depends_on": info.get("depends_on", []),
+                "entrypoints": info.get("entrypoints", []),
+                "routers": info.get("routers", []),
             }
         )
     report["resolution_order"] = annotated_order

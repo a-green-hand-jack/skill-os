@@ -18,6 +18,141 @@ Agents should determine the project profile, load the relevant pack, and then
 route within that pack. They should not search one global list of every skill
 the user has ever accumulated.
 
+## Relationship Model
+
+The matrix has three layers:
+
+1. **Profile packs** define project shape, install scope, and dependencies.
+2. **Router skills** choose the appropriate workflow inside a profile.
+3. **Leaf skills** perform the concrete work.
+
+The profile-pack layer is intentionally graph-shaped:
+
+```mermaid
+graph TD
+  Core[core-ops<br/>shared operational substrate]
+  Automation[automation<br/>remote runtimes, runbooks, automation]
+  Paper[paper-reading<br/>source intake, paper reading, literature maps]
+  Distill[research-distillation<br/>workflow distillation and skill proposals]
+  Quick[quick-experiment<br/>scratch experiments and debugging]
+  ML[ml-research<br/>full ML research lifecycle]
+
+  Core --> Automation
+  Core --> Paper
+  Core --> Distill
+  Core --> Quick
+  Automation --> Quick
+
+  Core --> ML
+  Automation --> ML
+  Paper --> ML
+  Distill --> ML
+  Quick --> ML
+```
+
+`core-ops` is the substrate: memory, git, documentation, sidecars, validation,
+workspace handling, and safe closeout. `automation`, `paper-reading`,
+`research-distillation`, and `quick-experiment` add domain-specific capability
+without forcing a full ML research install. `ml-research` is the assembly layer:
+it depends on all five sibling packs and adds paper-grade research planning,
+writing, review, rebuttal, submission, and release workflows.
+
+At runtime the graph becomes a routing tree. A prompt should first select the
+smallest fitting profile, then enter the profile's router, then land on a leaf
+skill:
+
+```mermaid
+graph TD
+  ProjectOps[project-ops-router]
+  Discovery[discovery-router]
+  Experiment[experiment-evidence-router]
+  MLRouter[ml-research-router]
+  PaperWriting[paper-writing-router]
+
+  Core[core-ops] --> ProjectOps
+  ProjectOps --> Git[safe-git-ops]
+  ProjectOps --> Memory[research-project-memory]
+  ProjectOps --> Docs[update-docs]
+  ProjectOps --> Sidecar[sidecar-task-runner]
+
+  Automation[automation] --> ProjectOps
+  ProjectOps --> Remote[remote-project-control]
+  ProjectOps --> Status[run-status-monitor]
+
+  Paper[paper-reading] --> Discovery
+  Discovery --> Library[reference-library-manager]
+  Discovery --> Read[reference-reading-summarizer]
+  Discovery --> Corpus[reference-corpus-analyzer]
+  Discovery --> Synthesis[reference-project-synthesizer]
+
+  Distill[research-distillation] --> Discovery
+  Discovery --> Publication[memory-publication-auditor]
+  Discovery --> SkillAudit[skill-system-auditor]
+  Discovery --> Personal[personalization-memory]
+
+  Quick[quick-experiment] --> Experiment
+  Experiment --> Design[experiment-design-planner]
+  Experiment --> Budget[compute-budget-planner]
+  Experiment --> Run[run-experiment]
+  Experiment --> Monitor[run-status-monitor]
+  Experiment --> Debug[experiment-debugger]
+  Experiment --> Diagnose[result-diagnosis]
+
+  ML[ml-research] --> MLRouter
+  ML[ml-research] --> PaperWriting
+  MLRouter --> Idea[research-idea-validator]
+  MLRouter --> Algorithm[algorithm-design-planner]
+  MLRouter --> Rebuttal[rebuttal-strategist]
+  MLRouter --> Release[artifact-evaluation-prep]
+  PaperWriting --> Contract[paper-writing-contract-planner]
+  PaperWriting --> Draft[paper-writing-assistant]
+  PaperWriting --> Review[paper-reviewer-simulator]
+  PaperWriting --> Submit[submit-paper]
+```
+
+The chain installer materializes both layers in a project-local root:
+profile-level adapters such as `core-ops/SKILL.md` and flat leaf-skill
+directories such as `experiment-debugger/SKILL.md`. If the same leaf skill name
+appears in multiple packs, the dependency order is first-wins so foundational
+packs keep ownership of shared substrate skills.
+
+## Scenario Map
+
+Common project situations should map to profiles before mapping to individual
+skills:
+
+| Scenario | Recommended profile | Entry route | Typical leaf skills |
+|---|---|---|---|
+| Ordinary project maintenance | `core-ops` | `project-ops-router` | `safe-git-ops`, `research-project-memory`, `update-docs`, `sidecar-task-runner` |
+| Read a single paper | `paper-reading` | `discovery-router` | `reference-reading-summarizer`, `reference-project-synthesizer` |
+| Run a focused literature review | `paper-reading` | `discovery-router` | `literature-review-sprint`, `reference-corpus-analyzer`, `citation-coverage-audit` |
+| Manage a reading group or paper folder | `paper-reading` | `discovery-router` | `reference-library-manager`, `reference-reading-summarizer`, `reference-corpus-analyzer` |
+| Distill a strong paper, repo, course, or workflow into reusable practice | `research-distillation` | `discovery-router` | `reference-reading-summarizer`, `memory-publication-auditor`, `skill-system-auditor`, `personalization-memory` |
+| Reproduce another project's code or experiments | `paper-reading` + `quick-experiment` | `discovery-router` then `experiment-evidence-router` | `reference-reading-summarizer`, `data-pipeline-manager`, `run-experiment`, `run-status-monitor`, `experiment-debugger`, `experiment-report-writer` |
+| Maintain remote jobs, clusters, storage, or runbooks | `automation` | `project-ops-router` | `remote-project-control`, `run-status-monitor`, `token-usage-auditor` |
+| Quickly test an AI idea | `quick-experiment` | `experiment-evidence-router` | `experiment-design-planner`, `compute-budget-planner`, `run-experiment`, `result-diagnosis` |
+| Build a small AI project before it becomes paper-grade | `quick-experiment`, then promote to `ml-research` if claims mature | `experiment-evidence-router` | `data-pipeline-manager`, `experiment-design-planner`, `experiment-debugger`, `experiment-report-writer` |
+| Run a paper-grade ML research project | `ml-research` | `ml-research-router` | `research-idea-validator`, `algorithm-design-planner`, `experiment-design-planner`, `paper-evidence-board`, `paper-writing-router` |
+| Write or revise a paper | `ml-research` | `paper-writing-router` | `paper-writing-contract-planner`, `paper-writing-assistant`, `method-section-explainer`, `experiment-story-writer`, `paper-draft-consistency-editor` |
+| Prepare submission, rebuttal, camera-ready, or artifact release | `ml-research` | `ml-research-router` / `paper-writing-router` | `paper-reviewer-simulator`, `auto-paper-improvement-loop`, `rebuttal-strategist`, `submit-paper`, `camera-ready-finalizer`, `artifact-evaluation-prep`, `model-card-writer`, `release-code` |
+
+Representative routes:
+
+```text
+Read a paper:
+paper-reading -> discovery-router -> reference-reading-summarizer -> reference-project-synthesizer
+
+Reproduce an experiment:
+paper-reading -> discovery-router -> reference-reading-summarizer
+quick-experiment -> experiment-evidence-router -> data-pipeline-manager -> run-experiment -> run-status-monitor -> experiment-debugger -> experiment-report-writer
+
+Test a small AI idea:
+quick-experiment -> experiment-evidence-router -> experiment-design-planner -> compute-budget-planner -> run-experiment -> result-diagnosis
+
+Run a paper-grade project:
+ml-research -> ml-research-router -> research-idea-validator -> algorithm-design-planner -> experiment-design-planner -> paper-evidence-board -> paper-writing-router
+```
+
 ## Source Of Truth
 
 Workflow knowledge should remain agent-neutral:
@@ -78,6 +213,8 @@ Each profile in `profiles/profile-index.yaml` must define:
 - `skills.optional`: useful but non-required skills
 - `install_policy.recommended`: `global`, `project-local`, `maintainer-debug`, or `private`
 - `install_policy.full_bundle_allowed`: whether all repo skills may be installed for this profile
+- `include_all_repo_skills`: required when `install_policy.full_bundle_allowed`
+  is `true`; keeps full-bundle installs explicit at the profile boundary
 
 Draft profiles must also set `future_repo` so extraction targets stay explicit.
 Future missing capabilities belong in `gaps`, not as fake skill names.

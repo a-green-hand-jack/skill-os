@@ -46,6 +46,16 @@ class ResolveProfileDependenciesTest(unittest.TestCase):
         order = [entry["profile"] for entry in report["resolution_order"]]
         self.assertEqual(order, ["core-ops"])
 
+    def test_resolution_entries_include_router_metadata(self) -> None:
+        code, report = run(["quick-experiment"])
+        self.assertEqual(code, 0)
+        quick = next(
+            entry for entry in report["resolution_order"]
+            if entry["profile"] == "quick-experiment"
+        )
+        self.assertEqual(quick["entrypoints"], ["experiment-evidence-router"])
+        self.assertEqual(quick["routers"], ["experiment-evidence-router"])
+
     def test_multiple_requests_deduplicate_dependencies(self) -> None:
         code, report = run(["paper-reading", "quick-experiment"])
         self.assertEqual(code, 0)

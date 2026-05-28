@@ -8,7 +8,8 @@ profile entry; this one carries them all.
 
 - `profile-index.yaml` — the full matrix registry. For every profile:
   `status`, `scope`, `future_repo`, `github_url`, `depends_on`,
-  `entrypoints`, `routers`, `skills`, `install_policy`.
+  `entrypoints`, `routers`, `skills`, `include_all_repo_skills`,
+  `install_policy`.
 
 ## Matrix as deployed (2026-05-28)
 
@@ -24,6 +25,33 @@ profile entry; this one carries them all.
 
 `repo_matrix` at the top of `profile-index.yaml` lists each pack repo with
 its `github_url` and current role.
+
+## How to read the graph
+
+Profiles should be selected before individual skills. The expected routing
+shape is:
+
+```text
+project scenario -> profile -> router / entrypoint -> leaf skill
+```
+
+Typical examples:
+
+| Scenario | Profile | Router / entrypoint |
+|---|---|---|
+| Generic project memory, git, docs, sidecars | `core-ops` | `project-ops-router` |
+| Remote jobs, clusters, runbooks, scheduler probes | `automation` | `project-ops-router` |
+| Paper reading, source cards, literature comparison | `paper-reading` | `discovery-router` |
+| Distilling reusable practices from papers, repos, or agent sessions | `research-distillation` | `discovery-router` |
+| Scratch experiments, reproduction runs, debug sessions | `quick-experiment` | `experiment-evidence-router` |
+| Paper-grade ML research from idea through release | `ml-research` | `ml-research-router`, `paper-writing-router` |
+
+Use the smallest profile that fits the project. Promote from
+`quick-experiment` to `ml-research` when an experiment starts carrying
+paper-grade claims, evidence boards, writing, review, rebuttal, or artifact
+release requirements.
+
+See `../docs/usage/profile-selection-guide.md` for the full scenario map.
 
 ## Why profiles exist
 
@@ -46,7 +74,8 @@ Three boundaries:
   don't yet exist.
 - After any profile edit run:
   ```bash
-  uv run scripts/validate_skill_taxonomy.py
+  python3 scripts/validate_matrix.py --pack-search-path <parent-of-cloned-packs>
+  uv run scripts/validate_skill_taxonomy.py --pack-search-path <parent-of-cloned-packs>
   python3 -m unittest discover tests
   ```
 

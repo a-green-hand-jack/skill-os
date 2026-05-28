@@ -47,10 +47,19 @@ Tests + validators that must always pass:
 ```bash
 python3 -m unittest discover tests
 python3 scripts/export_skill_kernel_adapters.py --runtime all --check
-uv run scripts/validate_skill_taxonomy.py
+uv run scripts/validate_skill_taxonomy.py --pack-search-path <parent-of-cloned-packs>
 ```
 
-58 tests across 9 files. The synthetic-fixture pack under
+For the full hub + sibling-pack check, prefer the read-only wrapper:
+
+```bash
+python3 scripts/validate_matrix.py --pack-search-path <parent-of-cloned-packs>
+```
+
+Use `--pack <profile-or-repo>=<path>` when a sibling pack has a non-canonical
+local directory name.
+
+69 tests across 11 files. The synthetic-fixture pack under
 `tests/fixtures/synthetic-pack/` (and a depends_on variant under
 `tests/fixtures/synthetic-pack-pdf/`) lets the operational tests run
 without depending on any real pack repo. The matrix-wide leaf-routing

@@ -170,6 +170,16 @@ class ChainInstallTest(unittest.TestCase):
             ["synthetic-alpha", "synthetic-beta", "synthetic-gamma", "synthetic-pdf-reader"],
         )
         self.assertEqual(report["leaf_skills_unique_count"], 4)
+        self.assertEqual(report["install_report"]["status"], "applied")
+        self.assertEqual(
+            report["install_report"]["profiles_applied"],
+            ["synthetic", "synthetic-pdf"],
+        )
+        self.assertEqual(
+            report["install_report"]["suggested_entrypoints"],
+            ["synthetic-pdf-reader"],
+        )
+        self.assertEqual(report["install_report"]["leaf_staging"]["unique_count"], 4)
 
         # Per-step staging counts
         synth_step = next(s for s in report["steps"] if s["profile"] == "synthetic")
@@ -202,6 +212,7 @@ class ChainInstallTest(unittest.TestCase):
         self.assertFalse((self.target_parent / "synthetic-alpha").exists())
         self.assertFalse((self.target_parent / "synthetic-pdf-reader").exists())
         self.assertEqual(report["leaf_skills_unique_count"], 0)
+        self.assertEqual(report["install_report"]["leaf_staging"]["enabled"], False)
         for step in report["steps"]:
             self.assertTrue(step["leaf_skills"].get("skipped_via_flag"))
 
@@ -245,6 +256,11 @@ class ChainInstallTest(unittest.TestCase):
             any(s["name"] == "synthetic-alpha" for s in skipped),
             f"expected synthetic-alpha in skipped_dedup, got {skipped}",
         )
+        install_skipped = report["install_report"]["leaf_staging"]["dedup_skipped"]
+        self.assertTrue(
+            any(s["name"] == "synthetic-alpha" for s in install_skipped),
+            f"expected synthetic-alpha in install_report dedup_skipped, got {install_skipped}",
+        )
 
     def test_chain_install_dry_run_writes_no_files_under_target(self) -> None:
         code, report = run(
@@ -268,6 +284,7 @@ class ChainInstallTest(unittest.TestCase):
         self.assertEqual(len(report["steps"]), 2)
         for step in report["steps"]:
             self.assertFalse(step["applied"])
+        self.assertEqual(report["install_report"]["status"], "dry-run")
         # No target files written
         self.assertFalse((self.target_parent / "synthetic" / "SKILL.md").exists())
         self.assertFalse((self.target_parent / "synthetic-pdf" / "SKILL.md").exists())
