@@ -32,6 +32,7 @@ from export_skill_kernel_adapters import (  # noqa: E402
 )
 from validate_install_handoff_plan import (  # noqa: E402
     DEFAULT_CONTRACT_PATH,
+    _resolve_source_root,
     load_json,
     resolve_input_path,
     validate_plan,
@@ -235,15 +236,26 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=DEFAULT_CONTRACT_PATH,
         help="Handoff contract JSON. Defaults to the active contract.",
     )
+    parser.add_argument(
+        "--source-root",
+        type=Path,
+        default=None,
+        help=(
+            "Optional second root for cross-repo plan validation. Forwarded "
+            "to validate_install_handoff_plan; see that script's --source-root "
+            "for details. Also accepts SKILL_OS_SOURCE_ROOT env var."
+        ),
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
+    source_root = _resolve_source_root(args.source_root)
     try:
         plan = load_json(resolve_input_path(args.plan))
         contract = load_json(resolve_input_path(args.contract))
-        plan_report = validate_plan(plan, contract, args.manifest_index)
+        plan_report = validate_plan(plan, contract, args.manifest_index, source_root)
         manifest_index, manifest_root = load_manifest_index(args.manifest_index)
         preview = build_preview(plan, plan_report, manifest_index, manifest_root)
     except ValueError as exc:

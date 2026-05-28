@@ -24,6 +24,7 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from validate_install_handoff_plan import (  # noqa: E402
     DEFAULT_CONTRACT_PATH,
+    _resolve_source_root,
     load_json,
     resolve_input_path,
     validate_plan,
@@ -272,15 +273,26 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         type=Path,
         help="Privacy audit JSON. Auto-located alongside the inventory when omitted.",
     )
+    parser.add_argument(
+        "--source-root",
+        type=Path,
+        default=None,
+        help=(
+            "Optional second root for cross-repo plan validation. Forwarded "
+            "to validate_install_handoff_plan; see that script for details. "
+            "Also accepts SKILL_OS_SOURCE_ROOT env var."
+        ),
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
+    source_root = _resolve_source_root(args.source_root)
     try:
         plan = load_json(resolve_input_path(args.plan))
         contract = load_json(resolve_input_path(args.contract))
-        plan_report = validate_plan(plan, contract, args.manifest_index)
+        plan_report = validate_plan(plan, contract, args.manifest_index, source_root)
         profile = plan.get("profile", "")
         inventory_path = args.inventory or find_inventory_path(profile)
         audit_path = args.privacy_audit or find_privacy_audit_path(profile)

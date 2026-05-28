@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -25,6 +26,34 @@ GLOBAL_SKILL_ROOTS = (
     Path.home() / ".claude" / "skills",
 )
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+SOURCE_ROOT_ENV = "SKILL_OS_SOURCE_ROOT"
+
+
+def _resolve_source_root(cli_value: Path | None) -> Path | None:
+    """Pick the source root for cross-repo path resolution.
+
+    The validator looks up authoritative_sources and manifest source_paths
+    against (REPO_ROOT, source_root). REPO_ROOT (the validator's own repo,
+    typically skill-os) holds kernel schema + contract + adapter scripts.
+    The optional source_root points at a sibling pack repo whose skills/
+    and pack-specific kernel example are referenced by the plan.
+
+    Returns None if neither CLI flag nor env var is set — back-compat with
+    single-repo invocations where REPO_ROOT has everything.
+    """
+    if cli_value is not None:
+        return cli_value.resolve()
+    env_value = os.environ.get(SOURCE_ROOT_ENV)
+    if env_value:
+        return Path(env_value).resolve()
+    return None
+
+
+def _path_exists_in_any_root(rel_path: str, roots: list[Path]) -> bool:
+    rel = Path(rel_path)
+    if rel.is_absolute():
+        return False
+    return any((root / rel).exists() for root in roots)
 
 
 def repo_relative(path: Path) -> str:
@@ -131,6 +160,7 @@ def validate_manifest_file(
     entry: dict[str, Any],
     manifest_root: Path,
     plan: dict[str, Any],
+    search_roots: list[Path] | None = None,
 ) -> tuple[dict[str, Any] | None, list[str]]:
     issues: list[str] = []
     manifest_rel = entry.get("manifest")
@@ -180,13 +210,14 @@ def validate_manifest_file(
         if required_gate not in manifest_gate_ids:
             issues.append(f"{manifest_rel}: missing manifest review gate `{required_gate}`")
 
+    roots = search_roots if search_roots else [REPO_ROOT]
     source_paths = string_list(manifest.get("kernel_source_paths", []))
     if not source_paths:
         issues.append(f"{manifest_rel}: kernel_source_paths must be a non-empty list")
     for source_path in source_paths:
         if source_path.startswith("/") or ".." in Path(source_path).parts:
             issues.append(f"{manifest_rel}: kernel source path must be repo-relative: {source_path}")
-        elif not (REPO_ROOT / source_path).exists():
+        elif not _path_exists_in_any_root(source_path, roots):
             issues.append(f"{manifest_rel}: kernel source path missing: {source_path}")
 
     return manifest, issues
@@ -196,10 +227,17 @@ def validate_plan(
     plan: dict[str, Any],
     contract: dict[str, Any],
     manifest_index_path: Path | None,
+    source_root: Path | None = None,
 ) -> dict[str, Any]:
     issues: list[str] = []
     warnings: list[str] = []
     matched_manifests: list[dict[str, str]] = []
+    # Multi-root resolution: when source_root is set (cross-repo install from
+    # skill-os against a sibling pack), a path is considered to exist if it
+    # exists under either REPO_ROOT or source_root.
+    search_roots: list[Path] = [REPO_ROOT]
+    if source_root is not None and source_root.resolve() != REPO_ROOT:
+        search_roots.append(source_root.resolve())
 
     if plan.get("schema_version") != PLAN_SCHEMA_VERSION:
         issues.append(f"schema_version must be `{PLAN_SCHEMA_VERSION}`")
@@ -256,7 +294,7 @@ def validate_plan(
         rel = Path(source_path)
         if rel.is_absolute() or ".." in rel.parts:
             issues.append(f"source_of_truth_paths must be repo-relative: {source_path}")
-        elif not (REPO_ROOT / rel).exists():
+        elif not _path_exists_in_any_root(source_path, search_roots):
             issues.append(f"source_of_truth_path does not exist: {source_path}")
 
     validation_commands = set(string_list(plan.get("validation_commands", [])))
@@ -345,7 +383,9 @@ def validate_plan(
             if entry is None:
                 issues.append(f"manifest index has no entry for {runtime}/{kernel_id}")
                 continue
-            manifest, manifest_issues = validate_manifest_file(entry, manifest_root, plan)
+            manifest, manifest_issues = validate_manifest_file(
+                entry, manifest_root, plan, search_roots
+            )
             issues.extend(manifest_issues)
             if manifest is not None:
                 matched_manifests.append(
@@ -411,15 +451,28 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         type=Path,
         help="Generated installable-manifest-index.json to validate requested manifests.",
     )
+    parser.add_argument(
+        "--source-root",
+        type=Path,
+        default=None,
+        help=(
+            "Optional second root used for cross-repo install validation. "
+            "When set, source_of_truth_paths and manifest kernel_source_paths "
+            "are considered to exist if they resolve under either the "
+            "validator's own REPO_ROOT or this source root (typically a "
+            "sibling pack repo). Also accepts SKILL_OS_SOURCE_ROOT env var."
+        ),
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
+    source_root = _resolve_source_root(args.source_root)
     try:
         plan = load_json(resolve_input_path(args.plan))
         contract = load_json(resolve_input_path(args.contract))
-        report = validate_plan(plan, contract, args.manifest_index)
+        report = validate_plan(plan, contract, args.manifest_index, source_root)
     except ValueError as exc:
         print(json.dumps({"passed": False, "issues": [str(exc)]}, indent=2, sort_keys=True))
         return 2

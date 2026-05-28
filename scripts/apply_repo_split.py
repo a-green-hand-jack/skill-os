@@ -306,11 +306,14 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
-    _set_source_root(_resolve_source_root(args.source_root))
+    resolved_source_root = _resolve_source_root(args.source_root)
+    _set_source_root(resolved_source_root)
     try:
         plan = load_json(resolve_input_path(args.plan))
         contract = load_json(resolve_input_path(args.contract))
-        plan_report = validate_plan(plan, contract, args.manifest_index)
+        plan_report = validate_plan(
+            plan, contract, args.manifest_index, resolved_source_root
+        )
         profile = plan.get("profile", "")
         inventory_path = args.inventory or find_inventory_path(profile)
         audit_path = args.privacy_audit or find_privacy_audit_path(profile)
