@@ -31,7 +31,7 @@ Run the full skill-os test suite:
 python3 -m unittest discover tests
 ```
 
-47 tests across 7 files. Coverage:
+54 tests across 8 files. Coverage:
 
 - `test_skill_kernel_adapter_export.py` (16) — kernel → adapter dry-run
 - `test_profile_routing_harness.py` (6) — profile-routing eval fixtures
@@ -40,6 +40,7 @@ python3 -m unittest discover tests
 - `test_synthetic_repo_split_chain.py` (2) — repo-split chain on synthetic fixture
 - `test_synthetic_cross_repo_install.py` (5) — cross-repo install via --source-root
 - `test_synthetic_chain_install.py` (4) — multi-profile chain installer
+- `test_routing_evals.py` (7) — matrix-wide leaf-routing eval regression (`tests/routing-evals.json`)
 
 Dry-run adapter export must always pass:
 

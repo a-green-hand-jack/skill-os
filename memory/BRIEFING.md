@@ -62,14 +62,16 @@ volatile-fields: git-state, sibling-pack-HEADs, test-counts
 ## Top Risks
 
 - RSK-024: Hub schema drift if a pack repo's kernel diverges from the reference example in this repo. Mitigated by `--source-root` resolution but not yet enforced automatically.
-- RSK-027: When a sibling pack is updated independently, ml-research-skills' depends_on doesn't pin a commit hash — chain installer pulls whatever HEAD the user has cloned.
-- RSK-028: `profiles/research-distillation/` template/example subtree still lives in ml-research-skills (not in research-distillation-skills); confusing for users discovering through the matrix.
+- RSK-027: When a sibling pack is updated independently, ml-research-skills' depends_on doesn't pin a commit hash — chain installer pulls whatever HEAD the user has cloned (ACT-086 in progress).
 
 ## Open Actions (skill-os scope)
 
-- ACT-077 + ACT-080 + ACT-081 + ACT-082 — all `done`.
-- ACT-086 (todo): pin sibling-pack commit hashes in profile-index when the matrix needs reproducible installs.
-- ACT-087 (todo): move `profiles/research-distillation/` template/example subtree to research-distillation-skills (cross-repo cleanup).
+- ACT-077 + ACT-080 + ACT-081 + ACT-082 + ACT-085 + ACT-087 — all `done`.
+- ACT-086 (todo): pin sibling-pack commit hashes in `profiles/profile-index.yaml` when the matrix needs reproducible installs.
+
+## Decision Log (recent)
+
+- ACT-085 (2026-05-28): matrix-wide leaf-routing regression fixture lives in **skill-os** (`tests/routing-evals.json` + `tests/test_routing_evals.py`). Reasoning: skills referenced by the evals span 6 pack repos after the hard-slim; only the hub sees the full matrix. The test enforces structural well-formedness; cross-pack skill-existence checks would require every pack cloned alongside and are an opt-in script, not part of the default suite. Total skill-os test count: 54.
 
 ## Full Memory
 

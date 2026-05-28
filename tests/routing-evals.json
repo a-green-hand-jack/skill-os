@@ -1,0 +1,206 @@
+{
+  "_comment": "Matrix-wide leaf-routing regression fixture for the Skill OS matrix. Each entry specifies the ideal routing path (expected_path), the skill that should do the work (should_trigger), and skills that must not trigger (should_not_trigger). Skills referenced here may live in any sibling pack repo (core-ops-skills, automation-skills, paper-reading-skills, research-distillation-skills, quick-experiment-skills, ml-research-skills); skill-os owns this fixture because the matrix is the only level that sees every skill. test_routing_evals.py enforces structural well-formedness; deeper cross-pack skill-existence checks require every pack checked out alongside and are not part of the default suite.",
+  "_format": "expected_path: ordered list from root router to leaf. should_trigger: leaf skill. should_not_trigger: common confusable alternatives.",
+  "evals": [
+    {
+      "id": "RTE-001",
+      "prompt": "My training loss became NaN after 500 steps. How do I fix it?",
+      "expected_path": ["experiment-evidence-router", "experiment-debugger"],
+      "should_trigger": "experiment-debugger",
+      "should_not_trigger": ["result-diagnosis", "research-results-auditor", "run-status-monitor"],
+      "rationale": "NaN loss is an engineering failure, not a scientific result issue or a status check."
+    },
+    {
+      "id": "RTE-002",
+      "prompt": "My method outperforms the baseline by 2% but I'm worried reviewers will say this is just noise. How do I defend it?",
+      "expected_path": ["experiment-evidence-router", "statistical-analysis-planner"],
+      "should_trigger": "statistical-analysis-planner",
+      "should_not_trigger": ["result-diagnosis", "research-results-auditor", "paper-reviewer-simulator"],
+      "rationale": "Needs significance testing and effect size reporting, not result diagnosis or reviewer simulation."
+    },
+    {
+      "id": "RTE-003",
+      "prompt": "Before I write up my results, I want to check whether my ablation really proves component X is responsible for the gain.",
+      "expected_path": ["experiment-evidence-router", "research-results-auditor"],
+      "should_trigger": "research-results-auditor",
+      "should_not_trigger": ["result-diagnosis", "statistical-analysis-planner", "paper-evidence-board"],
+      "rationale": "Ablation attribution is a confound/protocol audit before claim lock-in, not a diagnosis of an anomaly."
+    },
+    {
+      "id": "RTE-004",
+      "prompt": "My experiment results are surprising — the baseline is winning on two out of three datasets. What should I do next?",
+      "expected_path": ["experiment-evidence-router", "result-diagnosis"],
+      "should_trigger": "result-diagnosis",
+      "should_not_trigger": ["experiment-debugger", "research-results-auditor"],
+      "rationale": "Surprising but valid results need diagnosis of next action (rerun/ablate/pivot), not confound auditing."
+    },
+    {
+      "id": "RTE-005",
+      "prompt": "I need to preprocess my dataset, design train/val/test splits, and make sure there's no test set contamination.",
+      "expected_path": ["experiment-evidence-router", "data-pipeline-manager"],
+      "should_trigger": "data-pipeline-manager",
+      "should_not_trigger": ["experiment-design-planner", "experiment-debugger"],
+      "rationale": "Data split design and contamination checking is data pipeline work, not experiment design."
+    },
+    {
+      "id": "RTE-006",
+      "prompt": "How many GPU hours will my ablation matrix cost? I have 8 variants to run.",
+      "expected_path": ["experiment-evidence-router", "compute-budget-planner"],
+      "should_trigger": "compute-budget-planner",
+      "should_not_trigger": ["experiment-design-planner", "run-experiment"],
+      "rationale": "Cost estimation before submission is compute budget planning, not job submission or experiment design."
+    },
+    {
+      "id": "RTE-007",
+      "prompt": "My advisor gave feedback that my novelty framing is weak and the baseline comparison isn't fair. How do I process this?",
+      "expected_path": ["feedback-synthesizer"],
+      "should_trigger": "feedback-synthesizer",
+      "should_not_trigger": ["advisor-update-writer", "rebuttal-strategist", "baseline-selection-audit"],
+      "rationale": "Inbound advisor feedback needs triage into claims/risks/actions before any response or fix."
+    },
+    {
+      "id": "RTE-008",
+      "prompt": "I need to write the NeurIPS reproducibility checklist and structure my supplementary material.",
+      "expected_path": ["appendix-organizer"],
+      "should_trigger": "appendix-organizer",
+      "should_not_trigger": ["submit-paper", "model-card-writer", "paper-writing-assistant"],
+      "rationale": "Appendix structure and venue checklists are appendix organization work, not submission prep or writing."
+    },
+    {
+      "id": "RTE-009",
+      "prompt": "After 3 rounds of experiments, my core claim still doesn't hold. Should I narrow the scope or change direction?",
+      "expected_path": ["experiment-evidence-router", "project-pivot-planner"],
+      "should_trigger": "project-pivot-planner",
+      "should_not_trigger": ["result-diagnosis", "research-idea-validator"],
+      "rationale": "Multi-cycle failure requiring direction change needs pivot planning, not per-experiment diagnosis."
+    },
+    {
+      "id": "RTE-010",
+      "prompt": "I'm releasing my model on HuggingFace and need to write a model card with known limitations and intended uses.",
+      "expected_path": ["model-card-writer"],
+      "should_trigger": "model-card-writer",
+      "should_not_trigger": ["release-code", "artifact-evaluation-prep"],
+      "rationale": "Model card writing is a distinct documentation task from code release or artifact packaging."
+    },
+    {
+      "id": "RTE-011",
+      "prompt": "I want to run 2 rounds of review-and-fix on my draft before submission, with each round using a fresh reviewer.",
+      "expected_path": ["auto-paper-improvement-loop"],
+      "should_trigger": "auto-paper-improvement-loop",
+      "should_not_trigger": ["paper-draft-consistency-editor", "paper-reviewer-simulator"],
+      "rationale": "Multi-round review with fresh context and edit-whitelist is the improvement loop, not a single-pass edit."
+    },
+    {
+      "id": "RTE-012",
+      "prompt": "I want to check whether my accuracy claim on ImageNet really means the model is robust to distribution shift.",
+      "expected_path": ["experiment-evidence-router", "research-results-auditor"],
+      "should_trigger": "research-results-auditor",
+      "should_not_trigger": ["result-diagnosis", "statistical-analysis-planner"],
+      "rationale": "Benchmark-to-real-world generalization is a claim-drift audit, not result diagnosis or significance testing."
+    },
+    {
+      "id": "RTE-013",
+      "prompt": "I want to compare 10 recent papers on my topic side by side — which ones are closest to my work and how do they differ?",
+      "expected_path": ["reference-corpus-analyzer"],
+      "should_trigger": "reference-corpus-analyzer",
+      "should_not_trigger": ["reference-reading-summarizer", "reference-project-synthesizer", "literature-review-sprint"],
+      "rationale": "Multi-paper comparison matrix with tiered depth is the corpus analyzer, not per-paper cards or project linking."
+    },
+    {
+      "id": "RTE-014",
+      "prompt": "I just read three related papers. What do they mean for my project's claims and baselines?",
+      "expected_path": ["reference-project-synthesizer"],
+      "should_trigger": "reference-project-synthesizer",
+      "should_not_trigger": ["reference-corpus-analyzer", "reference-reading-summarizer"],
+      "rationale": "Connecting source cards to project memory is the synthesizer; the corpus analyzer is for multi-paper comparison matrices."
+    },
+    {
+      "id": "RTE-015",
+      "prompt": "My GPU job is stuck in ContainerCreating and I'm not sure if I should wait or resubmit.",
+      "expected_path": ["experiment-evidence-router", "run-status-monitor"],
+      "should_trigger": "run-status-monitor",
+      "should_not_trigger": ["experiment-debugger", "run-experiment"],
+      "rationale": "Probing scheduler/container status of an existing job is run monitoring, not debugging or job submission."
+    },
+    {
+      "id": "RTE-016",
+      "prompt": "I want to submit a new ablation run to my SLURM cluster with 4 GPUs and a 12-hour time limit.",
+      "expected_path": ["experiment-evidence-router", "run-experiment"],
+      "should_trigger": "run-experiment",
+      "should_not_trigger": ["run-status-monitor", "compute-budget-planner", "experiment-design-planner"],
+      "rationale": "Creating and submitting a new job is run-experiment, not status monitoring or budget planning."
+    },
+    {
+      "id": "RTE-017",
+      "prompt": "I want to start writing my paper but I haven't decided the section structure, archetype, or what claims I'll make yet.",
+      "expected_path": ["paper-writing-contract-planner"],
+      "should_trigger": "paper-writing-contract-planner",
+      "should_not_trigger": ["paper-writing-assistant", "paper-writing-memory-manager", "paper-positioning-planner"],
+      "rationale": "Locking structure, archetype, and forbidden claims before drafting is writing contract planning, not prose writing."
+    },
+    {
+      "id": "RTE-018",
+      "prompt": "I need to draft the results section of my paper. I have a writing contract and confirmed evidence ready.",
+      "expected_path": ["paper-writing-assistant"],
+      "should_trigger": "paper-writing-assistant",
+      "should_not_trigger": ["paper-writing-contract-planner", "paper-writing-memory-manager", "experiment-story-writer"],
+      "rationale": "Writing actual prose against a confirmed contract is paper-writing-assistant, not contract planning or state tracking."
+    },
+    {
+      "id": "RTE-019",
+      "prompt": "I've been writing the paper for a week across multiple sessions. I need to know which sections are stale, what decisions I made about terminology, and what's still open.",
+      "expected_path": ["paper-writing-memory-manager"],
+      "should_trigger": "paper-writing-memory-manager",
+      "should_not_trigger": ["paper-writing-assistant", "paper-writing-contract-planner", "paper-draft-consistency-editor"],
+      "rationale": "Tracking nonlinear drafting state, stale prose, and style decisions across sessions is writing memory management."
+    },
+    {
+      "id": "RTE-020",
+      "prompt": "I want to design the hypothesis, ablations, metrics, controls, and stop conditions for my next experiment before running anything.",
+      "expected_path": ["experiment-evidence-router", "experiment-design-planner"],
+      "should_trigger": "experiment-design-planner",
+      "should_not_trigger": ["run-experiment", "baseline-selection-audit", "compute-budget-planner"],
+      "rationale": "Designing ablations, metrics, and controls before running is experiment design, not job submission or budget planning."
+    },
+    {
+      "id": "RTE-021",
+      "prompt": "My advisor just gave me feedback saying the novelty is weak and the baselines are outdated. How should I respond?",
+      "expected_path": ["ml-research-router", "feedback-synthesizer"],
+      "should_trigger": "feedback-synthesizer",
+      "should_not_trigger": ["advisor-update-writer", "rebuttal-strategist", "baseline-selection-audit"],
+      "rationale": "Processing inbound advisor feedback is feedback-synthesizer, not writing an update back or running baseline audit."
+    },
+    {
+      "id": "RTE-022",
+      "prompt": "Reviews just came in from ICLR. Reviewer 2 says my method is just a special case of prior work. How do I respond?",
+      "expected_path": ["ml-research-router", "rebuttal-strategist"],
+      "should_trigger": "rebuttal-strategist",
+      "should_not_trigger": ["paper-writing-router", "paper-reviewer-simulator", "feedback-synthesizer"],
+      "rationale": "Real reviews requiring a point-by-point rebuttal are rebuttal-strategist; paper-reviewer-simulator is for pre-submission simulation."
+    },
+    {
+      "id": "RTE-023",
+      "prompt": "I'm not sure whether to run more experiments or start writing. The domain of my next task is unclear.",
+      "expected_path": ["ml-research-router"],
+      "should_trigger": "ml-research-router",
+      "should_not_trigger": ["experiment-evidence-router", "paper-writing-router"],
+      "rationale": "When the domain is genuinely ambiguous, the root router disambiguates rather than guessing a domain router."
+    },
+    {
+      "id": "RTE-024",
+      "prompt": "I need to create a progress slide deck for my advisor meeting next week.",
+      "expected_path": ["ml-research-router", "research-slide-deck-builder"],
+      "should_trigger": "research-slide-deck-builder",
+      "should_not_trigger": ["paper-writing-router", "advisor-update-writer", "paper-writing-assistant"],
+      "rationale": "Slide deck creation is a cross-cutting skill routed directly from the root router, not through paper-writing-router."
+    },
+    {
+      "id": "RTE-025",
+      "prompt": "I want to design the algorithm for my new method — formulate the mechanism, identify assumptions, and produce an implementation handoff.",
+      "expected_path": ["ml-research-router", "algorithm-design-planner"],
+      "should_trigger": "algorithm-design-planner",
+      "should_not_trigger": ["experiment-evidence-router", "experiment-design-planner", "discovery-router"],
+      "rationale": "Designing the method itself (formulation, mechanism) is algorithm-design-planner; experiment-design-planner is for planning experiments to test an already-designed method."
+    }
+  ]
+}
