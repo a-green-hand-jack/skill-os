@@ -12,6 +12,21 @@ design_principles:
   - Treat agent-specific files as adapters, not the source of truth.
   - Promote repeated use into skills through lessons, conventions, validators, and routing evals.
 
+pin_policy:
+  intent: >
+    Each pack repo has a recorded `pinned_commit` so the matrix can advertise a
+    reproducible install configuration. Pins are advisory: scripts and humans
+    may install whatever HEAD they have cloned, but `scripts/verify_pack_pins.py`
+    exits non-zero when local pack HEADs diverge from pinned commits.
+  managed_by: scripts/verify_pack_pins.py
+  update_when:
+    - A sibling pack lands a meaningful change (skills added/removed, contracts
+      changed, profile-index slice updated).
+    - A new chain-install regression is run end-to-end against the latest packs.
+  never:
+    - Auto-checkout sibling packs to the pinned commit. Pin verification is
+      read-only; mutation is the operator's call.
+
 repo_matrix:
   skill-kernel:
     status: proposed
@@ -33,37 +48,50 @@ repo_matrix:
   core-ops-skills:
     status: active
     github_url: https://github.com/a-green-hand-jack/core-ops-skills
+    pinned_commit: 5cd835d496d91282d143f3207707201d4d1e8f06
+    pinned_at: "2026-05-28"
     role: >
       Cross-project operational substrate such as memory, git closeout, artifact
       hygiene, environment boundaries, sidecars, validation, and docs updates.
   ml-research-skills:
     status: active
     github_url: https://github.com/a-green-hand-jack/ml-research-skills
+    pinned_commit: 9d698c7392ef54549de0e58e9ce4ef427ffb6490
+    pinned_at: "2026-05-28"
     role: >
       Domain pack for AI PhD and ML research workflows from idea through
-      paper, experiments, rebuttal, artifacts, and release. Currently also
-      hosts the full skill source-of-truth pending Phase B2 slim.
+      paper, experiments, rebuttal, artifacts, and release. After the
+      2026-05-28 hard-slim it owns only ml-research-specific skills and
+      depends_on the other five sibling packs.
   paper-reading-skills:
     status: active
     github_url: https://github.com/a-green-hand-jack/paper-reading-skills
+    pinned_commit: 4aead36d206548b29b62776140be06d54a52b214
+    pinned_at: "2026-05-28"
     role: >
       Focused paper, source, corpus, and note-reading workflows that can serve
       reading-only projects without activating the full ML research lifecycle.
   research-distillation-skills:
     status: active
     github_url: https://github.com/a-green-hand-jack/research-distillation-skills
+    pinned_commit: 7bbfa1f09d7de5fedd75b4a45c601a78245e63f0
+    pinned_at: "2026-05-28"
     role: >
       Distill excellent papers, projects, people, courses, and workflows into
       source cards, pattern cards, and reusable skill proposals.
   automation-skills:
     status: active
     github_url: https://github.com/a-green-hand-jack/automation-skills
+    pinned_commit: 242a97ffc50638a536c7d0628d43f737294bf888
+    pinned_at: "2026-05-28"
     role: >
       Device, storage, network, and remote-runtime ops — SSH/HPC/RunAI
       coordination, scheduler probes, runbooks, credential boundaries.
   quick-experiment-skills:
     status: active
     github_url: https://github.com/a-green-hand-jack/quick-experiment-skills
+    pinned_commit: 13463e05f177878c9b449862f8043e76f761e1b3
+    pinned_at: "2026-05-28"
     role: >
       Lightweight scratchpad experiments — launch, monitor, debug, estimate
       cost — without committing to the full ML paper lifecycle.

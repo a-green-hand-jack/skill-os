@@ -62,16 +62,17 @@ volatile-fields: git-state, sibling-pack-HEADs, test-counts
 ## Top Risks
 
 - RSK-024: Hub schema drift if a pack repo's kernel diverges from the reference example in this repo. Mitigated by `--source-root` resolution but not yet enforced automatically.
-- RSK-027: When a sibling pack is updated independently, ml-research-skills' depends_on doesn't pin a commit hash — chain installer pulls whatever HEAD the user has cloned (ACT-086 in progress).
+- RSK-027: When a sibling pack is updated independently, the pinned commit in `profile-index.yaml` becomes stale until refreshed. Mitigated by `verify_pack_pins.py` returning non-zero on mismatch; pin refresh is operator-driven.
 
 ## Open Actions (skill-os scope)
 
-- ACT-077 + ACT-080 + ACT-081 + ACT-082 + ACT-085 + ACT-087 — all `done`.
-- ACT-086 (todo): pin sibling-pack commit hashes in `profiles/profile-index.yaml` when the matrix needs reproducible installs.
+- ACT-077 + ACT-080 + ACT-081 + ACT-082 + ACT-085 + ACT-086 + ACT-087 — all `done`.
+- (queue empty)
 
 ## Decision Log (recent)
 
-- ACT-085 (2026-05-28): matrix-wide leaf-routing regression fixture lives in **skill-os** (`tests/routing-evals.json` + `tests/test_routing_evals.py`). Reasoning: skills referenced by the evals span 6 pack repos after the hard-slim; only the hub sees the full matrix. The test enforces structural well-formedness; cross-pack skill-existence checks would require every pack cloned alongside and are an opt-in script, not part of the default suite. Total skill-os test count: 54.
+- ACT-086 (2026-05-28): each sibling pack has a `pinned_commit` + `pinned_at` in `profiles/profile-index.yaml` `repo_matrix`. `scripts/verify_pack_pins.py` is read-only and exits non-zero on mismatch; it never auto-checks-out the pinned ref. 4 tests in `test_verify_pack_pins.py`. Total skill-os test count: 58.
+- ACT-085 (2026-05-28): matrix-wide leaf-routing regression fixture lives in **skill-os** (`tests/routing-evals.json` + `tests/test_routing_evals.py`). Reasoning: skills referenced by the evals span 6 pack repos after the hard-slim; only the hub sees the full matrix. The test enforces structural well-formedness; cross-pack skill-existence checks would require every pack cloned alongside and are an opt-in script, not part of the default suite.
 
 ## Full Memory
 

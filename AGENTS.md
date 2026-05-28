@@ -50,12 +50,14 @@ python3 scripts/export_skill_kernel_adapters.py --runtime all --check
 uv run scripts/validate_skill_taxonomy.py
 ```
 
-54 tests across 8 files. The synthetic-fixture pack under
+58 tests across 9 files. The synthetic-fixture pack under
 `tests/fixtures/synthetic-pack/` (and a depends_on variant under
 `tests/fixtures/synthetic-pack-pdf/`) lets the operational tests run
 without depending on any real pack repo. The matrix-wide leaf-routing
 regression fixture is `tests/routing-evals.json` with
 `tests/test_routing_evals.py` enforcing structural well-formedness.
+Sibling-pack commit pin verification is `scripts/verify_pack_pins.py`
+plus `tests/test_verify_pack_pins.py`.
 
 ## Operating The Installer For Real Projects
 

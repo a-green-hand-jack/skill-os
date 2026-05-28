@@ -31,7 +31,7 @@ Run the full skill-os test suite:
 python3 -m unittest discover tests
 ```
 
-54 tests across 8 files. Coverage:
+58 tests across 9 files. Coverage:
 
 - `test_skill_kernel_adapter_export.py` (16) — kernel → adapter dry-run
 - `test_profile_routing_harness.py` (6) — profile-routing eval fixtures
@@ -41,6 +41,7 @@ python3 -m unittest discover tests
 - `test_synthetic_cross_repo_install.py` (5) — cross-repo install via --source-root
 - `test_synthetic_chain_install.py` (4) — multi-profile chain installer
 - `test_routing_evals.py` (7) — matrix-wide leaf-routing eval regression (`tests/routing-evals.json`)
+- `test_verify_pack_pins.py` (4) — sibling-pack commit pin verifier
 
 Dry-run adapter export must always pass:
 
@@ -89,6 +90,32 @@ The chain installer resolves the profile's `depends_on` chain via
 per step in dependency-first order. Each step gets its own
 `plan-<profile>.json`, manifest index, and rollback record under
 `<target-parent>/.skill-os-install-state/`.
+
+## Sibling Pack Pin Verification
+
+Each pack in `profiles/profile-index.yaml` `repo_matrix` carries a
+`pinned_commit` + `pinned_at`. Verify the local clones match before running a
+reproducible install:
+
+```bash
+python3 scripts/verify_pack_pins.py --pack-search-path <parent-of-cloned-packs>
+```
+
+Use `--pack <name>=<path>` to override the path for one pack (e.g. when the
+local checkout lives under a different name). The script is read-only — it
+never checks out the pinned commit. Exit code is non-zero on any mismatch or
+missing pack.
+
+Update pins with the helper one-liner after a sibling-pack commit lands:
+
+```bash
+# inspect current HEADs
+for r in core-ops-skills automation-skills paper-reading-skills \
+         research-distillation-skills quick-experiment-skills ml-research-skills; do
+  echo "$r: $(git -C <parent>/$r log -1 --format=%H)"
+done
+# then edit profile-index.yaml repo_matrix.<name>.pinned_commit
+```
 
 ## Memory
 

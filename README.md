@@ -28,7 +28,10 @@ of a constellation of agent-skill profile packs. It owns:
   per step. Pulls all sibling packs in dependency-first order with one
   command.
 - **Matrix registry** — `profiles/profile-index.yaml`, listing every
-  profile-pack repo by `github_url` + `depends_on`
+  profile-pack repo by `github_url` + `pinned_commit` + `depends_on`
+- **Pack pin verifier** (ACT-086) — `scripts/verify_pack_pins.py`: read-only,
+  compares local sibling-pack HEADs to the matrix's pinned commits and exits
+  non-zero on mismatch. Never auto-checks-out the pinned ref.
 - **Design doc** — `docs/design/skill-matrix.md`
 
 ## Matrix (7 repos, all live on GitHub)
@@ -93,8 +96,11 @@ Common folder types and what to install:
 | ACT-082 | Multi-root resolution in `validate_install_handoff_plan` + threaded `--source-root` through preview/apply scripts. Cross-repo install verified end-to-end against cloned packs. | 2026-05-28 |
 | ACT-081 | Chain installer `install_profile_chain.py` + 4 chain tests. End-to-end validation: cloned 3 packs → quick-experiment chain installed in one command. | 2026-05-28 |
 | ACT-083 | Hard-slim ml-research-skills: 28 skill dirs removed there + explicit `depends_on` declared. Net -15,442 lines in that repo. | 2026-05-28 |
+| ACT-084 | Relocated `profiles/research-distillation/` subtree from ml-research-skills to research-distillation-skills. | 2026-05-28 |
+| ACT-085 | Matrix-wide leaf-routing regression fixture rehomed here as `tests/routing-evals.json` + `tests/test_routing_evals.py`. | 2026-05-28 |
+| ACT-086 | Pinned commit per sibling pack in `profile-index.yaml` + `scripts/verify_pack_pins.py` read-only mismatch detector. | 2026-05-28 |
 
-Test count: **47 passing** in skill-os.
+Test count: **58 passing** in skill-os.
 
 ## Source-of-truth boundaries
 
@@ -113,6 +119,9 @@ python3 -m unittest discover tests
 
 # Deep taxonomy / profile / kernel schema consistency check
 uv run scripts/validate_skill_taxonomy.py
+
+# Verify local sibling-pack clones match profile-index pinned commits
+python3 scripts/verify_pack_pins.py --pack-search-path <parent-of-cloned-packs>
 ```
 
 ## License and use
